@@ -11,8 +11,7 @@ export const generateWelcomeMessage = (customer) => {
     '',
     '👤 N.º Cliente: *' + customer.numero_cliente + '*',
     '🔑 Senha: *' + customer.telemovel + '*',
-    '',
-    'Aceda ao seu portal aqui: https://postogestao.app/login',
+    'Aceda ao seu portal aqui: ' + window.location.origin + '/login',
     '',
     'Obrigado pela preferência! 💧'
   ];

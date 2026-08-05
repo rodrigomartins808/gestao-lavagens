@@ -1,0 +1,815 @@
+import React, { useState, useEffect } from 'react';
+import { LogOut, BarChart2, Users, MessageSquare, Download, AlertTriangle, Search, Trash2, Calendar, FileText, X, Car, Award, Cloud } from 'lucide-react';
+import * as XLSX from 'xlsx';
+import dataService from '../services/dataService';
+import whatsappService from '../services/whatsappService';
+import { migrateToSupabase } from '../services/migrationService';
+
+export default function AdminDashboard({ currentUser }) {
+  const [activeTab, setActiveTab] = useState('painel');
+  const [stats, setStats] = useState({ today: null, month: null, global: null });
+  const [customers, setCustomers] = useState([]);
+  const [inactiveCustomers, setInactiveCustomers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [campaignText, setCampaignText] = useState('Olá! Temos saudades suas. Visite-nos esta semana e ganhe 20% de desconto na sua próxima lavagem!');
+  const [campaignType, setCampaignType] = useState('almost_there');
+  
+  // New State for Analytics
+  const [dailyData, setDailyData] = useState([]);
+  const [monthlyData, setMonthlyData] = useState([]);
+  
+  // Modal State for Customer Details
+  const [selectedCustomerForDetails, setSelectedCustomerForDetails] = useState(null);
+  const [customerWashes, setCustomerWashes] = useState([]);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      const today = await dataService.getTodayStats();
+      const month = await dataService.getMonthStats();
+      const global = await dataService.getGlobalStats();
+      const allCustomers = await dataService.getAllCustomers();
+      const inactive = await dataService.getInactiveCustomers(45);
+      
+      const currentMonth = new Date().getMonth();
+      const currentYear = new Date().getFullYear();
+      
+      const daily = await dataService.getWashesPerDay(currentMonth, currentYear);
+      const monthly = await dataService.getWashesPerMonth(currentYear);
+      
+      // Calculate lifetime value for customers in list
+      const customersWithLTV = await Promise.all(allCustomers.map(async c => ({
+        ...c,
+        ltv: await dataService.getCustomerLifetimeValue(c.id)
+      })));
+      customersWithLTV.sort((a, b) => new Date(b.criado_em) - new Date(a.criado_em));
+
+      setStats({ today, month, global });
+      setCustomers(customersWithLTV);
+      setInactiveCustomers(inactive);
+      setDailyData(daily);
+      setMonthlyData(monthly);
+    } catch (error) {
+      console.error("Erro ao carregar dados do admin:", error);
+    }
+  };
+
+  const handleDeleteCustomer = async (id, name) => {
+    if (window.confirm(`Tem a certeza que deseja eliminar o cliente ${name}? Esta ação é irreversível.`)) {
+      await dataService.deleteCustomer(id);
+      loadData();
+    }
+  };
+
+  const autoFitColumns = (json, ws) => {
+    if (!json || json.length === 0) return;
+    
+    // Auto fit columns
+    const keys = Object.keys(json[0]);
+    const colWidths = keys.map(key => {
+      let maxLen = key.length;
+      json.forEach(row => {
+        const val = row[key];
+        if (val !== null && val !== undefined) {
+          const len = String(val).length;
+          if (len > maxLen) maxLen = len;
+        }
+      });
+      return { wch: maxLen + 4 };
+    });
+    ws['!cols'] = colWidths;
+  };
+
+  const handleExportData = async () => {
+    try {
+      const data = await dataService.getExportData();
+      const wb = XLSX.utils.book_new();
+      
+      const formattedCustomers = data.customers.map(c => ({
+        'Nº Cliente': c.numero_cliente,
+        'Nome': c.nome,
+        'Telemóvel': c.telemovel,
+        'NIF': c.nif || '',
+        'Carimbos (Atuais)': c.carimbos_acumulados,
+        'Lavagens Gratuitas': c.lavagens_gratuitas || 0
+      }));
+      const wsCustomers = XLSX.utils.json_to_sheet(formattedCustomers);
+      autoFitColumns(formattedCustomers, wsCustomers);
+      XLSX.utils.book_append_sheet(wb, wsCustomers, "Clientes");
+      
+      const formattedVehicles = data.vehicles.map(v => ({
+        'ID Viatura': v.id,
+        'Matrícula': v.matricula,
+        'Marca': v.marca,
+        'Modelo': v.modelo,
+        'Cor': v.cor,
+        'ID Cliente': v.cliente_id
+      }));
+      const wsVehicles = XLSX.utils.json_to_sheet(formattedVehicles);
+      autoFitColumns(formattedVehicles, wsVehicles);
+      XLSX.utils.book_append_sheet(wb, wsVehicles, "Viaturas");
+      
+      const formattedWashes = data.washes.map(w => {
+        const customer = w.cliente_id ? data.customers.find(c => c.id === w.cliente_id) : null;
+        return {
+          'Data': new Date(w.data).toLocaleString('pt-PT'),
+          'Serviço': w.tipo_lavagem,
+          'Valor (€)': w.valor,
+          'Cliente': customer ? customer.nome : 'Anónimo',
+          'NIF': customer?.nif || '',
+          'Carimbo': w.carimbos_ganhos > 0 ? 'Sim' : 'Não'
+        };
+      });
+      const wsWashes = XLSX.utils.json_to_sheet(formattedWashes);
+      autoFitColumns(formattedWashes, wsWashes);
+      XLSX.utils.book_append_sheet(wb, wsWashes, "Lavagens");
+      
+      XLSX.writeFile(wb, `posto_gestao_backup_${new Date().toISOString().split('T')[0]}.xlsx`);
+    } catch (error) {
+      console.error("Erro ao exportar:", error);
+      alert("Ocorreu um erro ao exportar os dados.");
+    }
+  };
+
+  const handleExportMonthlyBilling = async () => {
+    const data = await dataService.getExportData();
+    const currentMonth = new Date().toISOString().substring(0, 7);
+    const monthWashes = data.washes.filter(w => w.data.startsWith(currentMonth) && w.valor > 0);
+    
+    if (monthWashes.length === 0) {
+      alert("Não existem lavagens faturadas neste mês.");
+      return;
+    }
+    
+    const exportData = monthWashes.map(w => {
+      const customer = w.cliente_id ? data.customers.find(c => c.id === w.cliente_id) : null;
+      return {
+        'Data/Hora': new Date(w.data).toLocaleString('pt-PT'),
+        'Tipo de Serviço': w.tipo_lavagem,
+        'Valor (€)': w.valor,
+        'Nome do Cliente': customer ? customer.nome : 'Anónimo',
+        'NIF': customer?.nif || 'Consumidor Final',
+      };
+    });
+
+    const totalRevenue = monthWashes.reduce((sum, w) => sum + (Number(w.valor) || 0), 0);
+    exportData.push({
+      'Data/Hora': '',
+      'Tipo de Serviço': 'TOTAL DO MÊS',
+      'Valor (€)': totalRevenue,
+      'Nome do Cliente': '',
+      'NIF': ''
+    });
+    
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    autoFitColumns(exportData, ws);
+    XLSX.utils.book_append_sheet(wb, ws, "Faturação Mês");
+    XLSX.writeFile(wb, `faturacao_${currentMonth}.xlsx`);
+  };
+
+  const handleExportInactive = () => {
+    if (inactiveCustomers.length === 0) {
+      alert("Não existem clientes inativos.");
+      return;
+    }
+    const exportData = inactiveCustomers.map(c => ({
+      'Nome': c.nome,
+      'Telemóvel': c.telemovel,
+      'Última Lavagem': c.lastWashDate ? new Date(c.lastWashDate).toLocaleDateString('pt-PT') : 'Desconhecida',
+      'Dias Inativo': c.daysInactive,
+      'Carimbos Atuais': c.carimbos_acumulados,
+      'Lavagens Gratuitas': c.lavagens_gratuitas || 0
+    }));
+    
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    autoFitColumns(exportData, ws);
+    XLSX.utils.book_append_sheet(wb, ws, "Clientes Inativos");
+    XLSX.writeFile(wb, `clientes_inativos_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+
+  const handleExportTopCustomers = () => {
+    const top = [...customers].sort((a, b) => (b.carimbos_acumulados || 0) - (a.carimbos_acumulados || 0)).slice(0, 20);
+    if (top.length === 0) {
+      alert("Sem clientes registados.");
+      return;
+    }
+    const exportData = top.map(c => ({
+      'Nome': c.nome,
+      'Telemóvel': c.telemovel,
+      'Nº Cliente': c.numero_cliente,
+      'Carimbos Atuais': c.carimbos_acumulados,
+      'Total Gasto': (c.totalGasto || 0).toFixed(2) + ' €',
+      'Lavagens Gratuitas': c.lavagens_gratuitas || 0
+    }));
+    
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    autoFitColumns(exportData, ws);
+    XLSX.utils.book_append_sheet(wb, ws, "Top Clientes");
+    XLSX.writeFile(wb, `top_clientes_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+
+  const handleSendCampaign = (customer) => {
+    if (customer && customer.telemovel) {
+      let msg = '';
+      if (campaignType === 'almost_there') {
+        msg = whatsappService.generateAlmostThereMessage(customer);
+      } else if (campaignType === 'miss_car') {
+        const vehicle = (customer.viaturas && customer.viaturas.length > 0) ? customer.viaturas[0] : null;
+        msg = whatsappService.generateMissYourCarMessage(customer, vehicle);
+      } else if (campaignType === 'vip_reactivation') {
+        msg = whatsappService.generateVIPReactivationMessage(customer);
+      } else {
+        msg = whatsappService.generateCampaignMessage(customer, campaignText);
+      }
+      whatsappService.openWhatsApp(customer.telemovel, msg);
+    }
+  };
+  
+  const handleOpenCustomerDetails = (customer) => {
+    const washes = dataService.getWashesByCustomer(customer.id);
+    setCustomerWashes(washes);
+    setSelectedCustomerForDetails(customer);
+  };
+
+  const filteredCustomers = customers.filter(c => 
+    (c.nome && c.nome.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    (c.telemovel && c.telemovel.includes(searchQuery)) ||
+    (c.numero_cliente && c.numero_cliente.includes(searchQuery)) ||
+    (c.nif && c.nif.includes(searchQuery))
+  );
+
+  return (
+    <div className="dashboard min-h-screen" style={{ display: 'flex' }}>
+      {/* Sidebar - Vanilla CSS fixing broken layout */}
+      <aside style={{ width: '250px', background: 'var(--bg-panel)', padding: '1.5rem', display: 'flex', flexDirection: 'column', borderRight: 'var(--glass-border)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2rem' }}>
+          <div style={{ width: '40px', height: '40px', background: 'var(--accent-primary)', color: 'white', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.2rem', marginRight: '1rem' }}>
+            PG
+          </div>
+          <h1 style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>Admin</h1>
+        </div>
+        
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
+          <button 
+            style={{ display: 'flex', alignItems: 'center', padding: '0.75rem 1rem', borderRadius: '8px', background: activeTab === 'painel' ? 'var(--accent-primary)' : 'transparent', color: activeTab === 'painel' ? 'white' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: '500', transition: 'all 0.2s' }}
+            onClick={() => setActiveTab('painel')}
+            onMouseEnter={e => { if(activeTab !== 'painel') e.currentTarget.style.background = 'rgba(0,0,0,0.04)' }}
+            onMouseLeave={e => { if(activeTab !== 'painel') e.currentTarget.style.background = 'transparent' }}
+          >
+            <BarChart2 size={18} style={{ marginRight: '0.75rem' }} /> Painel Central
+          </button>
+          <button 
+            style={{ display: 'flex', alignItems: 'center', padding: '0.75rem 1rem', borderRadius: '8px', background: activeTab === 'clientes' ? 'var(--accent-primary)' : 'transparent', color: activeTab === 'clientes' ? 'white' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: '500', transition: 'all 0.2s' }}
+            onClick={() => setActiveTab('clientes')}
+            onMouseEnter={e => { if(activeTab !== 'clientes') e.currentTarget.style.background = 'rgba(0,0,0,0.04)' }}
+            onMouseLeave={e => { if(activeTab !== 'clientes') e.currentTarget.style.background = 'transparent' }}
+          >
+            <Users size={18} style={{ marginRight: '0.75rem' }} /> Clientes
+          </button>
+          <button 
+            style={{ display: 'flex', alignItems: 'center', padding: '0.75rem 1rem', borderRadius: '8px', background: activeTab === 'campanhas' ? 'var(--accent-primary)' : 'transparent', color: activeTab === 'campanhas' ? 'white' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: '500', transition: 'all 0.2s' }}
+            onClick={() => setActiveTab('campanhas')}
+            onMouseEnter={e => { if(activeTab !== 'campanhas') e.currentTarget.style.background = 'rgba(0,0,0,0.04)' }}
+            onMouseLeave={e => { if(activeTab !== 'campanhas') e.currentTarget.style.background = 'transparent' }}
+          >
+            <MessageSquare size={18} style={{ marginRight: '0.75rem' }} /> Campanhas
+          </button>
+          <button 
+            style={{ display: 'flex', alignItems: 'center', padding: '0.75rem 1rem', borderRadius: '8px', background: activeTab === 'exportacoes' ? 'var(--accent-primary)' : 'transparent', color: activeTab === 'exportacoes' ? 'white' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: '500', transition: 'all 0.2s' }}
+            onClick={() => setActiveTab('exportacoes')}
+            onMouseEnter={e => { if(activeTab !== 'exportacoes') e.currentTarget.style.background = 'rgba(0,0,0,0.04)' }}
+            onMouseLeave={e => { if(activeTab !== 'exportacoes') e.currentTarget.style.background = 'transparent' }}
+          >
+            <Download size={18} style={{ marginRight: '0.75rem' }} /> Relatórios e Exportações
+          </button>
+        </nav>
+        
+        <div style={{ marginTop: 'auto', paddingTop: '1.5rem', borderTop: 'var(--glass-border)' }}>
+          <div style={{ marginBottom: '1rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+            Sessão: <span style={{ color: 'var(--text-primary)' }}>{currentUser?.name || 'Administrador'}</span>
+          </div>
+          <button className="btn btn-outline" style={{ width: '100%', display: 'flex', justifyContent: 'center' }} onClick={() => window.location.reload()}>
+            <LogOut size={16} style={{ marginRight: '0.5rem' }} /> Terminar Sessão
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <main style={{ flex: 1, padding: '2rem', overflowY: 'auto', height: '100vh' }}>
+        {activeTab === 'painel' && (
+          <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Visão Geral</h2>
+            </div>
+            
+            {/* Global Summary Cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+              <div className="card" style={{ padding: '1.5rem', borderTop: '4px solid var(--accent-primary)' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>Lavagens (Hoje)</p>
+                <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>{stats.today?.totalWashes || 0}</p>
+              </div>
+              <div className="card" style={{ padding: '1.5rem', borderTop: '4px solid var(--accent-green)' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>Faturação (Hoje)</p>
+                <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>{(stats.today?.totalRevenue || 0).toFixed(2)}€</p>
+              </div>
+              <div className="card" style={{ padding: '1.5rem', borderTop: '4px solid var(--accent-amber)' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>Novos Clientes (Mês)</p>
+                <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>{stats.month?.newCustomers || 0}</p>
+              </div>
+              <div className="card" style={{ padding: '1.5rem', borderTop: '4px solid var(--accent-cyan)' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>Faturação (Mês)</p>
+                <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>{(stats.month?.totalRevenue || 0).toFixed(2)}€</p>
+              </div>
+            </div>
+
+            {/* Detailed Tables */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+              {/* Daily Table */}
+              <div className="card" style={{ padding: '1.5rem', maxHeight: '500px', overflowY: 'auto' }}>
+                <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '1.5rem', display: 'flex', alignItems: 'center' }}>
+                  <Calendar size={18} style={{ marginRight: '0.5rem', color: 'var(--accent-primary)' }} /> 
+                  Lavagens por Dia (Mês Atual)
+                </h3>
+                <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
+                      <th style={{ padding: '0.75rem', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Dia</th>
+                      <th style={{ padding: '0.75rem', color: 'var(--text-secondary)', fontSize: '0.875rem', textAlign: 'center' }}>Qtd. Lavagens</th>
+                      <th style={{ padding: '0.75rem', color: 'var(--text-secondary)', fontSize: '0.875rem', textAlign: 'right' }}>Faturação</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dailyData.filter(d => d.count > 0).length > 0 ? (
+                      dailyData.filter(d => d.count > 0).map(d => (
+                        <tr key={`day-${d.day}`} style={{ borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
+                          <td style={{ padding: '0.75rem', fontWeight: 'bold' }}>{String(d.day).padStart(2, '0')}/{String(new Date().getMonth() + 1).padStart(2, '0')}</td>
+                          <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                            <span style={{ background: 'rgba(59, 130, 246, 0.2)', color: '#2563eb', padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.875rem' }}>
+                              {d.count}
+                            </span>
+                          </td>
+                          <td style={{ padding: '0.75rem', textAlign: 'right', fontWeight: '600' }}>{d.revenue.toFixed(2)}€</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="3" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>Sem registos este mês.</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Monthly Table */}
+              <div className="card" style={{ padding: '1.5rem', maxHeight: '500px', overflowY: 'auto' }}>
+                <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '1.5rem', display: 'flex', alignItems: 'center' }}>
+                  <BarChart2 size={18} style={{ marginRight: '0.5rem', color: 'var(--accent-green)' }} /> 
+                  Lavagens por Mês (Ano Atual)
+                </h3>
+                <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
+                      <th style={{ padding: '0.75rem', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Mês</th>
+                      <th style={{ padding: '0.75rem', color: 'var(--text-secondary)', fontSize: '0.875rem', textAlign: 'center' }}>Qtd. Lavagens</th>
+                      <th style={{ padding: '0.75rem', color: 'var(--text-secondary)', fontSize: '0.875rem', textAlign: 'right' }}>Faturação</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {monthlyData.filter(m => m.count > 0).length > 0 ? (
+                      monthlyData.filter(m => m.count > 0).map(m => (
+                        <tr key={`month-${m.month}`} style={{ borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
+                          <td style={{ padding: '0.75rem', fontWeight: 'bold' }}>{m.month}</td>
+                          <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                            <span style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#059669', padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.875rem' }}>
+                              {m.count}
+                            </span>
+                          </td>
+                          <td style={{ padding: '0.75rem', textAlign: 'right', fontWeight: '600' }}>{m.revenue.toFixed(2)}€</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="3" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>Sem registos este ano.</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Lifetime metrics */}
+            <div className="card" style={{ padding: '1.5rem' }}>
+              <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>Métricas Globais (Todo o Tempo)</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
+                <div style={{ background: 'rgba(0,0,0,0.03)', padding: '1.5rem', borderRadius: '8px' }}>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Total de Lavagens Registadas</p>
+                  <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>{stats.global?.totalWashes || 0}</p>
+                </div>
+                <div style={{ background: 'rgba(0,0,0,0.03)', padding: '1.5rem', borderRadius: '8px' }}>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Lavagens Anónimas (Sem Ficha)</p>
+                  <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>{stats.global?.totalAnonymousWashes || 0}</p>
+                </div>
+                <div style={{ background: 'rgba(0,0,0,0.03)', padding: '1.5rem', borderRadius: '8px' }}>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Lavagens Gratuitas Ofertas</p>
+                  <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>{stats.global?.totalFreeWashes || 0}</p>
+                </div>
+              </div>
+            </div>
+            
+            {inactiveCustomers.length > 0 && (
+              <div style={{ background: 'rgba(245, 158, 11, 0.1)', borderLeft: '4px solid var(--accent-amber)', padding: '1.5rem', borderRadius: '8px', display: 'flex' }}>
+                <AlertTriangle style={{ color: 'var(--accent-amber)', marginRight: '1rem' }} size={24} />
+                <div>
+                  <h3 style={{ fontWeight: 'bold', color: '#d97706', marginBottom: '0.5rem' }}>Atenção Necessária</h3>
+                  <p style={{ color: 'var(--text-primary)', marginBottom: '0.5rem' }}>Existem {inactiveCustomers.length} clientes inativos há mais de 45 dias.</p>
+                  <button 
+                    style={{ background: 'none', border: 'none', color: '#d97706', textDecoration: 'underline', cursor: 'pointer', padding: 0 }}
+                    onClick={() => setActiveTab('campanhas')}
+                  >
+                    Ir para Campanhas de Reativação
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'clientes' && (
+          <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Gestão de Clientes</h2>
+              <div style={{ position: 'relative', width: '300px' }}>
+                <Search style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} size={18} />
+                <input 
+                  type="text" 
+                  placeholder="Pesquisar clientes (Nome, NIF, Tel)..." 
+                  className="input"
+                  style={{ width: '100%', paddingLeft: '2.5rem' }}
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                />
+              </div>
+            </div>
+            
+            <div className="card" style={{ overflow: 'hidden' }}>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
+                  <thead style={{ background: 'rgba(0,0,0,0.03)' }}>
+                    <tr>
+                      <th style={{ padding: '1rem', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Cliente</th>
+                      <th style={{ padding: '1rem', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>NIF / Contacto</th>
+                      <th style={{ padding: '1rem', color: 'var(--text-secondary)', fontSize: '0.875rem', textAlign: 'center' }}>Data Registo</th>
+                      <th style={{ padding: '1rem', color: 'var(--text-secondary)', fontSize: '0.875rem', textAlign: 'center' }}>Carimbos</th>
+                      <th style={{ padding: '1rem', color: 'var(--text-secondary)', fontSize: '0.875rem', textAlign: 'center' }}>Total Lavagens</th>
+                      <th style={{ padding: '1rem', color: 'var(--text-secondary)', fontSize: '0.875rem', textAlign: 'right' }}>Faturação Total</th>
+                      <th style={{ padding: '1rem', color: 'var(--text-secondary)', fontSize: '0.875rem', textAlign: 'center' }}>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredCustomers.map(c => (
+                      <tr key={c.id} style={{ borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
+                        <td style={{ padding: '1rem' }}>
+                          <div style={{ fontWeight: 'bold' }}>{c.nome}</div>
+                          <div style={{ fontSize: '0.75rem', color: '#2563eb', marginTop: '0.25rem' }}>{c.numero_cliente}</div>
+                        </td>
+                        <td style={{ padding: '1rem' }}>
+                          <div>{c.telemovel || 'Sem Tel'}</div>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>{c.nif ? `NIF: ${c.nif}` : 'S/ NIF'}</div>
+                        </td>
+                        <td style={{ padding: '1rem', textAlign: 'center', fontSize: '0.875rem' }}>
+                          {new Date(c.criado_em).toLocaleDateString()}
+                        </td>
+                        <td style={{ padding: '1rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <div style={{ width: '60px', background: 'rgba(0,0,0,0.08)', height: '6px', borderRadius: '3px', marginRight: '8px', overflow: 'hidden' }}>
+                              <div style={{ background: 'var(--accent-primary)', height: '100%', width: `${(c.carimbos_acumulados / 10) * 100}%` }}></div>
+                            </div>
+                            <span style={{ fontSize: '0.875rem' }}>{c.carimbos_acumulados}/10</span>
+                          </div>
+                          {c.lavagens_gratuitas > 0 && (
+                            <div style={{ fontSize: '0.75rem', color: '#059669', textAlign: 'center', marginTop: '0.25rem' }}>
+                              +{c.lavagens_gratuitas} Ofertas
+                            </div>
+                          )}
+                        </td>
+                        <td style={{ padding: '1rem', textAlign: 'center', fontWeight: 'bold' }}>
+                          {c.total_lavagens_historico}
+                        </td>
+                        <td style={{ padding: '1rem', textAlign: 'right', fontWeight: 'bold', color: '#2563eb' }}>
+                          {c.ltv.toFixed(2)}€
+                        </td>
+                        <td style={{ padding: '1rem', textAlign: 'center' }}>
+                          <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
+                            <button 
+                              style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: '4px' }}
+                              title="Ver Detalhes do Cliente"
+                              onClick={() => handleOpenCustomerDetails(c)}
+                              onMouseEnter={e => e.currentTarget.style.color = 'white'}
+                              onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}
+                            >
+                              <FileText size={18} />
+                            </button>
+                            <button 
+                              style={{ background: 'none', border: 'none', color: 'var(--accent-red)', cursor: 'pointer', padding: '4px' }}
+                              title="Eliminar Cliente"
+                              onClick={() => handleDeleteCustomer(c.id, c.nome)}
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                    {filteredCustomers.length === 0 && (
+                      <tr>
+                        <td colSpan="7" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                          Nenhum cliente encontrado.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'campanhas' && (
+          <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Campanhas de Reativação</h2>
+            
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
+              <button className={`btn ${campaignType === 'almost_there' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setCampaignType('almost_there')}>🎯 Quase Lá! (Falta 1)</button>
+              <button className={`btn ${campaignType === 'miss_car' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setCampaignType('miss_car')}>🚗 Saudades do Carro</button>
+              <button className={`btn ${campaignType === 'vip_reactivation' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setCampaignType('vip_reactivation')}>🎁 Reativação VIP</button>
+              <button className={`btn ${campaignType === 'custom' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setCampaignType('custom')}>✏️ Personalizada</button>
+            </div>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+              <div className="card" style={{ padding: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>Configurar Mensagem</h3>
+                
+                {campaignType === 'custom' && (
+                  <div style={{ marginBottom: '1.5rem' }}>
+                    <label style={{ display: 'block', fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Modelos Rápidos</label>
+                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <button className="btn btn-outline" style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }} onClick={() => setCampaignText('Olá! Temos saudades suas. Visite-nos esta semana e ganhe 20% de desconto na sua próxima lavagem!')}>Desconto 20%</button>
+                      <button className="btn btn-outline" style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }} onClick={() => setCampaignText('Olá! O seu carro merece brilhar. Passe pelo nosso posto para uma lavagem premium com oferta de ambientador!')}>Oferta Ambientador</button>
+                    </div>
+                  </div>
+                )}
+                
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Texto a Enviar (WhatsApp)</label>
+                  {campaignType === 'custom' ? (
+                    <textarea 
+                      className="input"
+                      style={{ width: '100%', minHeight: '120px', padding: '1rem', resize: 'vertical' }}
+                      value={campaignText}
+                      onChange={e => setCampaignText(e.target.value)}
+                    ></textarea>
+                  ) : (
+                    <div style={{ padding: '1.25rem', background: 'var(--bg-darker)', borderRadius: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.95rem', fontStyle: 'italic', border: '1px solid var(--border-color)' }}>
+                      A mensagem será gerada automaticamente pelo sistema com o nome do cliente{campaignType === 'miss_car' ? ' e a marca do seu veículo.' : '.'}
+                    </div>
+                  )}
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>O nome do cliente será adicionado no início automaticamente.</p>
+                </div>
+              </div>
+              
+              <div className="card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
+                <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '1.5rem', display: 'flex', alignItems: 'center' }}>
+                  Alvos Selecionados
+                  <span style={{ marginLeft: '0.5rem', background: 'var(--accent-primary)', color: 'white', padding: '0.1rem 0.5rem', borderRadius: '9999px', fontSize: '0.875rem' }}>
+                    {(() => {
+                      if (campaignType === 'almost_there') return customers.filter(c => (c.carimbos_acumulados || 0) === 9 && (c.daysInactive || 0) >= 30).length;
+                      if (campaignType === 'miss_car') return customers.filter(c => (c.daysInactive || 0) >= 45 && c.viaturas && c.viaturas.length > 0).length;
+                      if (campaignType === 'vip_reactivation') return customers.filter(c => (c.daysInactive || 0) >= 90).length;
+                      return customers.length;
+                    })()}
+                  </span>
+                </h3>
+                
+                <div style={{ overflowY: 'auto', flex: 1, maxHeight: '350px' }}>
+                  {(() => {
+                    let targets = [];
+                    if (campaignType === 'almost_there') targets = customers.filter(c => (c.carimbos_acumulados || 0) === 9 && (c.daysInactive || 0) >= 30);
+                    else if (campaignType === 'miss_car') targets = customers.filter(c => (c.daysInactive || 0) >= 45 && c.viaturas && c.viaturas.length > 0);
+                    else if (campaignType === 'vip_reactivation') targets = customers.filter(c => (c.daysInactive || 0) >= 90);
+                    else targets = customers.slice(0, 50); // limit to 50 for performance on custom
+                    
+                    if (targets.length === 0) {
+                      return (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem 0', color: 'var(--text-muted)', textAlign: 'center' }}>
+                          <p>Nenhum cliente cumpre os critérios desta campanha.</p>
+                          <p style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>A sua retenção está excelente!</p>
+                        </div>
+                      );
+                    }
+                    
+                    return targets.map(c => (
+                      <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
+                        <div>
+                          <div style={{ fontWeight: 'bold' }}>{c.nome}</div>
+                          <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{c.telemovel} • {c.daysInactive || 0} dias ausente</div>
+                        </div>
+                        <button 
+                          className="btn" style={{ background: 'var(--accent-whatsapp)', color: '#fff', border: 'none', display: 'flex', alignItems: 'center', padding: '0.5rem 1rem' }}
+                          onClick={() => handleSendCampaign(c)}
+                        >
+                          <MessageSquare size={14} style={{ marginRight: '0.5rem' }} /> Enviar
+                        </button>
+                      </div>
+                    ));
+                  })()}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'exportacoes' && (
+          <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Relatórios & Exportações</h2>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+              <div className="card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', alignSelf: 'flex-start' }}>
+                <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
+                  <Download size={18} style={{ marginRight: '0.5rem', color: 'var(--accent-primary)' }} /> Opções de Exportação (XLSX)
+                </h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Exporte planilhas organizadas, prontas a imprimir ou enviar para o seu contabilista.</p>
+                
+                <button className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={handleExportData}>
+                  <Download size={16} style={{ marginRight: '0.5rem' }} /> Exportar Base de Dados (Backup)
+                </button>
+                <button className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={handleExportMonthlyBilling}>
+                  <Download size={16} style={{ marginRight: '0.5rem' }} /> Exportar Faturação do Mês
+                </button>
+                <button className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderColor: 'var(--accent-amber)', color: 'var(--accent-amber)' }} onClick={handleExportInactive}>
+                  <Download size={16} style={{ marginRight: '0.5rem' }} /> Exportar Clientes Inativos (&gt; 45 dias)
+                </button>
+                <button className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderColor: 'var(--accent-green)', color: 'var(--accent-green)' }} onClick={handleExportTopCustomers}>
+                  <Download size={16} style={{ marginRight: '0.5rem' }} /> Exportar Top Clientes
+                </button>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                <div className="card" style={{ padding: '1.5rem', maxHeight: '350px', overflowY: 'auto' }}>
+                  <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
+                    <AlertTriangle size={18} style={{ marginRight: '0.5rem', color: 'var(--accent-amber)' }} /> Clientes Inativos (Top 10)
+                  </h3>
+                  {inactiveCustomers.length > 0 ? (
+                    <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
+                          <th style={{ padding: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Nome</th>
+                          <th style={{ padding: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.875rem', textAlign: 'right' }}>Dias Ausente</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {inactiveCustomers.slice(0, 10).map(c => (
+                          <tr key={`inac-${c.id}`} style={{ borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
+                            <td style={{ padding: '0.5rem', fontWeight: '500' }}>{c.nome}</td>
+                            <td style={{ padding: '0.5rem', textAlign: 'right', color: '#d97706' }}>{c.daysInactive} dias</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <p style={{ color: 'var(--text-muted)' }}>Não há clientes inativos no momento.</p>
+                  )}
+                </div>
+
+                <div className="card" style={{ padding: '1.5rem', maxHeight: '350px', overflowY: 'auto' }}>
+                  <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
+                    <Award size={18} style={{ marginRight: '0.5rem', color: 'var(--accent-green)' }} /> Top Clientes (Fidelizados)
+                  </h3>
+                  {customers.filter(c => c.carimbos_acumulados > 0).length > 0 ? (
+                    <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
+                          <th style={{ padding: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Nome</th>
+                          <th style={{ padding: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.875rem', textAlign: 'center' }}>Ofertas</th>
+                          <th style={{ padding: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.875rem', textAlign: 'right' }}>Carimbos</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[...customers].sort((a,b) => (b.carimbos_acumulados || 0) - (a.carimbos_acumulados || 0)).slice(0, 10).map(c => (
+                          <tr key={`top-${c.id}`} style={{ borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
+                            <td style={{ padding: '0.5rem', fontWeight: '500' }}>{c.nome}</td>
+                            <td style={{ padding: '0.5rem', textAlign: 'center', color: '#2563eb' }}>{c.lavagens_gratuitas || 0}</td>
+                            <td style={{ padding: '0.5rem', textAlign: 'right', color: '#059669' }}>{c.carimbos_acumulados}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <p style={{ color: 'var(--text-muted)' }}>Sem dados suficientes.</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+
+      {/* Customer Details Modal */}
+      {selectedCustomerForDetails && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>
+          <div className="card animate-fade-in" style={{ width: '90%', maxWidth: '800px', maxHeight: '90vh', display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }}>
+            <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(0,0,0,0.03)' }}>
+              <div>
+                <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>Ficha de Cliente: {selectedCustomerForDetails.nome}</h2>
+                <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+                  {selectedCustomerForDetails.numero_cliente} • Registo: {new Date(selectedCustomerForDetails.criado_em).toLocaleDateString()}
+                </div>
+              </div>
+              <button 
+                style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}
+                onClick={() => setSelectedCustomerForDetails(null)}
+              >
+                <X size={24} />
+              </button>
+            </div>
+            
+            <div style={{ padding: '1.5rem', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+              {/* Summary blocks */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+                <div style={{ background: 'rgba(59, 130, 246, 0.1)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
+                  <p style={{ fontSize: '0.875rem', color: '#1d4ed8', marginBottom: '0.25rem' }}>Faturação Total</p>
+                  <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#2563eb' }}>
+                    {selectedCustomerForDetails.ltv.toFixed(2)}€
+                  </p>
+                </div>
+                <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                  <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Total Lavagens</p>
+                  <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
+                    {selectedCustomerForDetails.total_lavagens_historico}
+                  </p>
+                </div>
+                <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+                  <p style={{ fontSize: '0.875rem', color: '#047857', marginBottom: '0.25rem' }}>Lavagens Oferecidas</p>
+                  <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#059669' }}>
+                    {selectedCustomerForDetails.lavagens_gratuitas || 0}
+                  </p>
+                </div>
+              </div>
+
+              {/* Historic Wash Table */}
+              <div>
+                <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
+                  <Car size={18} style={{ marginRight: '0.5rem', color: 'var(--text-secondary)' }} /> Histórico de Lavagens
+                </h3>
+                
+                {customerWashes.length > 0 ? (
+                  <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
+                    <thead style={{ background: 'rgba(0,0,0,0.03)' }}>
+                      <tr>
+                        <th style={{ padding: '0.75rem', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Data e Hora</th>
+                        <th style={{ padding: '0.75rem', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Serviço</th>
+                        <th style={{ padding: '0.75rem', color: 'var(--text-secondary)', fontSize: '0.875rem', textAlign: 'center' }}>Carimbo?</th>
+                        <th style={{ padding: '0.75rem', color: 'var(--text-secondary)', fontSize: '0.875rem', textAlign: 'right' }}>Valor pago</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {customerWashes.map(w => (
+                        <tr key={w.id} style={{ borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
+                          <td style={{ padding: '0.75rem', fontSize: '0.875rem' }}>
+                            {new Date(w.data).toLocaleString()}
+                          </td>
+                          <td style={{ padding: '0.75rem', fontWeight: '500' }}>
+                            {w.tipo_lavagem}
+                          </td>
+                          <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                            {w.carimbos_ganhos > 0 ? (
+                              <span style={{ color: '#059669', fontSize: '0.875rem' }}>Sim</span>
+                            ) : (
+                              <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Não</span>
+                            )}
+                          </td>
+                          <td style={{ padding: '0.75rem', textAlign: 'right', fontWeight: 'bold' }}>
+                            {Number(w.valor).toFixed(2)}€
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)', background: 'rgba(0,0,0,0.1)', borderRadius: '8px' }}>
+                    O cliente ainda não realizou nenhuma lavagem.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

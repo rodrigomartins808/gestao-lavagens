@@ -86,7 +86,7 @@ export default function EmployeeDashboard({ currentUser }) {
     <div className="dashboard min-h-screen bg-gray-50">
       <div style={{ padding: '0 0 1.5rem 0', marginBottom: '1rem', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
         <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--text-primary)', display: 'flex', alignItems: 'center' }}>
-          <div style={{ width: '32px', height: '32px', background: 'var(--accent-primary)', color: 'white', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.875rem', marginRight: '0.75rem' }}>PG</div>
+          <div style={{ width: '32px', height: '32px', background: 'var(--accent-primary)', color: 'white', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.1rem', marginRight: '0.75rem' }}>M</div>
           Painel de Operador
         </h1>
       </div>

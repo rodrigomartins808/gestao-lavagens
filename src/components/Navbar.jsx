@@ -6,7 +6,7 @@ const Navbar = ({ user, onLogout }) => {
     <nav className="navbar" style={{ padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         <div className="navbar-logo" style={{ display: 'flex', alignItems: 'center' }}>
-          <img src={logo} alt="Logótipo" style={{ height: '40px', objectFit: 'contain' }} />
+          <img src={logo} alt="Logótipo" style={{ height: '56px', objectFit: 'contain' }} />
         </div>
       </div>
       <div className="navbar-right">

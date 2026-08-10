@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as dataService from '../services/dataService';
 import VirtualKeyboard from '../components/VirtualKeyboard';
+import logo from '../assets/logo.jpeg';
 
 export default function Login({ type = 'employee', onLogin }) {
   const [pin, setPin] = useState('');
@@ -42,24 +43,8 @@ export default function Login({ type = 'employee', onLogin }) {
     <div className="login-page">
       <div className="login-card">
         <div className="text-center mb-8">
-          {/* Placeholder para Logotipo Oficial */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '1rem' }}>
-            <div style={{ 
-              background: 'var(--accent-primary)', 
-              color: 'white', 
-              width: '48px', 
-              height: '48px', 
-              borderRadius: '12px', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center',
-              fontWeight: 'bold',
-              fontSize: '1.5rem',
-              marginBottom: '0.5rem'
-            }}>
-              PG
-            </div>
-            <h1 className="text-4xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Posto Lavagem</h1>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <img src={logo} alt="Logótipo Oficial" style={{ maxHeight: '120px', objectFit: 'contain' }} />
           </div>
           <p className="subtitle text-lg text-gray-400">
             {type === 'admin' ? 'Acesso Restrito - Administração' : 

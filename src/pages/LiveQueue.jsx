@@ -107,29 +107,34 @@ export default function LiveQueue() {
                   border: '2px solid #e2e8f0',
                   borderRadius: '1rem', 
                   padding: '1.25rem',
-                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  display: 'flex', flexDirection: 'column', gap: '0.5rem',
                   boxShadow: '0 2px 4px rgb(0 0 0 / 0.05)'
                 }}>
-                  <div style={{ fontSize: '2rem', fontWeight: '900', color: '#0f172a', letterSpacing: '2px', lineHeight: '1.2' }}>
-                    {(wash.matricula || '---').toUpperCase()}
+                  <div>
+                    <div style={{ fontSize: '2.2rem', fontWeight: '900', color: '#0f172a', letterSpacing: '2px', lineHeight: '1', whiteSpace: 'nowrap' }}>
+                      {(wash.matricula || '---').toUpperCase()}
+                    </div>
                     {wash.marca_modelo && (
-                      <div style={{ fontSize: '1rem', color: '#64748b', fontWeight: '600', letterSpacing: '0' }}>
+                      <div style={{ fontSize: '1rem', color: '#64748b', fontWeight: '600', marginTop: '0.25rem' }}>
                         {wash.marca_modelo} {wash.cor && `(${wash.cor})`}
                       </div>
                     )}
                   </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '1.1rem', color: '#64748b', fontWeight: '500' }}>
+                  
+                  <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '0.5rem', marginTop: '0.25rem' }}>
+                    <div style={{ fontSize: '1.1rem', color: '#334155', fontWeight: 'bold' }}>
                       {wash.tipo_lavagem}
                     </div>
-                    <div style={{ fontSize: '0.9rem', color: '#94a3b8', marginTop: '0.25rem' }}>
-                      Chegada: {formatTime(wash.data)}
-                    </div>
-                    {wash.hora_pedida && (
-                      <div style={{ fontSize: '1rem', color: '#ef4444', marginTop: '0.25rem', fontWeight: 'bold' }}>
-                        Pedida p/ {wash.hora_pedida}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.25rem' }}>
+                      <div style={{ fontSize: '0.9rem', color: '#94a3b8' }}>
+                        📥 {formatTime(wash.data)}
                       </div>
-                    )}
+                      {wash.hora_pedida && (
+                        <div style={{ fontSize: '0.95rem', color: '#ef4444', fontWeight: 'bold' }}>
+                          ⏰ {wash.hora_pedida}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))
@@ -166,24 +171,29 @@ export default function LiveQueue() {
                   background: '#f0fdf4', 
                   border: '4px solid #22c55e',
                   borderRadius: '1rem', 
-                  padding: '1.5rem',
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem',
+                  padding: '1.25rem',
+                  display: 'flex', flexDirection: 'column', gap: '0.5rem',
                   boxShadow: '0 10px 15px -3px rgb(34 197 94 / 0.2)'
                 }}>
-                  <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#166534', letterSpacing: '2px', lineHeight: '1.2' }}>
-                    {(wash.matricula || '---').toUpperCase()}
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#166534', letterSpacing: '2px', lineHeight: '1', whiteSpace: 'nowrap' }}>
+                      {(wash.matricula || '---').toUpperCase()}
+                    </div>
                     {wash.marca_modelo && (
-                      <div style={{ fontSize: '1.1rem', color: '#15803d', fontWeight: '600', letterSpacing: '0' }}>
+                      <div style={{ fontSize: '1rem', color: '#15803d', fontWeight: '600', marginTop: '0.25rem' }}>
                         {wash.marca_modelo} {wash.cor && `(${wash.cor})`}
                       </div>
                     )}
                   </div>
-                  <div style={{ fontSize: '1.1rem', color: '#166534', fontWeight: 'bold' }}>
-                    {wash.tipo_lavagem}
-                  </div>
-                  <div style={{ display: 'flex', gap: '1rem', fontSize: '0.9rem', color: '#15803d', marginTop: '0.5rem' }}>
-                    <span>📥 {formatTime(wash.data)}</span>
-                    <span>✅ {formatTime(wash.data_finalizado || new Date())}</span>
+
+                  <div style={{ borderTop: '2px solid #bbf7d0', paddingTop: '0.5rem', marginTop: '0.25rem', textAlign: 'center' }}>
+                    <div style={{ fontSize: '1.1rem', color: '#166534', fontWeight: 'bold' }}>
+                      {wash.tipo_lavagem}
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', fontSize: '0.95rem', color: '#15803d', marginTop: '0.25rem' }}>
+                      <span>📥 {formatTime(wash.data)}</span>
+                      <span style={{fontWeight: 'bold'}}>✅ {formatTime(wash.data_finalizado || new Date())}</span>
+                    </div>
                   </div>
                 </div>
               ))

@@ -24,7 +24,8 @@ export default function CustomerCard({
   if (!customer) return null;
 
   const stamps = customer.carimbos_acumulados || 0;
-  const isWinner = stamps >= 10;
+  const freeWashes = customer.lavagens_gratuitas || 0;
+  const isWinner = freeWashes > 0;
   
   const [showHistory, setShowHistory] = useState(false);
   const [history, setHistory] = useState([]);
@@ -137,17 +138,20 @@ export default function CustomerCard({
         {isWinner && (
           <div style={{ 
             marginTop: '1rem', 
-            padding: '0.75rem', 
-            background: 'rgba(234, 179, 8, 0.15)', 
-            color: '#fef08a', 
-            borderRadius: '0.5rem', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            border: '1px solid rgba(234, 179, 8, 0.3)'
+            padding: '1rem', 
+            background: 'linear-gradient(to right, #fef08a, #fde047)', 
+            borderRadius: '0.75rem', 
+            color: '#854d0e',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
           }}>
-            <Award size={18} style={{ marginRight: '0.5rem' }} />
-            <span style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Parabéns! O cliente tem uma lavagem gratuita!</span>
+            <Award size={24} style={{ flexShrink: 0 }} />
+            <div>
+              <div style={{ fontWeight: '900', fontSize: '1rem' }}>PARABÉNS!</div>
+              <div style={{ fontSize: '0.9rem', lineHeight: '1.4' }}>Tem <b>{freeWashes} Lavagem Grátis</b> disponível! Será descontada na próxima visita.</div>
+            </div>
           </div>
         )}
       </div>

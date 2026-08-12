@@ -190,12 +190,12 @@ export default function EmployeeDashboard({ currentUser }) {
         gaveStamps = true;
       }
 
-      await dataService.completeWashAndAssign(deliveryWash.id, finalCustomerId, gaveStamps, false);
+      const { justEarnedFreeWash, newStamps } = await dataService.completeWashAndAssign(deliveryWash.id, finalCustomerId, gaveStamps, false);
       
       setDeliveryWash(null);
       loadDashboardData();
       
-      // WhatsApp Card Message se criou ficha agora
+      // WhatsApp Messages
       if (createProfile && finalCustomerId) {
         const c = await dataService.getCustomerById(finalCustomerId);
         whatsappService.openWhatsApp(c.telemovel, [
@@ -206,6 +206,24 @@ export default function EmployeeDashboard({ currentUser }) {
           '',
           `Obrigado pela preferência! 💧`
         ].join('\n'));
+      } else if (finalCustomerId && gaveStamps) {
+        if (justEarnedFreeWash) {
+          whatsappService.openWhatsApp(deliveryWash.telemovel, [
+            `PARABÉNS 🎉!`,
+            `Com a lavagem de hoje, acabou de completar o seu cartão de fidelização!`,
+            '',
+            `A sua próxima lavagem é totalmente GRÁTIS! 🎁`,
+            `Obrigado pela preferência e até à próxima! 💧`
+          ].join('\n'));
+        } else {
+          whatsappService.openWhatsApp(deliveryWash.telemovel, [
+            `Obrigado pela visita! 💧`,
+            `Acabou de ganhar +1 carimbo. (Total: ${newStamps}/10)`,
+            `Faltam ${10 - newStamps} para a sua lavagem grátis!`,
+            '',
+            `Pode ver o seu cartão aqui: ${window.location.hostname === 'localhost' ? 'https://garagemmlavagens.vercel.app' : window.location.origin}/login`
+          ].join('\n'));
+        }
       }
     } catch (error) {
       console.error("Erro na entrega:", error);

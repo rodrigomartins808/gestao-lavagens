@@ -312,14 +312,11 @@ export default function EmployeeDashboard({ currentUser }) {
               ⚠️ O Robô do WhatsApp está desligado!
             </h3>
             <p style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>
-              As mensagens automáticas não estão a ser enviadas porque o terminal fechou ou o computador da garagem reiniciou.
+              As mensagens automáticas não estão a ser enviadas porque o servidor da nuvem perdeu a ligação.
             </p>
             <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', fontWeight: 'bold' }}>
-              Para voltar a ligar, vá ao computador da garagem, abra o terminal e escreva:
+              Por favor, envie uma mensagem ao Rodrigo para o 911905436 via WhatsApp para reiniciar o sistema.
             </p>
-            <code style={{ background: '#fee2e2', padding: '0.25rem 0.5rem', borderRadius: '0.25rem', marginTop: '0.5rem', display: 'inline-block', fontSize: '0.9rem' }}>
-              cd Desktop/whatsapp-bot && npm start
-            </code>
           </div>
         </div>
       )}

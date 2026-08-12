@@ -175,27 +175,32 @@ export const updateWashStatus = async (washId, estado) => {
   return data;
 };
 
-export const completeWashAndAssign = async (washId, clienteId, atribuirPonto) => {
+export const completeWashAndAssign = async (washId, clienteId, atribuirPonto, consumeFreeWash = false) => {
   // Passa para entregue e associa cliente
   const updateData = {
     estado: 'entregue',
     data_entregue: new Date().toISOString(),
     cliente_id: clienteId || null,
-    carimbos_ganhos: atribuirPonto ? 1 : 0
+    carimbos_ganhos: atribuirPonto && !consumeFreeWash ? 1 : 0
   };
 
   const { data: wash, error } = await supabase.from('washes').update(updateData).eq('id', washId).select().single();
   if (error) throw error;
 
-  // Se tem cliente e ganha ponto, atualizar o cliente
-  if (clienteId && atribuirPonto) {
+  // Se tem cliente, atualizar os carimbos/ofertas
+  if (clienteId && (atribuirPonto || consumeFreeWash)) {
     const customer = await getCustomerById(clienteId);
-    let newStamps = (customer.carimbos_acumulados || 0) + 1;
+    let newStamps = customer.carimbos_acumulados || 0;
     let newFreeWashes = customer.lavagens_gratuitas || 0;
     
-    if (newStamps >= 10) {
-      newStamps = 0;
-      newFreeWashes += 1;
+    if (consumeFreeWash && newFreeWashes > 0) {
+      newFreeWashes -= 1;
+    } else if (atribuirPonto && !consumeFreeWash) {
+      newStamps += 1;
+      if (newStamps >= 10) {
+        newStamps = 0;
+        newFreeWashes += 1;
+      }
     }
     
     await supabase.from('customers').update({

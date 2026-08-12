@@ -26,6 +26,7 @@ export default function EmployeeDashboard({ currentUser }) {
 
   // Delivery Modal State
   const [deliveryWash, setDeliveryWash] = useState(null);
+  const [deliveryCustomer, setDeliveryCustomer] = useState(null);
   const [createProfile, setCreateProfile] = useState(false);
   const [profileData, setProfileData] = useState({ nome: '', nif: '' });
 
@@ -143,10 +144,17 @@ export default function EmployeeDashboard({ currentUser }) {
     // We don't do it directly anymore, we use the readyWash modal.
   };
 
-  const handleOpenDelivery = (wash) => {
+  const handleOpenDelivery = async (wash) => {
     setDeliveryWash(wash);
     setCreateProfile(false);
     setProfileData({ nome: '', nif: '' });
+    
+    if (wash.cliente_id) {
+      const customer = await dataService.getCustomerById(wash.cliente_id);
+      setDeliveryCustomer(customer);
+    } else {
+      setDeliveryCustomer(null);
+    }
   };
 
   const handleConfirmDelivery = async (e) => {
@@ -182,7 +190,7 @@ export default function EmployeeDashboard({ currentUser }) {
         gaveStamps = true;
       }
 
-      await dataService.completeWashAndAssign(deliveryWash.id, finalCustomerId, gaveStamps);
+      await dataService.completeWashAndAssign(deliveryWash.id, finalCustomerId, gaveStamps, false);
       
       setDeliveryWash(null);
       loadDashboardData();
@@ -202,6 +210,28 @@ export default function EmployeeDashboard({ currentUser }) {
     } catch (error) {
       console.error("Erro na entrega:", error);
       alert("Erro ao entregar a viatura.");
+    }
+  const handleRedeemFreeWash = async (e) => {
+    e.preventDefault();
+    if (!deliveryWash || !deliveryCustomer) return;
+    
+    try {
+      await dataService.completeWashAndAssign(deliveryWash.id, deliveryCustomer.id, false, true);
+      
+      setDeliveryWash(null);
+      setDeliveryCustomer(null);
+      loadDashboardData();
+      
+      // WhatsApp message for free wash
+      whatsappService.openWhatsApp(deliveryCustomer.telemovel, [
+        `Olá ${deliveryCustomer.nome.split(' ')[0]}!`,
+        `Acabou de usar a sua 🎁 Lavagem Grátis! Esperamos que o seu carro fique impecável.`,
+        '',
+        `Obrigado pela preferência e até à próxima! 💧`
+      ].join('\n'));
+    } catch (error) {
+      console.error("Erro ao descontar oferta:", error);
+      alert("Erro ao descontar oferta.");
     }
   };
 
@@ -311,9 +341,14 @@ export default function EmployeeDashboard({ currentUser }) {
                       />
                     </div>
                     {detectedCustomer && (
-                      <div style={{ marginTop: '0.5rem', padding: '0.5rem', background: '#dcfce7', color: '#166534', borderRadius: '0.5rem', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div style={{ marginTop: '0.5rem', padding: '0.5rem', background: detectedCustomer.lavagens_gratuitas > 0 ? '#fef08a' : '#dcfce7', color: detectedCustomer.lavagens_gratuitas > 0 ? '#854d0e' : '#166534', borderRadius: '0.5rem', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <CheckCircle size={16} /> Cliente Reconhecido: <b>{detectedCustomer.nome.split(' ')[0]}</b>
+                          <CheckCircle size={16} /> Cliente Reconhecido: <b>{detectedCustomer.nome.split(' ')[0]}</b> 
+                          {detectedCustomer.lavagens_gratuitas > 0 ? (
+                            <span style={{fontWeight: 'bold', marginLeft: '0.5rem'}}>🎁 1 Oferta!</span>
+                          ) : (
+                            <span style={{marginLeft: '0.5rem'}}>({detectedCustomer.carimbos_acumulados}/10)</span>
+                          )}
                         </div>
                         {detectedCustomer.vehicles && detectedCustomer.vehicles.length > 0 && (
                           <button 
@@ -571,17 +606,28 @@ export default function EmployeeDashboard({ currentUser }) {
                 </div>
               )}
               
-              {deliveryWash.cliente_id && (
-                <div style={{ background: '#dcfce7', padding: '1.5rem', borderRadius: '0.75rem', marginBottom: '1.5rem', color: '#166534', textAlign: 'center' }}>
-                  <Award size={32} style={{ margin: '0 auto 0.5rem auto' }} />
-                  <p style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>Cliente Fidelizado!</p>
-                  <p style={{ fontSize: '0.9rem' }}>Mais um carimbo ganho hoje.</p>
+              {deliveryWash.cliente_id && deliveryCustomer && (
+                <div style={{ marginTop: '1.5rem', padding: '1rem', background: deliveryCustomer.lavagens_gratuitas > 0 ? '#fef08a' : '#f8fafc', borderRadius: '0.5rem', textAlign: 'center' }}>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: deliveryCustomer.lavagens_gratuitas > 0 ? '#854d0e' : '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                    <CheckCircle size={20} /> Cliente Fidelizado!
+                  </h3>
+                  {deliveryCustomer.lavagens_gratuitas > 0 ? (
+                    <p style={{ marginTop: '0.5rem', color: '#854d0e', fontWeight: 'bold' }}>🎁 O cliente tem 1 Lavagem Grátis disponível!</p>
+                  ) : (
+                    <p style={{ marginTop: '0.5rem', color: '#64748b' }}>Mais um carimbo ganho hoje. ({deliveryCustomer.carimbos_acumulados}/10)</p>
+                  )}
                 </div>
               )}
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
-                <button type="button" className="btn btn-outline" onClick={() => setDeliveryWash(null)}>Cancelar</button>
-                <button type="submit" className="btn btn-primary" style={{ background: '#22c55e', borderColor: '#22c55e' }}>Confirmar Entrega</button>
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', justifyContent: 'flex-end' }}>
+                <button type="button" onClick={() => { setDeliveryWash(null); setDeliveryCustomer(null); }} className="btn btn-secondary">Cancelar</button>
+                {deliveryWash.cliente_id && deliveryCustomer && deliveryCustomer.lavagens_gratuitas > 0 ? (
+                  <button type="button" onClick={handleRedeemFreeWash} style={{ background: '#eab308', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '0.5rem', fontWeight: 'bold', cursor: 'pointer' }}>
+                    🎁 Descontar Oferta
+                  </button>
+                ) : (
+                  <button type="submit" className="btn btn-primary">Confirmar Entrega</button>
+                )}
               </div>
             </form>
           </div>

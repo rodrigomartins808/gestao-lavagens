@@ -11,7 +11,6 @@ const Navbar = ({ user, onLogout }) => {
       </div>
       <div className="navbar-right">
         <span className="user-name">{user?.name}</span>
-        <span className="badge">{user?.role === 'admin' ? 'Administrador' : 'Funcionário'}</span>
         <button className="btn-outline" onClick={onLogout}>Sair</button>
       </div>
     </nav>

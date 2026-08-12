@@ -42,25 +42,17 @@ export default function CustomerPortal({ currentUser }) {
 
   return (
     <div className="portal min-h-screen">
-      <header className="navbar" style={{ borderBottom: '1px solid rgba(0,0,0,0.08)', padding: '1rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Droplets style={{ marginRight: '0.5rem', color: '#3b82f6' }} size={24} />
-            <h1 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>Portal do Cliente</h1>
-          </div>
-          <button 
-            className="btn btn-outline"
-            style={{ display: 'flex', alignItems: 'center', padding: '0.5rem 1rem' }}
-            onClick={() => window.location.reload()}
-          >
-            <LogOut size={16} style={{ marginRight: '0.5rem' }} /> Sair
-          </button>
-        </div>
-      </header>
-
       <main style={{ maxWidth: '800px', margin: '2rem auto', padding: '0 1rem', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
         <div>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>Bem-vindo, {customerData.nome.split(' ')[0]}!</h2>
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+            {(() => {
+              const name = customerData.nome.split(' ')[0];
+              const lower = name.toLowerCase();
+              const isFemale = (lower.endsWith('a') && !['luca', 'andrea'].includes(lower)) || 
+                               ['inês', 'beatriz', 'leonor', 'alice', 'raquel', 'isabel', 'carmen', 'miriam'].includes(lower);
+              return isFemale ? `Bem-vinda, ${name}!` : `Bem-vindo, ${name}!`;
+            })()}
+          </h2>
           <p style={{ color: '#94a3b8' }}>Acompanhe o seu cartão de fidelização e histórico de lavagens.</p>
         </div>
 
@@ -116,18 +108,8 @@ export default function CustomerPortal({ currentUser }) {
                       </div>
                       <div style={{ color: '#94a3b8', fontSize: '0.9rem', display: 'flex', alignItems: 'center' }}>
                          <Calendar size={14} style={{ marginRight: '0.3rem' }}/>
-                        {new Date(wash.data_registo).toLocaleDateString('pt-PT')}
+                        {new Date(wash.data || wash.criado_em || new Date()).toLocaleDateString('pt-PT')}
                       </div>
-                    </div>
-                    <div style={{ 
-                      color: '#2563eb', 
-                      fontWeight: 'bold', 
-                      fontSize: '1.35rem',
-                      background: 'rgba(59, 130, 246, 0.1)',
-                      padding: '0.5rem 1rem',
-                      borderRadius: '0.5rem'
-                    }}>
-                      {wash.valor.toFixed(2)}€
                     </div>
                   </div>
                 ))}

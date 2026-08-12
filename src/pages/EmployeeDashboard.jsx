@@ -38,6 +38,7 @@ export default function EmployeeDashboard({ currentUser }) {
 
   // Ready Modal State
   const [readyWash, setReadyWash] = useState(null);
+  const [botStatus, setBotStatus] = useState({ online: true, lastSeen: null });
 
   const loadDashboardData = async () => {
     try {
@@ -67,7 +68,26 @@ export default function EmployeeDashboard({ currentUser }) {
 
   useEffect(() => {
     loadDashboardData();
-    const interval = setInterval(loadDashboardData, 30000); // 30s poll
+    const interval = setInterval(loadDashboardData, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const checkBotStatus = async () => {
+      try {
+        const { data, error } = await supabase.from('bot_status').select('*').single();
+        if (!error && data) {
+          const lastActive = new Date(data.last_active).getTime();
+          const now = Date.now();
+          const isOnline = (now - lastActive) < 60000; // 1 minuto
+          setBotStatus({ online: isOnline, lastSeen: data.last_active });
+        }
+      } catch (err) {
+        // Silently fail if table doesn't exist yet
+      }
+    };
+    checkBotStatus();
+    const interval = setInterval(checkBotStatus, 10000);
     return () => clearInterval(interval);
   }, []);
 
@@ -259,8 +279,39 @@ export default function EmployeeDashboard({ currentUser }) {
         <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--text-primary)', display: 'flex', alignItems: 'center' }}>
           <div style={{ width: '32px', height: '32px', background: 'var(--accent-primary)', color: 'white', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.1rem', marginRight: '0.75rem' }}>M</div>
           Painel de Funcionário
+          
+          {botStatus.online ? (
+            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', color: '#16a34a', background: '#dcfce7', padding: '0.25rem 0.75rem', borderRadius: '9999px', fontWeight: 'bold' }}>
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', animation: 'pulse 2s infinite' }}></div>
+              Bot Online
+            </div>
+          ) : (
+            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', color: '#dc2626', background: '#fee2e2', padding: '0.25rem 0.75rem', borderRadius: '9999px', fontWeight: 'bold' }}>
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#dc2626' }}></div>
+              Bot Offline
+            </div>
+          )}
         </h1>
       </div>
+      
+      {!botStatus.online && (
+        <div className="max-w-7xl mx-auto" style={{ padding: '0 1rem', marginBottom: '1.5rem' }}>
+          <div style={{ background: '#fef2f2', border: '1px solid #f87171', borderRadius: '0.5rem', padding: '1rem', color: '#991b1b' }}>
+            <h3 style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem' }}>
+              ⚠️ O Robô do WhatsApp está desligado!
+            </h3>
+            <p style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>
+              As mensagens automáticas não estão a ser enviadas porque o terminal fechou ou o computador da garagem reiniciou.
+            </p>
+            <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', fontWeight: 'bold' }}>
+              Para voltar a ligar, vá ao computador da garagem, abra o terminal e escreva:
+            </p>
+            <code style={{ background: '#fee2e2', padding: '0.25rem 0.5rem', borderRadius: '0.25rem', marginTop: '0.5rem', display: 'inline-block', fontSize: '0.9rem' }}>
+              cd Desktop/whatsapp-bot && npm start
+            </code>
+          </div>
+        </div>
+      )}
 
       {/* Tabs / Menu Superior */}
       <div className="max-w-7xl mx-auto" style={{ padding: '0 1rem', marginBottom: '2rem' }}>

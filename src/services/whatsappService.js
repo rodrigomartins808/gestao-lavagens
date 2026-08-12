@@ -1,6 +1,7 @@
 /**
  * WhatsApp message generation service
  */
+import { supabase } from '../supabaseClient';
 
 export const generateWelcomeMessage = (customer) => {
   const lines = [
@@ -66,15 +67,32 @@ export const generateFreeWashMessage = (customer) => {
   return encodeURIComponent(lines.join('\n'));
 };
 
-export const openWhatsApp = (phone, encodedMessage) => {
+export const openWhatsApp = async (phone, rawMessage) => {
   let cleanPhone = phone.replace(/\D/g, '');
 
   if (cleanPhone.length === 9 && cleanPhone.startsWith('9')) {
     cleanPhone = '351' + cleanPhone;
   }
 
-  const url = 'https://wa.me/' + cleanPhone + '?text=' + encodedMessage;
-  window.open(url, '_blank');
+  // Descodificar a mensagem se vier do antigo formato (onde o developer usava encodeURIComponent)
+  // Alguns sítios no código passam raw text, outros passam encodeURIComponent, por segurança descodificamos
+  let decodedMessage = rawMessage;
+  try {
+    decodedMessage = decodeURIComponent(rawMessage);
+  } catch (e) {
+    // If it fails to decode, it was probably raw text
+  }
+
+  try {
+    const { error } = await supabase.from('whatsapp_queue').insert([{
+      telemovel: cleanPhone,
+      mensagem: decodedMessage,
+      estado: 'pendente'
+    }]);
+    if (error) throw error;
+  } catch (err) {
+    console.error("Erro ao adicionar à fila de WhatsApp:", err);
+  }
 };
 
 export const generateAlmostThereMessage = (customer) => {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LogOut, Bell, CheckCircle, Clock, User, PlusCircle, Car, Play, Check, Search, Phone, Award } from 'lucide-react';
 import dataService from '../services/dataService';
 import whatsappService from '../services/whatsappService';
+import { supabase } from '../lib/supabase';
 import QuickSearch from '../components/QuickSearch';
 import CustomerCard from '../components/CustomerCard';
 import NewCustomerModal from '../components/NewCustomerModal';

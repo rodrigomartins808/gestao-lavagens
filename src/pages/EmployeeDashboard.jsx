@@ -139,7 +139,13 @@ export default function EmployeeDashboard({ currentUser }) {
       if (entry.hora_pedida) {
         welcomeMsg += `Hora Pedida: *${entry.hora_pedida}*\n`;
       }
-      welcomeMsg += `\nPode acompanhar o estado da sua lavagem em tempo real aqui:\n ${trackingUrl} \n\nObrigado pela preferência! 💧`;
+      welcomeMsg += `\nPode acompanhar o estado da lavagem aqui:\n ${trackingUrl} \n`;
+      
+      if (detectedCustomer) {
+         welcomeMsg += `\nPara consultar os seus carimbos, aceda ao seu cartão VIP:\n ${baseUrl}/cartao?id=${detectedCustomer.id}\n`;
+      }
+      
+      welcomeMsg += `\nObrigado pela preferência! 💧`;
       
       whatsappService.openWhatsApp(entry.telemovel, welcomeMsg);
       

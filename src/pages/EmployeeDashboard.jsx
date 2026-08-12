@@ -81,9 +81,11 @@ export default function EmployeeDashboard({ currentUser }) {
           const now = Date.now();
           const isOnline = (now - lastActive) < 60000; // 1 minuto
           setBotStatus({ online: isOnline, lastSeen: data.last_active });
+        } else {
+          setBotStatus(prev => ({ ...prev, online: false }));
         }
       } catch (err) {
-        // Silently fail if table doesn't exist yet
+        setBotStatus(prev => ({ ...prev, online: false }));
       }
     };
     checkBotStatus();

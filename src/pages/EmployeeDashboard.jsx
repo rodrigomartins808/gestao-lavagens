@@ -249,6 +249,8 @@ export default function EmployeeDashboard({ currentUser }) {
       console.error("Erro na entrega:", error);
       alert("Erro ao entregar a viatura.");
     }
+  };
+
   const handleRedeemFreeWash = async (e) => {
     e.preventDefault();
     if (!deliveryWash || !deliveryCustomer) return;

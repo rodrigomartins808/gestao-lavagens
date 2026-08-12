@@ -1,7 +1,7 @@
 /**
  * WhatsApp message generation service
  */
-import { supabase } from '../supabaseClient';
+import { supabase } from '../lib/supabase';
 
 export const generateWelcomeMessage = (customer) => {
   const lines = [

@@ -326,14 +326,15 @@ export default function EmployeeDashboard({ currentUser }) {
                               const vehicle = detectedCustomer.vehicles.find(v => v.matricula.toUpperCase() === entry.matricula.toUpperCase()) || detectedCustomer.vehicles[0];
                               setEntry(prev => ({
                                 ...prev,
-                                matricula: vehicle.matricula || prev.matricula,
+                                telemovel: prev.telemovel || detectedCustomer.telemovel,
+                                matricula: prev.matricula || vehicle.matricula,
                                 marca_modelo: `${vehicle.marca || ''} ${vehicle.modelo || ''}`.trim(),
                                 cor: vehicle.cor || ''
                               }));
                             }}
                             style={{ background: '#16a34a', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '0.25rem', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
                           >
-                            <Car size={14} /> Preencher Viatura
+                            <Car size={14} /> Preencher Dados
                           </button>
                         )}
                       </div>

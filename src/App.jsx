@@ -23,11 +23,13 @@ export default function App() {
     
     const cardId = searchParams.get('id');
     if (cardId && !storedUser) {
-      // Auto login from param for customer (simulated)
-      const customer = dataService.getCustomerById(cardId);
-      if (customer) {
-        handleLogin({ ...customer, role: 'customer' });
-      }
+      const fetchCustomer = async () => {
+        const customer = await dataService.getCustomerById(cardId);
+        if (customer) {
+          handleLogin({ ...customer, role: 'customer' });
+        }
+      };
+      fetchCustomer();
     }
   }, [searchParams]);
 

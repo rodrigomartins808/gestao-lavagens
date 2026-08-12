@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import Login from './pages/Login';
 import EmployeeDashboard from './pages/EmployeeDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import CustomerPortal from './pages/CustomerPortal';
+import LiveQueue from './pages/LiveQueue';
+import CustomerTracking from './pages/CustomerTracking';
 import Navbar from './components/Navbar';
 import dataService from './services/dataService';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
@@ -42,9 +45,11 @@ export default function App() {
     navigate('/');
   };
 
+  const isStandaloneRoute = location.pathname === '/tv' || location.pathname.startsWith('/tracking');
+
   return (
     <div className="app-container">
-      {currentUser && <Navbar user={currentUser} onLogout={handleLogout} />}
+      {currentUser && !isStandaloneRoute && <Navbar user={currentUser} onLogout={handleLogout} />}
       
       <main className="main-content">
         <Routes>
@@ -80,6 +85,9 @@ export default function App() {
               ? <CustomerPortal currentUser={currentUser} /> 
               : <Login type="customer" onLogin={handleLogin} />
           } />
+
+          <Route path="/tv" element={<LiveQueue />} />
+          <Route path="/tracking/:id" element={<CustomerTracking />} />
 
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

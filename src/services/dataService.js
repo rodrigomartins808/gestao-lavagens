@@ -142,20 +142,54 @@ export const getWashesByCustomer = async (customerId) => {
   return data || [];
 };
 
-export const registerWash = async (data) => {
+export const registerWashEntry = async (data) => {
   const washPayload = {
+    telemovel: data.telemovel,
+    matricula: data.matricula,
     tipo_lavagem: data.tipo_servico || data.tipo_lavagem,
-    valor: data.valor,
-    carimbos_ganhos: data.atribuiu_ponto ? 1 : 0,
-    cliente_id: data.cliente_id || null,
-    data: new Date().toISOString()
+    valor: data.valor || 0,
+    hora_pedida: data.hora_pedida || null,
+    estado: 'em_preparacao',
+    cliente_id: data.cliente_id || null, // pode ser null no início
+    data: new Date().toISOString(),
+    marca_modelo: data.marca_modelo || null,
+    cor: data.cor || null
   };
   
   const { data: newWash, error } = await supabase.from('washes').insert([washPayload]).select().single();
   if (error) throw error;
   
-  if (data.cliente_id && data.atribuiu_ponto) {
-    const customer = await getCustomerById(data.cliente_id);
+  return newWash;
+};
+
+export const updateWashStatus = async (washId, estado) => {
+  const updateData = { estado };
+  if (estado === 'finalizado') {
+    updateData.data_finalizado = new Date().toISOString();
+  } else if (estado === 'entregue') {
+    updateData.data_entregue = new Date().toISOString();
+  }
+
+  const { data, error } = await supabase.from('washes').update(updateData).eq('id', washId).select().single();
+  if (error) throw error;
+  return data;
+};
+
+export const completeWashAndAssign = async (washId, clienteId, atribuirPonto) => {
+  // Passa para entregue e associa cliente
+  const updateData = {
+    estado: 'entregue',
+    data_entregue: new Date().toISOString(),
+    cliente_id: clienteId || null,
+    carimbos_ganhos: atribuirPonto ? 1 : 0
+  };
+
+  const { data: wash, error } = await supabase.from('washes').update(updateData).eq('id', washId).select().single();
+  if (error) throw error;
+
+  // Se tem cliente e ganha ponto, atualizar o cliente
+  if (clienteId && atribuirPonto) {
+    const customer = await getCustomerById(clienteId);
     let newStamps = (customer.carimbos_acumulados || 0) + 1;
     let newFreeWashes = customer.lavagens_gratuitas || 0;
     
@@ -168,22 +202,28 @@ export const registerWash = async (data) => {
       carimbos_acumulados: newStamps,
       lavagens_gratuitas: newFreeWashes,
       last_wash_date: new Date().toISOString()
-    }).eq('id', data.cliente_id);
+    }).eq('id', clienteId);
   }
-  return newWash;
-};
-
-export const updateWashStatus = async (washId, estado) => {
-  return true; // Mocked for now if 'estado' column is missing in washes
+  return wash;
 };
 
 export const getActiveWashes = async () => {
-  // Returns empty to bypass the queue UI since we didn't add 'estado' to washes table
-  return [];
+  const { data, error } = await supabase
+    .from('washes')
+    .select('*')
+    .in('estado', ['em_preparacao', 'finalizado'])
+    .order('data', { ascending: true });
+    
+  if (error) {
+    console.error("Erro a carregar lavagens ativas:", error);
+    return [];
+  }
+  return data || [];
 };
 
-export const registerAnonymousWash = async (data) => {
-  return registerWash({ ...data, cliente_id: null, atribuiu_ponto: false });
+export const getWashById = async (id) => {
+  const { data } = await supabase.from('washes').select('*').eq('id', id).single();
+  return data;
 };
 
 export const getTodayStats = async () => {
@@ -287,5 +327,5 @@ export const getCustomerLifetimeValue = async (customerId) => {
 };
 
 export default {
-  loginStaff, loginCustomer, getAllCustomers, getCustomerById, searchCustomers, createCustomer, updateCustomer, deleteCustomer, getNextCustomerNumber, getInactiveCustomers, getVehiclesByCustomer, addVehicle, removeVehicle, getWashesByCustomer, registerWash, updateWashStatus, getActiveWashes, registerAnonymousWash, getTodayStats, getGlobalStats, getMonthStats, getExportData, getWashesPerDay, getWashesPerMonth, getCustomerLifetimeValue
+  loginStaff, loginCustomer, getAllCustomers, getCustomerById, searchCustomers, createCustomer, updateCustomer, deleteCustomer, getNextCustomerNumber, getInactiveCustomers, getVehiclesByCustomer, addVehicle, removeVehicle, getWashesByCustomer, registerWashEntry, updateWashStatus, completeWashAndAssign, getActiveWashes, getWashById, getTodayStats, getGlobalStats, getMonthStats, getExportData, getWashesPerDay, getWashesPerMonth, getCustomerLifetimeValue
 };

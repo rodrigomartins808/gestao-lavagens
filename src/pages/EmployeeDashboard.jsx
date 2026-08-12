@@ -111,16 +111,12 @@ export default function EmployeeDashboard({ currentUser }) {
       // WhatsApp Tracking Message
       const baseUrl = window.location.hostname === 'localhost' ? 'https://garagemmlavagens.vercel.app' : window.location.origin;
       const trackingUrl = baseUrl + '/tracking/' + newWash.id;
-      const welcomeMsg = [
-        `Olá! 🚗 O seu veículo (${entry.matricula.toUpperCase()}) acabou de dar entrada.`,
-        `Serviço: *${entry.tipo_servico}*`,
-        entry.hora_pedida ? `Hora Pedida: *${entry.hora_pedida}*` : '',
-        '',
-        `Pode acompanhar o estado da sua lavagem em tempo real aqui:`,
-        trackingUrl,
-        '',
-        `Obrigado pela preferência! 💧`
-      ].filter(Boolean).join('\n');
+      let welcomeMsg = `Olá! 🚗 O seu veículo (${entry.matricula.toUpperCase()}) acabou de dar entrada.\n`;
+      welcomeMsg += `Serviço: *${entry.tipo_servico}*\n`;
+      if (entry.hora_pedida) {
+        welcomeMsg += `Hora Pedida: *${entry.hora_pedida}*\n`;
+      }
+      welcomeMsg += `\nPode acompanhar o estado da sua lavagem em tempo real aqui:\n ${trackingUrl} \n\nObrigado pela preferência! 💧`;
       
       whatsappService.openWhatsApp(entry.telemovel, welcomeMsg);
       

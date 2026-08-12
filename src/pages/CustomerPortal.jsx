@@ -94,13 +94,14 @@ export default function CustomerPortal({ currentUser }) {
                         {wash.carimbos_ganhos > 0 && (
                           <span style={{ 
                             background: 'rgba(234, 179, 8, 0.15)', 
-                            color: '#fef08a', 
+                            color: '#b45309', 
                             fontSize: '0.75rem', 
                             padding: '0.25rem 0.6rem', 
                             borderRadius: '9999px',
                             display: 'flex',
                             alignItems: 'center',
-                            border: '1px solid rgba(234, 179, 8, 0.3)'
+                            border: '1px solid rgba(234, 179, 8, 0.3)',
+                            fontWeight: 'bold'
                           }}>
                             <Award size={12} style={{ marginRight: '0.25rem' }} /> +1 Carimbo
                           </span>

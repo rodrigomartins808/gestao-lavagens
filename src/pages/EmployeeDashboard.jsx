@@ -714,9 +714,9 @@ export default function EmployeeDashboard({ currentUser }) {
       {/* Outros Modais (Gestão de Clientes) */}
       {isNewCustomerOpen && (
         <NewCustomerModal
-          initialPhone={searchQuery}
+          prefillData={searchQuery}
           onClose={() => setIsNewCustomerOpen(false)}
-          onSuccess={(newCustomer) => {
+          onSave={(newCustomer) => {
             setIsNewCustomerOpen(false);
             handleSelectCustomer(newCustomer);
             loadDashboardData();

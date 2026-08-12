@@ -224,7 +224,7 @@ export default function EmployeeDashboard({ currentUser }) {
           `Olá ${c.nome.split(' ')[0]}! 🎉 Bem-vindo(a) ao nosso cartão de fidelização.`,
           `Ganhou 1 carimbo com a lavagem de hoje!`,
           '',
-          `Aceda ao seu cartão digital aqui: ${window.location.hostname === 'localhost' ? 'https://garagemmlavagens.vercel.app' : window.location.origin}/login`,
+          `Aceda ao seu cartão digital aqui: ${window.location.hostname === 'localhost' ? 'https://garagemmlavagens.vercel.app' : window.location.origin}/cartao?id=${c.id}`,
           '',
           `Obrigado pela preferência! 💧`
         ].join('\n'));
@@ -243,7 +243,7 @@ export default function EmployeeDashboard({ currentUser }) {
             `Acabou de ganhar +1 carimbo. (Total: ${newStamps}/10)`,
             `Faltam ${10 - newStamps} para a sua lavagem grátis!`,
             '',
-            `Pode ver o seu cartão aqui: ${window.location.hostname === 'localhost' ? 'https://garagemmlavagens.vercel.app' : window.location.origin}/login`
+            `Pode ver o seu cartão aqui: ${window.location.hostname === 'localhost' ? 'https://garagemmlavagens.vercel.app' : window.location.origin}/cartao?id=${finalCustomerId}`
           ].join('\n'));
         }
       }

@@ -13,7 +13,7 @@ export default function Login({ type = 'employee', onLogin }) {
   const handleStaffLogin = async (e) => {
     e.preventDefault();
     setError('');
-    const user = await dataService.loginStaff(pin);
+    const user = await dataService.loginStaff(pin, type);
     
     if (user) {
       if (type === 'admin' && user.role !== 'admin') {

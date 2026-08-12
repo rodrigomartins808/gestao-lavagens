@@ -41,9 +41,10 @@ export default function App() {
     else navigate('/cliente');
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setCurrentUser(null);
     sessionStorage.removeItem('currentUser');
+    await dataService.logout();
     navigate('/');
   };
 

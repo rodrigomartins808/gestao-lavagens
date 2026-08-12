@@ -6,20 +6,39 @@ const subDays = (date, days) => {
   return result;
 };
 
-export const loginStaff = async (pin) => {
-  if (pin === '1823') return { id: 'admin', name: 'Administrador', role: 'admin' };
-  if (pin === '0000') return { id: 'func1', name: 'Equipa (Geral)', role: 'employee' };
-  return null;
+export const loginStaff = async (pin, type) => {
+  const email = type === 'admin' ? 'admin@garagemm.com' : 'equipa@garagemm.com';
+  const suffix = type === 'admin' ? '-GarageAdmin' : '-GarageEquipa';
+  
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password: `${pin}${suffix}`
+  });
+  
+  if (error || !data.user) {
+    console.error("Login failed:", error);
+    return null;
+  }
+  
+  return {
+    id: data.user.id,
+    name: data.user.user_metadata?.name || (type === 'admin' ? 'Administrador' : 'Equipa (Geral)'),
+    role: data.user.user_metadata?.role || type
+  };
+};
+
+export const logout = async () => {
+  await supabase.auth.signOut();
 };
 
 export const loginCustomer = async (customerNumber, phone) => {
-  const { data } = await supabase
-    .from('customers')
-    .select('*')
-    .eq('numero_cliente', customerNumber)
-    .eq('telemovel', phone)
-    .single();
-  return data;
+  const { data, error } = await supabase.rpc('login_customer', { 
+    p_numero: customerNumber, 
+    p_telemovel: phone 
+  });
+  
+  if (error || !data || data.length === 0) return null;
+  return data[0];
 };
 
 export const getAllCustomers = async () => {
@@ -121,7 +140,7 @@ export const getInactiveCustomers = async (days) => {
 };
 
 export const getVehiclesByCustomer = async (customerId) => {
-  const { data } = await supabase.from('vehicles').select('*').eq('cliente_id', customerId);
+  const { data } = await supabase.rpc('get_customer_vehicles', { p_cliente_id: customerId });
   return data || [];
 };
 
@@ -138,7 +157,7 @@ export const removeVehicle = async (id) => {
 };
 
 export const getWashesByCustomer = async (customerId) => {
-  const { data } = await supabase.from('washes').select('*').eq('cliente_id', customerId).order('data', { ascending: false });
+  const { data } = await supabase.rpc('get_customer_washes', { p_cliente_id: customerId });
   return data || [];
 };
 

@@ -36,8 +36,8 @@ export default function App() {
   const handleLogin = (user) => {
     setCurrentUser(user);
     sessionStorage.setItem('currentUser', JSON.stringify(user));
-    if (user.role === 'admin') navigate('/admin');
-    else if (user.role === 'employee') navigate('/funcionario');
+    if (user.role === 'admin') navigate('/acesso-gerencia-x89f');
+    else if (user.role === 'employee') navigate('/acesso-equipa-x89f');
     else navigate('/cliente');
   };
 
@@ -56,20 +56,20 @@ export default function App() {
       <main className="main-content">
         <Routes>
           <Route path="/" element={
-            !currentUser ? <Login type="employee" onLogin={handleLogin} /> : 
-            currentUser.role === 'admin' ? <Navigate to="/admin" /> :
-            currentUser.role === 'employee' ? <Navigate to="/funcionario" /> :
+            !currentUser ? <Login type="customer" onLogin={handleLogin} /> : 
+            currentUser.role === 'admin' ? <Navigate to="/acesso-gerencia-x89f" /> :
+            currentUser.role === 'employee' ? <Navigate to="/acesso-equipa-x89f" /> :
             <Navigate to="/cliente" />
           } />
           
-          <Route path="/admin" element={
+          <Route path="/acesso-gerencia-x89f" element={
             !currentUser ? <Login type="admin" onLogin={handleLogin} /> :
             currentUser.role === 'admin' ? <AdminDashboard currentUser={currentUser} /> :
             <Navigate to="/" />
           } />
 
-          <Route path="/funcionario" element={
-            !currentUser ? <Navigate to="/" /> :
+          <Route path="/acesso-equipa-x89f" element={
+            !currentUser ? <Login type="employee" onLogin={handleLogin} /> :
             ['admin', 'employee'].includes(currentUser.role) 
               ? <EmployeeDashboard currentUser={currentUser} /> 
               : <Navigate to="/" />

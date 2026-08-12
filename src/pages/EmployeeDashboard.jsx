@@ -198,10 +198,9 @@ export default function EmployeeDashboard({ currentUser }) {
           `Ganhou 1 carimbo com a lavagem de hoje!`,
           '',
           `Aceda ao seu cartão digital aqui: ${window.location.origin}/login`,
-          `PIN: ${c.telemovel}`
+          '',
+          `Obrigado pela preferência! 💧`
         ].join('\n'));
-      } else {
-        alert("Viatura entregue com sucesso!");
       }
     } catch (error) {
       console.error("Erro na entrega:", error);

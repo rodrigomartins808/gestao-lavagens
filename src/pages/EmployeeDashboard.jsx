@@ -109,7 +109,8 @@ export default function EmployeeDashboard({ currentUser }) {
       });
       
       // WhatsApp Tracking Message
-      const trackingUrl = window.location.origin + '/tracking/' + newWash.id;
+      const baseUrl = window.location.hostname === 'localhost' ? 'https://garagemmlavagens.vercel.app' : window.location.origin;
+      const trackingUrl = baseUrl + '/tracking/' + newWash.id;
       const welcomeMsg = [
         `Olá! 🚗 O seu veículo (${entry.matricula.toUpperCase()}) acabou de dar entrada.`,
         `Serviço: *${entry.tipo_servico}*`,
@@ -197,7 +198,7 @@ export default function EmployeeDashboard({ currentUser }) {
           `Olá ${c.nome.split(' ')[0]}! 🎉 Bem-vindo(a) ao nosso cartão de fidelização.`,
           `Ganhou 1 carimbo com a lavagem de hoje!`,
           '',
-          `Aceda ao seu cartão digital aqui: ${window.location.origin}/login`,
+          `Aceda ao seu cartão digital aqui: ${window.location.hostname === 'localhost' ? 'https://garagemmlavagens.vercel.app' : window.location.origin}/login`,
           '',
           `Obrigado pela preferência! 💧`
         ].join('\n'));

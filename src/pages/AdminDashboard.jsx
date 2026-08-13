@@ -274,6 +274,22 @@ export default function AdminDashboard({ currentUser }) {
     }
   };
 
+  const handleRemoveVehicle = async (vehicleId, matricula) => {
+    if (!window.confirm(`Tem a certeza que deseja remover a viatura ${matricula} da ficha deste cliente?`)) {
+      return;
+    }
+    try {
+      await dataService.removeVehicle(vehicleId);
+      // Atualizar a lista de viaturas no modal sem o fechar
+      const updatedVehicles = selectedCustomerForDetails.viaturas.filter(v => v.id !== vehicleId);
+      setSelectedCustomerForDetails({ ...selectedCustomerForDetails, viaturas: updatedVehicles });
+      loadData();
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao remover viatura.");
+    }
+  };
+
   const handleOpenCustomerDetails = async (customer) => {
     const washes = dataService.getWashesByCustomer(customer.id);
     const vehicles = await dataService.getVehiclesByCustomer(customer.id);
@@ -830,8 +846,17 @@ export default function AdminDashboard({ currentUser }) {
                 {selectedCustomerForDetails.viaturas && selectedCustomerForDetails.viaturas.length > 0 ? (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
                     {selectedCustomerForDetails.viaturas.map(v => (
-                      <div key={v.id} style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <span style={{ fontWeight: 'bold', fontSize: '1.125rem', color: '#0f172a' }}>{v.matricula.toUpperCase()}</span>
+                      <div key={v.id} style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '0.5rem', position: 'relative' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <span style={{ fontWeight: 'bold', fontSize: '1.125rem', color: '#0f172a' }}>{v.matricula.toUpperCase()}</span>
+                          <button 
+                            onClick={() => handleRemoveVehicle(v.id, v.matricula)}
+                            style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '2px', display: 'flex' }}
+                            title="Remover viatura"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                         <span style={{ fontSize: '0.875rem', color: '#64748b' }}>{v.marca || 'Sem Marca'} {v.modelo ? `- ${v.modelo}` : ''}</span>
                       </div>
                     ))}

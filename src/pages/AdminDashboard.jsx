@@ -50,34 +50,33 @@ export default function AdminDashboard({ currentUser }) {
       const currentMonth = new Date().getMonth();
       const currentYear = new Date().getFullYear();
       
-      // Inject daysInactive for campaigns logic
-      const customersWithDays = (allCustomers || []).map(c => {
+      const daily = await dataService.getWashesPerDay(currentMonth, currentYear);
+      const monthly = await dataService.getWashesPerMonth(currentYear);
+      
+      // Calculate lifetime value and daysInactive for customers in list
+      const processedCustomers = (allCustomers || []).map(c => {
         let daysInactive = 0;
         if (c.last_wash_date) {
            const ms = new Date() - new Date(c.last_wash_date);
            daysInactive = Math.floor(ms / (1000 * 60 * 60 * 24));
         }
-        return { ...c, daysInactive };
+        
+        const cWashes = (_history || []).filter(w => w.cliente_id === c.id);
+        const ltv = cWashes.reduce((sum, w) => sum + (Number(w.valor) || 0), 0);
+        
+        return {
+          ...c,
+          daysInactive,
+          ltv,
+          total_lavagens_historico: cWashes.length
+        };
       });
-      
+      processedCustomers.sort((a, b) => new Date(b.criado_em) - new Date(a.criado_em));
+
       setStats({ today, month, global: _globalStats });
-      setCustomers(customersWithDays);
+      setCustomers(processedCustomers);
       setInactiveCustomers(inactive || []);
       setGlobalHistory(_history || []);
-      
-      const daily = await dataService.getWashesPerDay(currentMonth, currentYear);
-      const monthly = await dataService.getWashesPerMonth(currentYear);
-      
-      // Calculate lifetime value for customers in list
-      const customersWithLTV = await Promise.all(allCustomers.map(async c => ({
-        ...c,
-        ltv: await dataService.getCustomerLifetimeValue(c.id)
-      })));
-      customersWithLTV.sort((a, b) => new Date(b.criado_em) - new Date(a.criado_em));
-
-      setStats({ today, month, global });
-      setCustomers(customersWithLTV);
-      setInactiveCustomers(inactive);
       setDailyData(daily);
       setMonthlyData(monthly);
     } catch (error) {

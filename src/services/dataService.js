@@ -47,8 +47,9 @@ export const getAllCustomers = async () => {
 };
 
 export const getCustomerById = async (id) => {
-  const { data: customer } = await supabase.from('customers').select('*').eq('id', id).single();
-  if (!customer) return null;
+  const { data } = await supabase.rpc('get_customer_by_id', { p_id: id });
+  if (!data || data.length === 0) return null;
+  const customer = data[0];
   customer.vehicles = await getVehiclesByCustomer(id);
   customer.washes = await getWashesByCustomer(id);
   return customer;
@@ -255,10 +256,6 @@ export const getWashById = async (id) => {
   return data;
 };
 
-export const getCustomerById = async (id) => {
-  const { data } = await supabase.rpc('get_customer_by_id', { p_id: id });
-  return data && data.length > 0 ? data[0] : null;
-};
 
 export const getTodayStats = async () => {
   const todayStart = new Date();

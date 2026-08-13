@@ -274,10 +274,11 @@ export default function AdminDashboard({ currentUser }) {
     }
   };
 
-  const handleOpenCustomerDetails = (customer) => {
+  const handleOpenCustomerDetails = async (customer) => {
     const washes = dataService.getWashesByCustomer(customer.id);
+    const vehicles = await dataService.getVehiclesByCustomer(customer.id);
     setCustomerWashes(washes);
-    setSelectedCustomerForDetails(customer);
+    setSelectedCustomerForDetails({ ...customer, viaturas: vehicles });
   };
 
   const filteredCustomers = customers.filter(c => 
@@ -818,6 +819,28 @@ export default function AdminDashboard({ currentUser }) {
                     {selectedCustomerForDetails.lavagens_gratuitas || 0}
                   </p>
                 </div>
+              </div>
+
+              
+              {/* Vehicles Section */}
+              <div>
+                <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
+                  <Car size={18} style={{ marginRight: '0.5rem', color: 'var(--text-secondary)' }} /> Viaturas do Cliente
+                </h3>
+                {selectedCustomerForDetails.viaturas && selectedCustomerForDetails.viaturas.length > 0 ? (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
+                    {selectedCustomerForDetails.viaturas.map(v => (
+                      <div key={v.id} style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        <span style={{ fontWeight: 'bold', fontSize: '1.125rem', color: '#0f172a' }}>{v.matricula.toUpperCase()}</span>
+                        <span style={{ fontSize: '0.875rem', color: '#64748b' }}>{v.marca || 'Sem Marca'} {v.modelo ? `- ${v.modelo}` : ''}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-muted)', background: 'rgba(0,0,0,0.02)', borderRadius: '8px' }}>
+                    Nenhuma viatura registada.
+                  </div>
+                )}
               </div>
 
               {/* Historic Wash Table */}

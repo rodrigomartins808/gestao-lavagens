@@ -192,6 +192,7 @@ export default function EmployeeDashboard({ currentUser }) {
     try {
       let finalCustomerId = deliveryWash.cliente_id;
       let gaveStamps = false;
+      let isNewCustomerCreated = false;
 
       // Se não tinha cliente mas quer criar agora
       if (!finalCustomerId && createProfile) {
@@ -215,6 +216,7 @@ export default function EmployeeDashboard({ currentUser }) {
 
         finalCustomerId = newCustomer.id;
         gaveStamps = true;
+        isNewCustomerCreated = true;
       } else if (finalCustomerId) {
         // Já tinha cliente detetado desde o início
         gaveStamps = true;
@@ -235,7 +237,7 @@ export default function EmployeeDashboard({ currentUser }) {
       loadDashboardData();
       
       // WhatsApp Messages
-      if (createProfile && finalCustomerId) {
+      if (isNewCustomerCreated && finalCustomerId) {
         const c = await dataService.getCustomerById(finalCustomerId);
         whatsappService.openWhatsApp(c.telemovel, [
           `Olá ${c.nome.split(' ')[0]}! 🎉 Bem-vindo(a) ao nosso cartão de fidelização.`,

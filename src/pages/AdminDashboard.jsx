@@ -661,11 +661,11 @@ export default function AdminDashboard({ currentUser }) {
             
             targets.forEach(c => {
               if (c && c.telemovel) {
-                let msg = campaignText.replace('{nome}', c.nome.split(' ')[0]);
+                let msg = campaignText.replaceAll('{nome}', c.nome.split(' ')[0]);
                 if (c.viaturas && c.viaturas.length > 0) {
-                  msg = msg.replace('{marca}', c.viaturas[0].marca || 'carro');
+                  msg = msg.replaceAll('{marca}', c.viaturas[0].marca || 'carro');
                 } else {
-                  msg = msg.replace('{marca}', 'carro');
+                  msg = msg.replaceAll('{marca}', 'carro');
                 }
                 whatsappService.openWhatsApp(c.telemovel, msg);
               }
@@ -728,11 +728,11 @@ export default function AdminDashboard({ currentUser }) {
                         <button 
                           className="btn" style={{ background: 'var(--accent-whatsapp)', color: '#fff', border: 'none', display: 'flex', alignItems: 'center', padding: '0.5rem 1rem' }}
                           onClick={() => {
-                            let msg = campaignText.replace('{nome}', c.nome.split(' ')[0]);
+                            let msg = campaignText.replaceAll('{nome}', c.nome.split(' ')[0]);
                             if (c.viaturas && c.viaturas.length > 0) {
-                              msg = msg.replace('{marca}', c.viaturas[0].marca || 'carro');
+                              msg = msg.replaceAll('{marca}', c.viaturas[0].marca || 'carro');
                             } else {
-                              msg = msg.replace('{marca}', 'carro');
+                              msg = msg.replaceAll('{marca}', 'carro');
                             }
                             whatsappService.openWhatsApp(c.telemovel, msg);
                           }}

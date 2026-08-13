@@ -648,80 +648,78 @@ export default function AdminDashboard({ currentUser }) {
           </div>
         )}
 
-        {activeTab === 'campanhas' && (
+        {activeTab === 'campanhas' && (() => {
+          let targets = [];
+          if (campaignType === 'almost_there') targets = customers.filter(c => (c.carimbos_acumulados || 0) === 9 && (c.daysInactive || 0) >= 30);
+          else if (campaignType === 'miss_car') targets = customers.filter(c => (c.daysInactive || 0) >= 45 && c.viaturas && c.viaturas.length > 0);
+          else if (campaignType === 'vip_reactivation') targets = customers.filter(c => (c.daysInactive || 0) >= 90);
+          else targets = customers.slice(0, 50);
+
+          const handleSendCampaignToAll = () => {
+            if (targets.length === 0) return;
+            if (!window.confirm(`Atenção: O sistema vai tentar abrir ${targets.length} abas do WhatsApp. O seu navegador pode bloquear pop-ups. Deseja continuar?`)) return;
+            
+            targets.forEach(c => {
+              if (c && c.telemovel) {
+                let msg = campaignText.replace('{nome}', c.nome.split(' ')[0]);
+                if (c.viaturas && c.viaturas.length > 0) {
+                  msg = msg.replace('{marca}', c.viaturas[0].marca || 'carro');
+                } else {
+                  msg = msg.replace('{marca}', 'carro');
+                }
+                whatsappService.openWhatsApp(c.telemovel, msg);
+              }
+            });
+          };
+
+          return (
           <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Campanhas de Reativação</h2>
             
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
-              <button className={`btn ${campaignType === 'almost_there' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setCampaignType('almost_there')}>🎯 Quase Lá! (Falta 1)</button>
-              <button className={`btn ${campaignType === 'miss_car' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setCampaignType('miss_car')}>🚗 Saudades do Carro</button>
-              <button className={`btn ${campaignType === 'vip_reactivation' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setCampaignType('vip_reactivation')}>🎁 Reativação VIP</button>
-              <button className={`btn ${campaignType === 'custom' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setCampaignType('custom')}>✏️ Personalizada</button>
+              <button className={`btn ${campaignType === 'almost_there' ? 'btn-primary' : 'btn-outline'}`} onClick={() => { setCampaignType('almost_there'); setCampaignText('Olá {nome}! Notámos que só lhe falta 1 carimbo para ganhar uma lavagem grátis! 🎉 Venha visitar-nos esta semana para completar o seu cartão VIP.'); }}>🎯 Quase Lá! (Falta 1)</button>
+              <button className={`btn ${campaignType === 'miss_car' ? 'btn-primary' : 'btn-outline'}`} onClick={() => { setCampaignType('miss_car'); setCampaignText('Olá {nome}! O seu {marca} já tem saudades de brilhar! ✨ Já passaram algumas semanas desde a sua última lavagem connosco. Que tal dar-lhe um mimo especial esta semana?'); }}>🚗 Saudades do Carro</button>
+              <button className={`btn ${campaignType === 'vip_reactivation' ? 'btn-primary' : 'btn-outline'}`} onClick={() => { setCampaignType('vip_reactivation'); setCampaignText('Olá {nome}! Temos saudades suas! Preparamos uma oferta especial de 20% de desconto para o seu próximo serviço. Visite-nos nos próximos dias para aproveitar!'); }}>🎁 Reativação VIP</button>
+              <button className={`btn ${campaignType === 'custom' ? 'btn-primary' : 'btn-outline'}`} onClick={() => { setCampaignType('custom'); setCampaignText('Olá {nome}! Temos saudades suas. Visite-nos esta semana e ganhe 20% de desconto na sua próxima lavagem!'); }}>✏️ Personalizada</button>
             </div>
             
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
               <div className="card" style={{ padding: '1.5rem' }}>
                 <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>Configurar Mensagem</h3>
                 
-                {campaignType === 'custom' && (
-                  <div style={{ marginBottom: '1.5rem' }}>
-                    <label style={{ display: 'block', fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Modelos Rápidos</label>
-                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                      <button className="btn btn-outline" style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }} onClick={() => setCampaignText('Olá! Temos saudades suas. Visite-nos esta semana e ganhe 20% de desconto na sua próxima lavagem!')}>Desconto 20%</button>
-                      <button className="btn btn-outline" style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }} onClick={() => setCampaignText('Olá! O seu carro merece brilhar. Passe pelo nosso posto para uma lavagem premium com oferta de ambientador!')}>Oferta Ambientador</button>
-                    </div>
-                  </div>
-                )}
-                
                 <div>
                   <label style={{ display: 'block', fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Texto a Enviar (WhatsApp)</label>
-                  {campaignType === 'custom' ? (
-                    <textarea 
-                      className="input"
-                      style={{ width: '100%', minHeight: '120px', padding: '1rem', resize: 'vertical' }}
-                      value={campaignText}
-                      onChange={e => setCampaignText(e.target.value)}
-                    ></textarea>
-                  ) : (
-                    <div style={{ padding: '1.25rem', background: 'var(--bg-darker)', borderRadius: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.95rem', fontStyle: 'italic', border: '1px solid var(--border-color)' }}>
-                      A mensagem será gerada automaticamente pelo sistema com o nome do cliente{campaignType === 'miss_car' ? ' e a marca do seu veículo.' : '.'}
-                    </div>
-                  )}
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>O nome do cliente será adicionado no início automaticamente.</p>
+                  <textarea 
+                    className="input"
+                    style={{ width: '100%', minHeight: '120px', padding: '1rem', resize: 'vertical' }}
+                    value={campaignText}
+                    onChange={e => setCampaignText(e.target.value)}
+                  ></textarea>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>Use <b>{'{nome}'}</b> para o nome do cliente e <b>{'{marca}'}</b> para a marca do veículo.</p>
                 </div>
               </div>
               
               <div className="card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
-                <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '1.5rem', display: 'flex', alignItems: 'center' }}>
-                  Alvos Selecionados
-                  <span style={{ marginLeft: '0.5rem', background: 'var(--accent-primary)', color: 'white', padding: '0.1rem 0.5rem', borderRadius: '9999px', fontSize: '0.875rem' }}>
-                    {(() => {
-                      if (campaignType === 'almost_there') return customers.filter(c => (c.carimbos_acumulados || 0) === 9 && (c.daysInactive || 0) >= 30).length;
-                      if (campaignType === 'miss_car') return customers.filter(c => (c.daysInactive || 0) >= 45 && c.viaturas && c.viaturas.length > 0).length;
-                      if (campaignType === 'vip_reactivation') return customers.filter(c => (c.daysInactive || 0) >= 90).length;
-                      return customers.length;
-                    })()}
-                  </span>
+                <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span>Alvos Selecionados <span style={{ marginLeft: '0.5rem', background: 'var(--accent-primary)', color: 'white', padding: '0.1rem 0.5rem', borderRadius: '9999px', fontSize: '0.875rem' }}>{targets.length}</span></span>
+                  {targets.length > 0 && (
+                    <button 
+                      onClick={handleSendCampaignToAll}
+                      style={{ background: 'var(--accent-whatsapp)', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.875rem', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                    >
+                      <MessageSquare size={14} style={{ marginRight: '0.5rem' }} /> Enviar para Todos
+                    </button>
+                  )}
                 </h3>
                 
                 <div style={{ overflowY: 'auto', flex: 1, maxHeight: '350px' }}>
-                  {(() => {
-                    let targets = [];
-                    if (campaignType === 'almost_there') targets = customers.filter(c => (c.carimbos_acumulados || 0) === 9 && (c.daysInactive || 0) >= 30);
-                    else if (campaignType === 'miss_car') targets = customers.filter(c => (c.daysInactive || 0) >= 45 && c.viaturas && c.viaturas.length > 0);
-                    else if (campaignType === 'vip_reactivation') targets = customers.filter(c => (c.daysInactive || 0) >= 90);
-                    else targets = customers.slice(0, 50); // limit to 50 for performance on custom
-                    
-                    if (targets.length === 0) {
-                      return (
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem 0', color: 'var(--text-muted)', textAlign: 'center' }}>
-                          <p>Nenhum cliente cumpre os critérios desta campanha.</p>
-                          <p style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>A sua retenção está excelente!</p>
-                        </div>
-                      );
-                    }
-                    
-                    return targets.map(c => (
+                  {targets.length === 0 ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem 0', color: 'var(--text-muted)', textAlign: 'center' }}>
+                      <p>Nenhum cliente cumpre os critérios desta campanha.</p>
+                      <p style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>A sua retenção está excelente!</p>
+                    </div>
+                  ) : (
+                    targets.map(c => (
                       <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
                         <div>
                           <div style={{ fontWeight: 'bold' }}>{c.nome}</div>
@@ -729,18 +727,28 @@ export default function AdminDashboard({ currentUser }) {
                         </div>
                         <button 
                           className="btn" style={{ background: 'var(--accent-whatsapp)', color: '#fff', border: 'none', display: 'flex', alignItems: 'center', padding: '0.5rem 1rem' }}
-                          onClick={() => handleSendCampaign(c)}
+                          onClick={() => {
+                            let msg = campaignText.replace('{nome}', c.nome.split(' ')[0]);
+                            if (c.viaturas && c.viaturas.length > 0) {
+                              msg = msg.replace('{marca}', c.viaturas[0].marca || 'carro');
+                            } else {
+                              msg = msg.replace('{marca}', 'carro');
+                            }
+                            whatsappService.openWhatsApp(c.telemovel, msg);
+                          }}
                         >
                           <MessageSquare size={14} style={{ marginRight: '0.5rem' }} /> Enviar
                         </button>
                       </div>
-                    ));
-                  })()}
+                    ))
+                  )}
                 </div>
               </div>
             </div>
           </div>
-        )}
+          );
+        })()}
+
         {activeTab === 'historico' && (
           <div className="animate-fade-in">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>

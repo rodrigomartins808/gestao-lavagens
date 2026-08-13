@@ -31,7 +31,12 @@ export default function Login({ type = 'employee', onLogin }) {
   const handleCustomerLogin = async (e) => {
     e.preventDefault();
     setError('');
-    const customer = await dataService.loginCustomer(numeroCliente, telemovel);
+    
+    // Normalize inputs for robustness
+    const normalizedPhone = telemovel.replace(/\s+/g, '').trim();
+    const normalizedCustomerNumber = numeroCliente.trim().toUpperCase();
+    
+    const customer = await dataService.loginCustomer(normalizedCustomerNumber, normalizedPhone);
     if (customer) {
       onLogin({ ...customer, role: 'customer' });
     } else {

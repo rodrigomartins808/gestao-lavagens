@@ -43,16 +43,16 @@ export default function AdminDashboard({ currentUser }) {
       const today = await dataService.getTodayStats();
       const month = await dataService.getMonthStats();
       const _globalStats = await dataService.getGlobalStats();
-      const _customers = await dataService.getAllCustomers();
-      const _inactive = await dataService.getInactiveCustomers(30);
+      const allCustomers = await dataService.getAllCustomers();
+      const inactive = await dataService.getInactiveCustomers(30);
       const _history = await dataService.getAllWashesHistory();
       
       const currentMonth = new Date().getMonth();
       const currentYear = new Date().getFullYear();
       
       setStats({ today, month, global: _globalStats });
-      setCustomers(_customers || []);
-      setInactiveCustomers(_inactive || []);
+      setCustomers(allCustomers || []);
+      setInactiveCustomers(inactive || []);
       setGlobalHistory(_history || []);
       
       const daily = await dataService.getWashesPerDay(currentMonth, currentYear);

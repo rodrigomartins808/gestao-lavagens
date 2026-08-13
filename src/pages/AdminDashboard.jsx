@@ -600,10 +600,10 @@ export default function AdminDashboard({ currentUser }) {
                           )}
                         </td>
                         <td style={{ padding: '1rem', textAlign: 'center', fontWeight: 'bold' }}>
-                          {c.total_lavagens_historico}
+                          {c.total_lavagens_historico || 0}
                         </td>
                         <td style={{ padding: '1rem', textAlign: 'right', fontWeight: 'bold', color: '#2563eb' }}>
-                          {c.ltv.toFixed(2)}€
+                          {(c.ltv || 0).toFixed(2)}€
                         </td>
                         <td style={{ padding: '1rem', textAlign: 'center' }}>
                           <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>

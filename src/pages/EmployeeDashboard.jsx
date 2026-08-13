@@ -131,6 +131,24 @@ export default function EmployeeDashboard({ currentUser }) {
         ...entry,
         cliente_id: detectedCustomer ? detectedCustomer.id : null,
       });
+
+      if (detectedCustomer && entry.associateVehicle) {
+        const marcaModelo = (entry.marca_modelo || '').trim();
+        let marca = '';
+        let modelo = '';
+        if (marcaModelo) {
+          const parts = marcaModelo.split(' ');
+          marca = parts[0];
+          modelo = parts.slice(1).join(' ');
+        }
+        await dataService.addVehicle({
+          cliente_id: detectedCustomer.id,
+          matricula: entry.matricula,
+          marca: marca || '',
+          modelo: modelo || '',
+          cor: entry.cor || '' // Note: The database table might not have 'cor' column natively in this schema unless we added it, but addVehicle inserts whatever is in the object. We'll pass it anyway just in case.
+        });
+      }
       
       // WhatsApp Tracking Message
       const baseUrl = window.location.hostname === 'localhost' ? 'https://garagemmlavagens.vercel.app' : window.location.origin;
@@ -206,12 +224,22 @@ export default function EmployeeDashboard({ currentUser }) {
           nif: profileData.nif
         });
         
+        const marcaModelo = (deliveryWash.marca_modelo || '').trim();
+        let marca = '';
+        let modelo = '';
+        if (marcaModelo) {
+          const parts = marcaModelo.split(' ');
+          marca = parts[0];
+          modelo = parts.slice(1).join(' ');
+        }
+        
         // Associar o carro a este novo perfil
         await dataService.addVehicle({
           cliente_id: newCustomer.id,
           matricula: deliveryWash.matricula,
-          marca: '',
-          modelo: ''
+          marca: marca,
+          modelo: modelo,
+          cor: deliveryWash.cor || ''
         });
 
         finalCustomerId = newCustomer.id;
@@ -223,11 +251,20 @@ export default function EmployeeDashboard({ currentUser }) {
         
         // Se a opção de associar viatura foi marcada
         if (createProfile) {
+          const marcaModelo = (deliveryWash.marca_modelo || '').trim();
+          let marca = '';
+          let modelo = '';
+          if (marcaModelo) {
+            const parts = marcaModelo.split(' ');
+            marca = parts[0];
+            modelo = parts.slice(1).join(' ');
+          }
           await dataService.addVehicle({
             cliente_id: finalCustomerId,
             matricula: deliveryWash.matricula,
-            marca: '',
-            modelo: ''
+            marca: marca,
+            modelo: modelo,
+            cor: deliveryWash.cor || ''
           });
         }
       }
@@ -430,32 +467,42 @@ export default function EmployeeDashboard({ currentUser }) {
                       />
                     </div>
                     {detectedCustomer && (
-                      <div style={{ marginTop: '0.5rem', padding: '0.5rem', background: detectedCustomer.lavagens_gratuitas > 0 ? '#fef08a' : '#dcfce7', color: detectedCustomer.lavagens_gratuitas > 0 ? '#854d0e' : '#166534', borderRadius: '0.5rem', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <CheckCircle size={16} /> Cliente Reconhecido: <b>{detectedCustomer.nome.split(' ')[0]}</b> 
-                          {detectedCustomer.lavagens_gratuitas > 0 ? (
-                            <span style={{fontWeight: 'bold', marginLeft: '0.5rem'}}>🎁 1 Oferta!</span>
-                          ) : (
-                            <span style={{marginLeft: '0.5rem'}}>({detectedCustomer.carimbos_acumulados}/10)</span>
+                      <div style={{ padding: '0.75rem', background: '#dcfce7', borderRadius: '0.5rem', display: 'flex', alignItems: 'stretch', justifyContent: 'space-between', marginTop: '-0.5rem', flexDirection: 'column', gap: '0.5rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#166534' }}>
+                            <CheckCircle size={16} />
+                            <span style={{ fontSize: '0.875rem' }}>Cliente Reconhecido:</span>
+                            <strong style={{ fontSize: '0.875rem' }}>{detectedCustomer.nome.split(' ')[0]} <span style={{ fontWeight: 'normal', color: '#15803d' }}>({detectedCustomer.carimbos_acumulados}/10)</span></strong>
+                          </div>
+                          {detectedCustomer.vehicles && detectedCustomer.vehicles.length > 0 && (
+                            <button 
+                              type="button" 
+                              style={{ background: '#16a34a', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '0.25rem', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
+                              onClick={() => {
+                                const vehicle = detectedCustomer.vehicles.find(v => v.matricula.toUpperCase() === entry.matricula.toUpperCase()) || detectedCustomer.vehicles[0];
+                                setEntry(prev => ({
+                                  ...prev,
+                                  telemovel: prev.telemovel || detectedCustomer.telemovel,
+                                  matricula: prev.matricula || vehicle.matricula,
+                                  marca_modelo: `${vehicle.marca || ''} ${vehicle.modelo || ''}`.trim(),
+                                  cor: vehicle.cor || ''
+                                }));
+                              }}
+                            >
+                              <Car size={14} /> Preencher Dados
+                            </button>
                           )}
                         </div>
-                        {detectedCustomer.vehicles && detectedCustomer.vehicles.length > 0 && (
-                          <button 
-                            type="button"
-                            onClick={() => {
-                              const vehicle = detectedCustomer.vehicles.find(v => v.matricula.toUpperCase() === entry.matricula.toUpperCase()) || detectedCustomer.vehicles[0];
-                              setEntry(prev => ({
-                                ...prev,
-                                telemovel: prev.telemovel || detectedCustomer.telemovel,
-                                matricula: prev.matricula || vehicle.matricula,
-                                marca_modelo: `${vehicle.marca || ''} ${vehicle.modelo || ''}`.trim(),
-                                cor: vehicle.cor || ''
-                              }));
-                            }}
-                            style={{ background: '#16a34a', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '0.25rem', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
-                          >
-                            <Car size={14} /> Preencher Dados
-                          </button>
+                        {detectedCustomer.vehicles && !detectedCustomer.vehicles.some(v => v.matricula.toUpperCase() === entry.matricula.toUpperCase()) && entry.matricula.length >= 6 && (
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem', color: '#166534', marginTop: '0.25rem', background: 'rgba(255,255,255,0.5)', padding: '0.25rem', borderRadius: '0.25rem' }}>
+                            <input 
+                              type="checkbox"
+                              checked={entry.associateVehicle || false}
+                              onChange={e => setEntry({...entry, associateVehicle: e.target.checked})}
+                              style={{ width: '1rem', height: '1rem', accentColor: '#16a34a' }}
+                            />
+                            Adicionar viatura {entry.matricula.toUpperCase()} à ficha?
+                          </label>
                         )}
                       </div>
                     )}

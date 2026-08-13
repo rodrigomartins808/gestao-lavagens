@@ -792,13 +792,13 @@ export default function AdminDashboard({ currentUser }) {
                                            (w.telemovel || '').includes(historySearchQuery));
                         let matchDate = true;
                         if (historyDateFilter) {
-                           matchDate = (w.created_at || '').startsWith(historyDateFilter);
+                           matchDate = (w.data || '').startsWith(historyDateFilter);
                         }
                         return matchText && matchDate;
                       })
                       .map(w => (
                       <tr key={w.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                        <td style={{ padding: '1rem 1.5rem' }}>{new Date(w.created_at || new Date()).toLocaleString('pt-PT')}</td>
+                        <td style={{ padding: '1rem 1.5rem' }}>{new Date(w.data || new Date()).toLocaleString('pt-PT')}</td>
                         <td style={{ padding: '1rem 1.5rem', fontWeight: 'bold' }}>{(w.matricula || '').toUpperCase()}</td>
                         <td style={{ padding: '1rem 1.5rem' }}>{w.telemovel || ''}</td>
                         <td style={{ padding: '1rem 1.5rem' }}>{w.tipo_servico || ''}</td>

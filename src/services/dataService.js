@@ -239,7 +239,7 @@ export const completeWashAndAssign = async (washId, clienteId, atribuirPonto, co
 export const getActiveWashes = async () => {
   const { data, error } = await supabase
     .from('washes')
-    .select('*')
+    .select('*, customers(id, nome)')
     .in('estado', ['em_preparacao', 'finalizado'])
     .order('data', { ascending: true });
     
@@ -253,6 +253,11 @@ export const getActiveWashes = async () => {
 export const getWashById = async (id) => {
   const { data } = await supabase.from('washes').select('*').eq('id', id).single();
   return data;
+};
+
+export const getCustomerById = async (id) => {
+  const { data } = await supabase.rpc('get_customer_by_id', { p_id: id });
+  return data && data.length > 0 ? data[0] : null;
 };
 
 export const getTodayStats = async () => {

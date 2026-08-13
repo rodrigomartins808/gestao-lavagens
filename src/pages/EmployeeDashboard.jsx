@@ -570,7 +570,8 @@ export default function EmployeeDashboard({ currentUser }) {
                                 className="btn btn-outline"
                                 style={{ borderColor: '#22c55e', color: '#22c55e', padding: '0.5rem 1rem', fontSize: '0.9rem', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
                                 onClick={() => {
-                                  const msg = whatsappService.generateCarReadyMessage({ nome: 'Cliente' }, { matricula: wash.matricula, marca: '', modelo: '' });
+                                  const customerData = wash.customers || { nome: wash.nome_cliente_avulso || 'Cliente' };
+                                  const msg = whatsappService.generateCarReadyMessage(customerData, { matricula: wash.matricula, marca: '', modelo: '' });
                                   whatsappService.openWhatsApp(wash.telemovel, msg);
                                 }}
                               >
@@ -747,7 +748,8 @@ export default function EmployeeDashboard({ currentUser }) {
                 onClick={async () => {
                   await dataService.updateWashStatus(readyWash.id, 'finalizado');
                   loadDashboardData();
-                  const msg = whatsappService.generateCarReadyMessage({ nome: 'Cliente' }, { matricula: readyWash.matricula, marca: '', modelo: '' });
+                  const customerData = readyWash.customers || { nome: readyWash.nome_cliente_avulso || 'Cliente' };
+                  const msg = whatsappService.generateCarReadyMessage(customerData, { matricula: readyWash.matricula, marca: '', modelo: '' });
                   whatsappService.openWhatsApp(readyWash.telemovel, msg);
                   setReadyWash(null);
                 }}

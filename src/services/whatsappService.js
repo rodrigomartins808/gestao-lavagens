@@ -12,7 +12,7 @@ export const generateWelcomeMessage = (customer) => {
     '',
     '👤 N.º Cliente: *' + customer.numero_cliente + '*',
     '🔑 Senha: *' + customer.telemovel + '*',
-    'Aceda ao seu portal aqui: ' + window.location.origin + '/login',
+    'Aceda ao seu Cartão Digital sem senha aqui: ' + window.location.origin + '/cartao?id=' + customer.id,
     '',
     'Obrigado pela preferência! 💧'
   ];
@@ -28,8 +28,14 @@ export const generateCarReadyMessage = (customer, vehicle) => {
     '',
     'Informamos que' + vehicleName + ' já está lavado e pronto a ser levantado no nosso posto.',
     '',
-    'Obrigado pela preferência e até breve! 💧'
   ];
+
+  if (customer.id) {
+    lines.push('Acompanhe o seu histórico de lavagens no seu Cartão Digital sem password aqui: ' + window.location.origin + '/cartao?id=' + customer.id);
+    lines.push('');
+  }
+
+  lines.push('Obrigado pela preferência e até breve! 💧');
   return encodeURIComponent(lines.join('\n'));
 };
 

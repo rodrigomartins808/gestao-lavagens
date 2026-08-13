@@ -291,7 +291,7 @@ export default function AdminDashboard({ currentUser }) {
   };
 
   const handleOpenCustomerDetails = async (customer) => {
-    const washes = dataService.getWashesByCustomer(customer.id);
+    const washes = await dataService.getWashesByCustomer(customer.id);
     const vehicles = await dataService.getVehiclesByCustomer(customer.id);
     setCustomerWashes(washes);
     setSelectedCustomerForDetails({ ...customer, viaturas: vehicles });
@@ -820,13 +820,13 @@ export default function AdminDashboard({ currentUser }) {
                 <div style={{ background: 'rgba(59, 130, 246, 0.1)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
                   <p style={{ fontSize: '0.875rem', color: '#1d4ed8', marginBottom: '0.25rem' }}>Faturação Total</p>
                   <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#2563eb' }}>
-                    {selectedCustomerForDetails.ltv.toFixed(2)}€
+                    {customerWashes.reduce((acc, w) => acc + (w.valor_pago || 0), 0).toFixed(2)}€
                   </p>
                 </div>
                 <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
                   <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Total Lavagens</p>
                   <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
-                    {selectedCustomerForDetails.total_lavagens_historico}
+                    {customerWashes.length}
                   </p>
                 </div>
                 <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
@@ -857,7 +857,9 @@ export default function AdminDashboard({ currentUser }) {
                             <Trash2 size={16} />
                           </button>
                         </div>
-                        <span style={{ fontSize: '0.875rem', color: '#64748b' }}>{v.marca || 'Sem Marca'} {v.modelo ? `- ${v.modelo}` : ''}</span>
+                        <span style={{ fontSize: '0.875rem', color: '#64748b' }}>
+                          {v.marca || 'Sem Marca'} {v.modelo ? `- ${v.modelo}` : ''} • <span style={{ fontWeight: 'bold', color: '#3b82f6' }}>{customerWashes.filter(w => w.matricula.toUpperCase() === v.matricula.toUpperCase()).length} lavagens</span>
+                        </span>
                       </div>
                     ))}
                   </div>

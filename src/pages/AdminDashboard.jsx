@@ -816,7 +816,7 @@ export default function AdminDashboard({ currentUser }) {
                       .map(w => (
                       <tr key={w.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                         <td style={{ padding: '1rem 1.5rem' }}>{new Date(w.data || new Date()).toLocaleString('pt-PT')}</td>
-                        <td style={{ padding: '1rem 1.5rem', fontWeight: 'bold' }}>{(w.matricula || '').toUpperCase()}</td>
+                        <td style={{ padding: '1rem 1.5rem', fontWeight: 'bold', whiteSpace: 'nowrap' }}>{(w.matricula || '').toUpperCase()}</td>
                         <td style={{ padding: '1rem 1.5rem' }}>{w.telemovel || ''}</td>
                         <td style={{ padding: '1rem 1.5rem' }}>{w.tipo_servico || ''}</td>
                         <td style={{ padding: '1rem 1.5rem' }}>

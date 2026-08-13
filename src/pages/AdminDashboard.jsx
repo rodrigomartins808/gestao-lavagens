@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LogOut, BarChart2, Users, MessageSquare, Download, AlertTriangle, Search, Trash2, Calendar, FileText, X, Car, Award, Cloud } from 'lucide-react';
+import { LogOut, BarChart2, Users, MessageSquare, Download, AlertTriangle, Search, Trash2, Calendar, FileText, X, Car, Award, Cloud, Plus } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import dataService from '../services/dataService';
 import whatsappService from '../services/whatsappService';
@@ -21,6 +21,12 @@ export default function AdminDashboard({ currentUser }) {
   // Modal State for Customer Details
   const [selectedCustomerForDetails, setSelectedCustomerForDetails] = useState(null);
   const [customerWashes, setCustomerWashes] = useState([]);
+
+  // New CRM Data
+  const [isNewCustomerModalOpen, setIsNewCustomerModalOpen] = useState(false);
+  const [newCustomerData, setNewCustomerData] = useState({ nome: '', telemovel: '', nif: '' });
+  const [selectedCustomerForVehicle, setSelectedCustomerForVehicle] = useState(null);
+  const [newVehicleData, setNewVehicleData] = useState({ matricula: '', marca: '', modelo: '' });
 
   useEffect(() => {
     loadData();
@@ -231,6 +237,43 @@ export default function AdminDashboard({ currentUser }) {
     }
   };
   
+  const handleCreateCustomer = async (e) => {
+    e.preventDefault();
+    if (!newCustomerData.nome || !newCustomerData.telemovel) {
+      alert("Nome e telemóvel são obrigatórios.");
+      return;
+    }
+    try {
+      await dataService.createCustomer(newCustomerData);
+      setIsNewCustomerModalOpen(false);
+      setNewCustomerData({ nome: '', telemovel: '', nif: '' });
+      loadData();
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao criar cliente.");
+    }
+  };
+
+  const handleAddVehicleAdmin = async (e) => {
+    e.preventDefault();
+    if (!newVehicleData.matricula) {
+      alert("Matrícula é obrigatória.");
+      return;
+    }
+    try {
+      await dataService.addVehicle({
+        cliente_id: selectedCustomerForVehicle.id,
+        ...newVehicleData
+      });
+      setSelectedCustomerForVehicle(null);
+      setNewVehicleData({ matricula: '', marca: '', modelo: '' });
+      loadData();
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao adicionar viatura.");
+    }
+  };
+
   const handleOpenCustomerDetails = (customer) => {
     const washes = dataService.getWashesByCustomer(customer.id);
     setCustomerWashes(washes);
@@ -444,16 +487,25 @@ export default function AdminDashboard({ currentUser }) {
           <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Gestão de Clientes</h2>
-              <div style={{ position: 'relative', width: '300px' }}>
-                <Search style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} size={18} />
-                <input 
-                  type="text" 
-                  placeholder="Pesquisar clientes (Nome, NIF, Tel)..." 
-                  className="input"
-                  style={{ width: '100%', paddingLeft: '2.5rem' }}
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                />
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <div style={{ position: 'relative', width: '300px' }}>
+                  <Search style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} size={18} />
+                  <input 
+                    type="text" 
+                    placeholder="Pesquisar clientes (Nome, NIF, Tel)..." 
+                    className="input"
+                    style={{ width: '100%', paddingLeft: '2.5rem' }}
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                <button 
+                  className="btn btn-primary" 
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                  onClick={() => setIsNewCustomerModalOpen(true)}
+                >
+                  <Plus size={18} /> Novo Cliente
+                </button>
               </div>
             </div>
             
@@ -514,6 +566,13 @@ export default function AdminDashboard({ currentUser }) {
                               onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}
                             >
                               <FileText size={18} />
+                            </button>
+                            <button 
+                              style={{ background: 'none', border: 'none', color: '#10b981', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center' }}
+                              title="Adicionar Viatura"
+                              onClick={() => setSelectedCustomerForVehicle(c)}
+                            >
+                              <Plus size={16} /><Car size={18} style={{ marginLeft: '2px' }} />
                             </button>
                             <button 
                               style={{ background: 'none', border: 'none', color: 'var(--accent-red)', cursor: 'pointer', padding: '4px' }}
@@ -810,6 +869,72 @@ export default function AdminDashboard({ currentUser }) {
           </div>
         </div>
       )}
+
+      {/* Modal: Add New Customer */}
+      {isNewCustomerModalOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: '1rem' }}>
+          <div className="card animate-scale-up" style={{ padding: '2rem', maxWidth: '400px', width: '100%' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1.5rem', display: 'flex', alignItems: 'center' }}>
+              <Plus size={20} style={{ marginRight: '0.5rem', color: 'var(--accent-primary)' }} /> Novo Cliente
+            </h2>
+            <form onSubmit={handleCreateCustomer}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div>
+                  <label className="block text-sm text-gray-700 mb-1">Nome *</label>
+                  <input type="text" className="input" required value={newCustomerData.nome} onChange={e => setNewCustomerData({...newCustomerData, nome: e.target.value})} />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-700 mb-1">Telemóvel *</label>
+                  <input type="text" className="input" required value={newCustomerData.telemovel} onChange={e => setNewCustomerData({...newCustomerData, telemovel: e.target.value})} />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-700 mb-1">NIF (Opcional)</label>
+                  <input type="text" className="input" value={newCustomerData.nif} onChange={e => setNewCustomerData({...newCustomerData, nif: e.target.value})} />
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', justifyContent: 'flex-end' }}>
+                <button type="button" onClick={() => setIsNewCustomerModalOpen(false)} className="btn btn-secondary">Cancelar</button>
+                <button type="submit" className="btn btn-primary">Criar Cliente</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Add Vehicle Admin */}
+      {selectedCustomerForVehicle && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: '1rem' }}>
+          <div className="card animate-scale-up" style={{ padding: '2rem', maxWidth: '400px', width: '100%' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1.5rem', display: 'flex', alignItems: 'center' }}>
+              <Car size={20} style={{ marginRight: '0.5rem', color: 'var(--accent-primary)' }} /> Nova Viatura
+            </h2>
+            <p style={{ marginBottom: '1.5rem', color: '#64748b' }}>Associar à ficha de <b>{selectedCustomerForVehicle.nome}</b></p>
+            <form onSubmit={handleAddVehicleAdmin}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div>
+                  <label className="block text-sm text-gray-700 mb-1">Matrícula *</label>
+                  <input type="text" className="input" required placeholder="00-AA-00" value={newVehicleData.matricula} onChange={e => setNewVehicleData({...newVehicleData, matricula: e.target.value})} />
+                </div>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  <div style={{ flex: 1 }}>
+                    <label className="block text-sm text-gray-700 mb-1">Marca</label>
+                    <input type="text" className="input" placeholder="Ex: BMW" value={newVehicleData.marca} onChange={e => setNewVehicleData({...newVehicleData, marca: e.target.value})} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label className="block text-sm text-gray-700 mb-1">Modelo</label>
+                    <input type="text" className="input" placeholder="Ex: Serie 1" value={newVehicleData.modelo} onChange={e => setNewVehicleData({...newVehicleData, modelo: e.target.value})} />
+                  </div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', justifyContent: 'flex-end' }}>
+                <button type="button" onClick={() => setSelectedCustomerForVehicle(null)} className="btn btn-secondary">Cancelar</button>
+                <button type="submit" className="btn btn-primary">Guardar Viatura</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

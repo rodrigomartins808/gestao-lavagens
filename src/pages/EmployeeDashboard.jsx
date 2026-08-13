@@ -180,7 +180,8 @@ export default function EmployeeDashboard({ currentUser }) {
     
     if (wash.cliente_id) {
       const customer = await dataService.getCustomerById(wash.cliente_id);
-      setDeliveryCustomer(customer);
+      const vehicles = await dataService.getVehiclesByCustomer(wash.cliente_id);
+      setDeliveryCustomer({ ...customer, viaturas: vehicles });
     } else {
       setDeliveryCustomer(null);
     }
@@ -217,8 +218,17 @@ export default function EmployeeDashboard({ currentUser }) {
       } else if (finalCustomerId) {
         // Já tinha cliente detetado desde o início
         gaveStamps = true;
+        
+        // Se a opção de associar viatura foi marcada
+        if (createProfile) {
+          await dataService.addVehicle({
+            cliente_id: finalCustomerId,
+            matricula: deliveryWash.matricula,
+            marca: '',
+            modelo: ''
+          });
+        }
       }
-
       const { justEarnedFreeWash, newStamps } = await dataService.completeWashAndAssign(deliveryWash.id, finalCustomerId, gaveStamps, false);
       
       setDeliveryWash(null);
@@ -685,14 +695,31 @@ export default function EmployeeDashboard({ currentUser }) {
               )}
               
               {deliveryWash.cliente_id && deliveryCustomer && (
-                <div style={{ marginTop: '1.5rem', padding: '1rem', background: deliveryCustomer.lavagens_gratuitas > 0 ? '#fef08a' : '#f8fafc', borderRadius: '0.5rem', textAlign: 'center' }}>
-                  <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: deliveryCustomer.lavagens_gratuitas > 0 ? '#854d0e' : '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                    <CheckCircle size={20} /> Cliente Fidelizado!
-                  </h3>
-                  {deliveryCustomer.lavagens_gratuitas > 0 ? (
-                    <p style={{ marginTop: '0.5rem', color: '#854d0e', fontWeight: 'bold' }}>🎁 O cliente tem 1 Lavagem Grátis disponível!</p>
-                  ) : (
-                    <p style={{ marginTop: '0.5rem', color: '#64748b' }}>Mais um carimbo ganho hoje. ({deliveryCustomer.carimbos_acumulados}/10)</p>
+                <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <div style={{ padding: '1rem', background: deliveryCustomer.lavagens_gratuitas > 0 ? '#fef08a' : '#f8fafc', borderRadius: '0.5rem', textAlign: 'center' }}>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: deliveryCustomer.lavagens_gratuitas > 0 ? '#854d0e' : '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                      <CheckCircle size={20} /> Cliente Fidelizado!
+                    </h3>
+                    {deliveryCustomer.lavagens_gratuitas > 0 ? (
+                      <p style={{ marginTop: '0.5rem', color: '#854d0e', fontWeight: 'bold' }}>🎁 O cliente tem 1 Lavagem Grátis disponível!</p>
+                    ) : (
+                      <p style={{ marginTop: '0.5rem', color: '#64748b' }}>Mais um carimbo ganho hoje. ({deliveryCustomer.carimbos_acumulados}/10)</p>
+                    )}
+                  </div>
+                  
+                  {deliveryCustomer.viaturas && !deliveryCustomer.viaturas.some(v => v.matricula.toUpperCase() === deliveryWash.matricula.toUpperCase()) && (
+                    <div style={{ padding: '1rem', background: '#eff6ff', borderRadius: '0.5rem', border: '1px solid #bfdbfe' }}>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', fontWeight: 'bold', fontSize: '1rem', color: '#1e3a8a' }}>
+                        <input 
+                          type="checkbox" 
+                          checked={createProfile} // Using createProfile state to track if we should link the vehicle
+                          onChange={e => setCreateProfile(e.target.checked)}
+                          style={{ width: '1.25rem', height: '1.25rem' }}
+                        />
+                        Associar Viatura {deliveryWash.matricula.toUpperCase()} à ficha?
+                      </label>
+                      <p style={{ fontSize: '0.875rem', color: '#3b82f6', marginTop: '0.5rem', marginLeft: '2rem' }}>O telefone {deliveryWash.telemovel} pertence ao(à) cliente {deliveryCustomer.nome}.</p>
+                    </div>
                   )}
                 </div>
               )}

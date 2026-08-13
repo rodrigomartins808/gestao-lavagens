@@ -788,20 +788,20 @@ export default function AdminDashboard({ currentUser }) {
                   <tbody>
                     {globalHistory
                       .filter(w => {
-                        const matchText = (w.matricula?.toLowerCase().includes(historySearchQuery.toLowerCase()) || 
-                                           w.telemovel?.includes(historySearchQuery));
+                        const matchText = ((w.matricula || '').toLowerCase().includes(historySearchQuery.toLowerCase()) || 
+                                           (w.telemovel || '').includes(historySearchQuery));
                         let matchDate = true;
                         if (historyDateFilter) {
-                           matchDate = w.created_at?.startsWith(historyDateFilter);
+                           matchDate = (w.created_at || '').startsWith(historyDateFilter);
                         }
                         return matchText && matchDate;
                       })
                       .map(w => (
                       <tr key={w.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                        <td style={{ padding: '1rem 1.5rem' }}>{new Date(w.created_at).toLocaleString('pt-PT')}</td>
-                        <td style={{ padding: '1rem 1.5rem', fontWeight: 'bold' }}>{w.matricula?.toUpperCase()}</td>
-                        <td style={{ padding: '1rem 1.5rem' }}>{w.telemovel}</td>
-                        <td style={{ padding: '1rem 1.5rem' }}>{w.tipo_servico}</td>
+                        <td style={{ padding: '1rem 1.5rem' }}>{new Date(w.created_at || new Date()).toLocaleString('pt-PT')}</td>
+                        <td style={{ padding: '1rem 1.5rem', fontWeight: 'bold' }}>{(w.matricula || '').toUpperCase()}</td>
+                        <td style={{ padding: '1rem 1.5rem' }}>{w.telemovel || ''}</td>
+                        <td style={{ padding: '1rem 1.5rem' }}>{w.tipo_servico || ''}</td>
                         <td style={{ padding: '1rem 1.5rem' }}>
                           <span style={{ 
                             padding: '0.25rem 0.5rem', 
@@ -811,7 +811,7 @@ export default function AdminDashboard({ currentUser }) {
                             background: w.estado === 'entregue' ? '#dcfce7' : w.estado === 'finalizado' ? '#fef08a' : '#f1f5f9',
                             color: w.estado === 'entregue' ? '#166534' : w.estado === 'finalizado' ? '#854d0e' : '#475569'
                           }}>
-                            {w.estado.toUpperCase()}
+                            {(w.estado || 'Desconhecido').toUpperCase()}
                           </span>
                         </td>
                         <td style={{ padding: '1rem 1.5rem', textAlign: 'center' }}>

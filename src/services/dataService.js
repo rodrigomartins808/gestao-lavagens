@@ -42,7 +42,7 @@ export const loginCustomer = async (customerNumber, phone) => {
 };
 
 export const getAllCustomers = async () => {
-  const { data } = await supabase.from('customers').select('*').order('criado_em', { ascending: false });
+  const { data } = await supabase.from('customers').select('*, viaturas:vehicles(*)').order('criado_em', { ascending: false });
   return data || [];
 };
 

@@ -50,8 +50,18 @@ export default function AdminDashboard({ currentUser }) {
       const currentMonth = new Date().getMonth();
       const currentYear = new Date().getFullYear();
       
+      // Inject daysInactive for campaigns logic
+      const customersWithDays = (allCustomers || []).map(c => {
+        let daysInactive = 0;
+        if (c.last_wash_date) {
+           const ms = new Date() - new Date(c.last_wash_date);
+           daysInactive = Math.floor(ms / (1000 * 60 * 60 * 24));
+        }
+        return { ...c, daysInactive };
+      });
+      
       setStats({ today, month, global: _globalStats });
-      setCustomers(allCustomers || []);
+      setCustomers(customersWithDays);
       setInactiveCustomers(inactive || []);
       setGlobalHistory(_history || []);
       

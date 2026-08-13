@@ -11,6 +11,12 @@ export default function AdminDashboard({ currentUser }) {
   const [customers, setCustomers] = useState([]);
   const [inactiveCustomers, setInactiveCustomers] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // States for Global History Tab
+  const [globalHistory, setGlobalHistory] = useState([]);
+  const [historySearchQuery, setHistorySearchQuery] = useState('');
+  const [historyDateFilter, setHistoryDateFilter] = useState('');
+
   const [campaignText, setCampaignText] = useState('Olá! Temos saudades suas. Visite-nos esta semana e ganhe 20% de desconto na sua próxima lavagem!');
   const [campaignType, setCampaignType] = useState('almost_there');
   
@@ -36,12 +42,18 @@ export default function AdminDashboard({ currentUser }) {
     try {
       const today = await dataService.getTodayStats();
       const month = await dataService.getMonthStats();
-      const global = await dataService.getGlobalStats();
-      const allCustomers = await dataService.getAllCustomers();
-      const inactive = await dataService.getInactiveCustomers(45);
+      const _globalStats = await dataService.getGlobalStats();
+      const _customers = await dataService.getAllCustomers();
+      const _inactive = await dataService.getInactiveCustomers(30);
+      const _history = await dataService.getAllWashesHistory();
       
       const currentMonth = new Date().getMonth();
       const currentYear = new Date().getFullYear();
+      
+      setStats({ today, month, global: _globalStats });
+      setCustomers(_customers || []);
+      setInactiveCustomers(_inactive || []);
+      setGlobalHistory(_history || []);
       
       const daily = await dataService.getWashesPerDay(currentMonth, currentYear);
       const monthly = await dataService.getWashesPerMonth(currentYear);
@@ -341,12 +353,22 @@ export default function AdminDashboard({ currentUser }) {
             <MessageSquare size={18} style={{ marginRight: '0.75rem' }} /> Campanhas
           </button>
           <button 
-            style={{ display: 'flex', alignItems: 'center', padding: '0.75rem 1rem', borderRadius: '8px', background: activeTab === 'exportacoes' ? 'var(--accent-primary)' : 'transparent', color: activeTab === 'exportacoes' ? 'white' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: '500', transition: 'all 0.2s' }}
+            className="menu-btn"
+            onClick={() => setActiveTab('historico')}
+            style={{ display: 'flex', alignItems: 'center', padding: '0.75rem 1rem', borderRadius: '8px', background: activeTab === 'historico' ? 'var(--accent-primary)' : 'transparent', color: activeTab === 'historico' ? 'white' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: '500', transition: 'all 0.2s' }}
+            onMouseEnter={e => { if(activeTab !== 'historico') e.currentTarget.style.background = 'rgba(0,0,0,0.04)' }}
+            onMouseLeave={e => { if(activeTab !== 'historico') e.currentTarget.style.background = 'transparent' }}
+          >
+            <Calendar size={20} style={{ marginRight: '0.75rem' }} /> Histórico Geral
+          </button>
+          <button 
+            className="menu-btn"
             onClick={() => setActiveTab('exportacoes')}
+            style={{ display: 'flex', alignItems: 'center', padding: '0.75rem 1rem', borderRadius: '8px', background: activeTab === 'exportacoes' ? 'var(--accent-primary)' : 'transparent', color: activeTab === 'exportacoes' ? 'white' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: '500', transition: 'all 0.2s' }}
             onMouseEnter={e => { if(activeTab !== 'exportacoes') e.currentTarget.style.background = 'rgba(0,0,0,0.04)' }}
             onMouseLeave={e => { if(activeTab !== 'exportacoes') e.currentTarget.style.background = 'transparent' }}
           >
-            <Download size={18} style={{ marginRight: '0.75rem' }} /> Relatórios e Exportações
+            <Download size={20} style={{ marginRight: '0.75rem' }} /> Exportações
           </button>
         </nav>
         
@@ -705,6 +727,111 @@ export default function AdminDashboard({ currentUser }) {
                     ));
                   })()}
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {activeTab === 'historico' && (
+          <div className="animate-fade-in">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+              <div>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Histórico Geral de Lavagens</h2>
+                <p style={{ color: 'var(--text-secondary)', marginTop: '0.25rem' }}>Consulte todos os registos de lavagem que deram entrada na garagem.</p>
+              </div>
+            </div>
+
+            <div className="card" style={{ padding: '0' }}>
+              <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-color)', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <div style={{ position: 'relative', flex: 1, maxWidth: '400px' }}>
+                  <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
+                  <input 
+                    type="text"
+                    className="input"
+                    placeholder="Pesquisar por matrícula ou telemóvel..."
+                    value={historySearchQuery}
+                    onChange={e => setHistorySearchQuery(e.target.value)}
+                    style={{ paddingLeft: '2.5rem', background: 'white' }}
+                  />
+                </div>
+                <div style={{ position: 'relative', width: '200px' }}>
+                  <Calendar size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
+                  <input 
+                    type="date"
+                    className="input"
+                    value={historyDateFilter}
+                    onChange={e => setHistoryDateFilter(e.target.value)}
+                    style={{ paddingLeft: '2.5rem', background: 'white' }}
+                  />
+                </div>
+                {historyDateFilter && (
+                  <button 
+                    onClick={() => setHistoryDateFilter('')}
+                    style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '0.875rem', fontWeight: 'bold' }}
+                  >
+                    Limpar Data
+                  </button>
+                )}
+              </div>
+              
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                  <thead style={{ background: 'rgba(0,0,0,0.02)' }}>
+                    <tr>
+                      <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Data e Hora</th>
+                      <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Matrícula</th>
+                      <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Telemóvel</th>
+                      <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Serviço</th>
+                      <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Estado</th>
+                      <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)', fontSize: '0.875rem', textAlign: 'center' }}>Ficha Cliente</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {globalHistory
+                      .filter(w => {
+                        const matchText = (w.matricula?.toLowerCase().includes(historySearchQuery.toLowerCase()) || 
+                                           w.telemovel?.includes(historySearchQuery));
+                        let matchDate = true;
+                        if (historyDateFilter) {
+                           matchDate = w.created_at?.startsWith(historyDateFilter);
+                        }
+                        return matchText && matchDate;
+                      })
+                      .map(w => (
+                      <tr key={w.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                        <td style={{ padding: '1rem 1.5rem' }}>{new Date(w.created_at).toLocaleString('pt-PT')}</td>
+                        <td style={{ padding: '1rem 1.5rem', fontWeight: 'bold' }}>{w.matricula?.toUpperCase()}</td>
+                        <td style={{ padding: '1rem 1.5rem' }}>{w.telemovel}</td>
+                        <td style={{ padding: '1rem 1.5rem' }}>{w.tipo_servico}</td>
+                        <td style={{ padding: '1rem 1.5rem' }}>
+                          <span style={{ 
+                            padding: '0.25rem 0.5rem', 
+                            borderRadius: '9999px', 
+                            fontSize: '0.75rem', 
+                            fontWeight: 'bold',
+                            background: w.estado === 'entregue' ? '#dcfce7' : w.estado === 'finalizado' ? '#fef08a' : '#f1f5f9',
+                            color: w.estado === 'entregue' ? '#166534' : w.estado === 'finalizado' ? '#854d0e' : '#475569'
+                          }}>
+                            {w.estado.toUpperCase()}
+                          </span>
+                        </td>
+                        <td style={{ padding: '1rem 1.5rem', textAlign: 'center' }}>
+                          {w.cliente_id ? (
+                            <span style={{ color: '#16a34a', fontWeight: 'bold' }}>Sim</span>
+                          ) : (
+                            <span style={{ color: '#94a3b8' }}>Não</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                    {globalHistory.length === 0 && (
+                      <tr>
+                        <td colSpan="6" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                          Nenhum registo de lavagem encontrado.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>

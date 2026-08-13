@@ -242,6 +242,7 @@ export const getActiveWashes = async () => {
     .from('washes')
     .select('*, customers(id, nome)')
     .in('estado', ['em_preparacao', 'finalizado'])
+    .not('estado', 'eq', `cache_bust_${Date.now()}`)
     .order('data', { ascending: true });
     
   if (error) {
@@ -259,7 +260,7 @@ export const getAllWashesHistory = async () => {
 
 
 export const getWashById = async (id) => {
-  const { data } = await supabase.from('washes').select('*').eq('id', id).single();
+  const { data } = await supabase.from('washes').select('*').eq('id', id).not('estado', 'eq', `cache_bust_${Date.now()}`).single();
   return data;
 };
 

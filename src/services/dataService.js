@@ -251,6 +251,13 @@ export const getActiveWashes = async () => {
   return data || [];
 };
 
+export const getAllWashesHistory = async () => {
+  const { data, error } = await supabase.from('washes').select('*').order('created_at', { ascending: false });
+  if (error) throw error;
+  return data;
+};
+
+
 export const getWashById = async (id) => {
   const { data } = await supabase.from('washes').select('*').eq('id', id).single();
   return data;

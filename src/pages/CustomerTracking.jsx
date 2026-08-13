@@ -67,8 +67,11 @@ export default function CustomerTracking() {
 
       <div className="card animate-fade-in" style={{ width: '100%', maxWidth: '500px', padding: '2rem' }}>
         <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '0.5rem' }}>Estado da Viatura</h1>
-        <div style={{ fontSize: '2rem', fontWeight: '900', textAlign: 'center', letterSpacing: '2px', color: '#3b82f6', marginBottom: '2rem' }}>
+        <div style={{ fontSize: '2rem', fontWeight: '900', textAlign: 'center', letterSpacing: '2px', color: '#3b82f6', marginBottom: '0.25rem' }}>
           {(wash.matricula || '---').toUpperCase()}
+        </div>
+        <div style={{ textAlign: 'center', color: '#64748b', fontSize: '1rem', fontWeight: '500', marginBottom: '2rem', textTransform: 'capitalize' }}>
+          {wash.data ? new Date(wash.data).toLocaleDateString('pt-PT', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', position: 'relative' }}>

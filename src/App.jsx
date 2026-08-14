@@ -6,6 +6,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import CustomerPortal from './pages/CustomerPortal';
 import LiveQueue from './pages/LiveQueue';
 import CustomerTracking from './pages/CustomerTracking';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import Navbar from './components/Navbar';
 import dataService from './services/dataService';
 
@@ -91,6 +92,7 @@ export default function App() {
 
           <Route path="/tv" element={<LiveQueue />} />
           <Route path="/tracking/:id" element={<CustomerTracking />} />
+          <Route path="/privacidade" element={<PrivacyPolicy />} />
 
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

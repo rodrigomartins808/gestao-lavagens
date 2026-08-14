@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { LogOut, Award, Calendar, Droplets } from 'lucide-react';
 import dataService from '../services/dataService';
 import CustomerCard from '../components/CustomerCard';
@@ -68,6 +69,9 @@ export default function CustomerPortal({ currentUser }) {
           />
         </div>
 
+        <div style={{ textAlign: 'center', marginTop: '3rem', borderTop: '1px solid #e2e8f0', paddingTop: '1.5rem' }}>
+          <Link to="/privacidade" style={{ color: '#94a3b8', fontSize: '0.875rem', textDecoration: 'none' }}>Política de Privacidade</Link>
+        </div>
       </main>
     </div>
   );

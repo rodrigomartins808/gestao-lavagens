@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import * as dataService from '../services/dataService';
 import VirtualKeyboard from '../components/VirtualKeyboard';
 import logo from '../assets/logo.jpeg';
@@ -113,6 +113,9 @@ export default function Login({ type = 'employee', onLogin }) {
             </button>
           </form>
         )}
+        <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+          <Link to="/privacidade" style={{ color: '#94a3b8', fontSize: '0.875rem', textDecoration: 'none' }}>Política de Privacidade</Link>
+        </div>
       </div>
     </div>
   );

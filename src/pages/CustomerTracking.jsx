@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import * as dataService from '../services/dataService';
 import logo from '../assets/logo.jpeg';
 import { Clock, CheckCircle, Car, AlertCircle } from 'lucide-react';
@@ -126,6 +126,9 @@ export default function CustomerTracking() {
         {wash.hora_pedida && (
           <p style={{ marginTop: '0.5rem', fontWeight: 'bold', color: '#0f172a' }}>Hora prevista: {wash.hora_pedida}</p>
         )}
+        <div style={{ marginTop: '1.5rem' }}>
+          <Link to="/privacidade" style={{ color: '#94a3b8', fontSize: '0.875rem', textDecoration: 'none' }}>Política de Privacidade</Link>
+        </div>
       </div>
       
     </div>

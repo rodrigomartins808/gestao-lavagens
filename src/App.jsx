@@ -7,6 +7,7 @@ import CustomerPortal from './pages/CustomerPortal';
 import LiveQueue from './pages/LiveQueue';
 import CustomerTracking from './pages/CustomerTracking';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import LandingPage from './pages/LandingPage';
 import Navbar from './components/Navbar';
 import dataService from './services/dataService';
 
@@ -49,7 +50,7 @@ export default function App() {
     navigate('/');
   };
 
-  const isStandaloneRoute = location.pathname === '/tv' || location.pathname.startsWith('/tracking');
+  const isStandaloneRoute = location.pathname === '/tv-v9k2' || location.pathname.startsWith('/tracking') || location.pathname === '/' || location.pathname === '/privacidade';
 
   return (
     <div className="app-container">
@@ -57,12 +58,7 @@ export default function App() {
       
       <main className="main-content">
         <Routes>
-          <Route path="/" element={
-            !currentUser ? <Login type="customer" onLogin={handleLogin} /> : 
-            currentUser.role === 'admin' ? <Navigate to="/acesso-gerencia-x89f" /> :
-            currentUser.role === 'employee' ? <Navigate to="/acesso-equipa-x89f" /> :
-            <Navigate to="/cliente" />
-          } />
+          <Route path="/" element={<LandingPage />} />
           
           <Route path="/acesso-gerencia-x89f" element={
             !currentUser ? <Login type="admin" onLogin={handleLogin} /> :
@@ -85,12 +81,13 @@ export default function App() {
           } />
           
           <Route path="/cartao" element={
-            currentUser && currentUser.role === 'customer' 
+            !currentUser ? <Login type="customer" onLogin={handleLogin} /> :
+            currentUser.role === 'customer' 
               ? <CustomerPortal currentUser={currentUser} /> 
-              : <Login type="customer" onLogin={handleLogin} />
+              : <Navigate to="/" />
           } />
 
-          <Route path="/tv" element={<LiveQueue />} />
+          <Route path="/tv-v9k2" element={<LiveQueue />} />
           <Route path="/tracking/:id" element={<CustomerTracking />} />
           <Route path="/privacidade" element={<PrivacyPolicy />} />
 

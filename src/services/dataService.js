@@ -365,6 +365,39 @@ export const getCustomerLifetimeValue = async (customerId) => {
   return data?.reduce((sum, w) => sum + (Number(w.valor) || 0), 0) || 0;
 };
 
+// --- Settings (Prices) ---
+export const getFuelPrices = async () => {
+  const { data, error } = await supabase.from('settings').select('value').eq('id', 'fuel_prices').single();
+  if (error || !data) return { gasoleo: '1.49', gasolina: '1.69', gas: '0.89' };
+  return data.value;
+};
+
+export const updateFuelPrices = async (prices) => {
+  const { error } = await supabase.from('settings').upsert({ id: 'fuel_prices', value: prices });
+  if (error) throw error;
+  return true;
+};
+
+// --- Bookings ---
+export const addBooking = async (bookingData) => {
+  const { data, error } = await supabase.from('bookings').insert([bookingData]).select().single();
+  if (error) throw error;
+  return data;
+};
+
+export const getBookings = async () => {
+  const { data, error } = await supabase.from('bookings').select('*').order('created_at', { ascending: false });
+  if (error) throw error;
+  return data || [];
+};
+
+export const updateBookingStatus = async (id, estado) => {
+  const { error } = await supabase.from('bookings').update({ estado }).eq('id', id);
+  if (error) throw error;
+  return true;
+};
+
 export default {
-  loginStaff, loginCustomer, getAllCustomers, getCustomerById, searchCustomers, createCustomer, updateCustomer, deleteCustomer, getNextCustomerNumber, getInactiveCustomers, getVehiclesByCustomer, addVehicle, removeVehicle, getWashesByCustomer, registerWashEntry, updateWashStatus, completeWashAndAssign, getActiveWashes, getAllWashesHistory, getWashById, getTodayStats, getGlobalStats, getMonthStats, getExportData, getWashesPerDay, getWashesPerMonth, getCustomerLifetimeValue
+  loginStaff, loginCustomer, getAllCustomers, getCustomerById, searchCustomers, createCustomer, updateCustomer, deleteCustomer, getNextCustomerNumber, getInactiveCustomers, getVehiclesByCustomer, addVehicle, removeVehicle, getWashesByCustomer, registerWashEntry, updateWashStatus, completeWashAndAssign, getActiveWashes, getAllWashesHistory, getWashById, getTodayStats, getGlobalStats, getMonthStats, getExportData, getWashesPerDay, getWashesPerMonth, getCustomerLifetimeValue,
+  getFuelPrices, updateFuelPrices, addBooking, getBookings, updateBookingStatus
 };

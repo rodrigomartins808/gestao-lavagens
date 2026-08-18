@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LogOut, BarChart2, Users, MessageSquare, Download, AlertTriangle, Search, Trash2, Calendar, FileText, X, Car, Award, Cloud, Plus } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import dataService from '../services/dataService';
+import { supabase } from '../lib/supabase';
 import whatsappService from '../services/whatsappService';
 import { migrateToSupabase } from '../services/migrationService';
 
@@ -20,6 +21,10 @@ export default function AdminDashboard({ currentUser }) {
   const [campaignText, setCampaignText] = useState('Olá! Temos saudades suas. Visite-nos esta semana e ganhe 20% de desconto na sua próxima lavagem!');
   const [campaignType, setCampaignType] = useState('almost_there');
   
+  // Fuel Prices & Bookings State
+  const [fuelPrices, setFuelPrices] = useState({ gasoleo: '1.49', gasolina: '1.69', gas: '0.89' });
+  const [bookings, setBookings] = useState([]);
+  
   // New State for Analytics
   const [dailyData, setDailyData] = useState([]);
   const [monthlyData, setMonthlyData] = useState([]);
@@ -36,6 +41,23 @@ export default function AdminDashboard({ currentUser }) {
 
   useEffect(() => {
     loadData();
+
+    // Subscribe to new bookings to play a sound
+    const bookingsSubscription = supabase
+      .channel('public:bookings')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'bookings' }, payload => {
+        // Play notification sound
+        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+        audio.play().catch(e => console.error("Audio play failed:", e));
+        
+        // Reload data to get the new booking in the list
+        loadData();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(bookingsSubscription);
+    };
   }, []);
 
   const loadData = async () => {
@@ -52,6 +74,8 @@ export default function AdminDashboard({ currentUser }) {
       
       const daily = await dataService.getWashesPerDay(currentMonth, currentYear);
       const monthly = await dataService.getWashesPerMonth(currentYear);
+      const prices = await dataService.getFuelPrices();
+      const bks = await dataService.getBookings();
       
       // Calculate lifetime value and daysInactive for customers in list
       const processedCustomers = (allCustomers || []).map(c => {
@@ -79,6 +103,8 @@ export default function AdminDashboard({ currentUser }) {
       setGlobalHistory(_history || []);
       setDailyData(daily);
       setMonthlyData(monthly);
+      setFuelPrices(prices);
+      setBookings(bks);
     } catch (error) {
       console.error("Erro ao carregar dados do admin:", error);
     }
@@ -318,12 +344,67 @@ export default function AdminDashboard({ currentUser }) {
     setSelectedCustomerForDetails({ ...customer, viaturas: vehicles });
   };
 
+  const handleDescontarVale = async () => {
+    if (!selectedCustomerForDetails) return;
+    const currentVales = selectedCustomerForDetails.vales_descontados || 0;
+    try {
+      const updated = await dataService.updateCustomer(selectedCustomerForDetails.id, {
+        vales_descontados: currentVales + 1
+      });
+      setSelectedCustomerForDetails({ ...selectedCustomerForDetails, vales_descontados: currentVales + 1 });
+      
+      // Update in the main list too
+      const updatedCustomers = customers.map(c => c.id === updated.id ? { ...c, vales_descontados: currentVales + 1 } : c);
+      setCustomers(updatedCustomers);
+      alert('Vale descontado com sucesso!');
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao descontar vale.');
+    }
+  };
+
   const filteredCustomers = customers.filter(c => 
     (c.nome && c.nome.toLowerCase().includes(searchQuery.toLowerCase())) ||
     (c.telemovel && c.telemovel.includes(searchQuery)) ||
     (c.numero_cliente && c.numero_cliente.includes(searchQuery)) ||
     (c.nif && c.nif.includes(searchQuery))
   );
+
+  const handleSaveFuelPrices = async () => {
+    try {
+      await dataService.updateFuelPrices(fuelPrices);
+      alert('Preços atualizados com sucesso! A Landing Page já está a mostrar os novos preços.');
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao atualizar preços.');
+    }
+  };
+
+  const handleBookingAction = async (id, newStatus) => {
+    try {
+      await dataService.updateBookingStatus(id, newStatus);
+      const updatedBookings = bookings.map(b => b.id === id ? { ...b, estado: newStatus } : b);
+      setBookings(updatedBookings);
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao atualizar estado da marcação.');
+    }
+  };
+
+  const handleConvertBookingToCustomer = (booking) => {
+    setNewCustomerData({
+      nome: booking.nome,
+      telemovel: booking.telemovel,
+      nif: ''
+    });
+    setNewVehicleData({
+      matricula: booking.matricula || '',
+      marca: '',
+      modelo: ''
+    });
+    setIsNewCustomerModalOpen(true);
+    // Optional: could mark the booking as accepted and converted automatically
+  };
 
   return (
     <div className="dashboard min-h-screen" style={{ display: 'flex' }}>
@@ -378,6 +459,24 @@ export default function AdminDashboard({ currentUser }) {
             onMouseLeave={e => { if(activeTab !== 'exportacoes') e.currentTarget.style.background = 'transparent' }}
           >
             <Download size={20} style={{ marginRight: '0.75rem' }} /> Exportações
+          </button>
+          <button 
+            className="menu-btn"
+            onClick={() => setActiveTab('marcacoes')}
+            style={{ display: 'flex', alignItems: 'center', padding: '0.75rem 1rem', borderRadius: '8px', background: activeTab === 'marcacoes' ? 'var(--accent-primary)' : 'transparent', color: activeTab === 'marcacoes' ? 'white' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: '500', transition: 'all 0.2s' }}
+            onMouseEnter={e => { if(activeTab !== 'marcacoes') e.currentTarget.style.background = 'rgba(0,0,0,0.04)' }}
+            onMouseLeave={e => { if(activeTab !== 'marcacoes') e.currentTarget.style.background = 'transparent' }}
+          >
+            <Calendar size={20} style={{ marginRight: '0.75rem' }} /> Marcações
+          </button>
+          <button 
+            className="menu-btn"
+            onClick={() => setActiveTab('precos')}
+            style={{ display: 'flex', alignItems: 'center', padding: '0.75rem 1rem', borderRadius: '8px', background: activeTab === 'precos' ? 'var(--accent-primary)' : 'transparent', color: activeTab === 'precos' ? 'white' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: '500', transition: 'all 0.2s' }}
+            onMouseEnter={e => { if(activeTab !== 'precos') e.currentTarget.style.background = 'rgba(0,0,0,0.04)' }}
+            onMouseLeave={e => { if(activeTab !== 'precos') e.currentTarget.style.background = 'transparent' }}
+          >
+            <FileText size={20} style={{ marginRight: '0.75rem' }} /> Preços
           </button>
         </nav>
         
@@ -937,6 +1036,120 @@ export default function AdminDashboard({ currentUser }) {
             </div>
           </div>
         )}
+        {activeTab === 'precos' && (
+          <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Preços de Combustível (Landing Page)</h2>
+            <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', border: '1px solid var(--border-color)', maxWidth: '600px' }}>
+              <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Os preços definidos aqui serão mostrados em tempo real na página inicial pública.</p>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>Gasóleo Simples (€)</label>
+                  <input type="text" value={fuelPrices.gasoleo} onChange={e => setFuelPrices({...fuelPrices, gasoleo: e.target.value})} style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>Gasolina 95 (€)</label>
+                  <input type="text" value={fuelPrices.gasolina} onChange={e => setFuelPrices({...fuelPrices, gasolina: e.target.value})} style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>GPL Auto (€)</label>
+                  <input type="text" value={fuelPrices.gas} onChange={e => setFuelPrices({...fuelPrices, gas: e.target.value})} style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+                </div>
+              </div>
+              
+              <button onClick={handleSaveFuelPrices} className="btn btn-primary" style={{ marginTop: '2rem', width: '100%', padding: '1rem' }}>
+                Guardar e Atualizar Preços
+              </button>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'marcacoes' && (
+          <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Calendar size={24} /> Pedidos de Marcação (Fila de Espera)
+            </h2>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1rem' }}>
+              <div style={{ background: '#fef3c7', padding: '1.5rem', borderRadius: '12px', border: '1px solid #fde68a' }}>
+                <p style={{ color: '#b45309', fontWeight: 'bold', marginBottom: '0.5rem' }}>Pendentes</p>
+                <p style={{ fontSize: '2rem', fontWeight: '900', color: '#d97706' }}>{bookings.filter(b => b.estado === 'pendente').length}</p>
+              </div>
+              <div style={{ background: '#d1fae5', padding: '1.5rem', borderRadius: '12px', border: '1px solid #a7f3d0' }}>
+                <p style={{ color: '#047857', fontWeight: 'bold', marginBottom: '0.5rem' }}>Aceites</p>
+                <p style={{ fontSize: '2rem', fontWeight: '900', color: '#059669' }}>{bookings.filter(b => b.estado === 'aceite').length}</p>
+              </div>
+              <div style={{ background: '#fee2e2', padding: '1.5rem', borderRadius: '12px', border: '1px solid #fecaca' }}>
+                <p style={{ color: '#b91c1c', fontWeight: 'bold', marginBottom: '0.5rem' }}>Rejeitadas</p>
+                <p style={{ fontSize: '2rem', fontWeight: '900', color: '#dc2626' }}>{bookings.filter(b => b.estado === 'rejeitado').length}</p>
+              </div>
+            </div>
+
+            <div style={{ background: 'white', borderRadius: '12px', border: '1px solid var(--border-color)', overflow: 'hidden' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', textAlign: 'left' }}>
+                    <th style={{ padding: '1rem', fontWeight: 'bold', color: '#475569' }}>Data/Período</th>
+                    <th style={{ padding: '1rem', fontWeight: 'bold', color: '#475569' }}>Cliente</th>
+                    <th style={{ padding: '1rem', fontWeight: 'bold', color: '#475569' }}>Telemóvel</th>
+                    <th style={{ padding: '1rem', fontWeight: 'bold', color: '#475569' }}>Matrícula</th>
+                    <th style={{ padding: '1rem', fontWeight: 'bold', color: '#475569' }}>Serviço</th>
+                    <th style={{ padding: '1rem', fontWeight: 'bold', color: '#475569' }}>Estado</th>
+                    <th style={{ padding: '1rem', fontWeight: 'bold', color: '#475569', textAlign: 'right' }}>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bookings.map(b => (
+                    <tr key={b.id} style={{ borderBottom: '1px solid #f1f5f9', background: b.estado === 'pendente' ? '#fffbeb' : 'transparent' }}>
+                      <td style={{ padding: '1rem' }}>
+                        <div style={{ fontWeight: 'bold' }}>{new Date(b.data_desejada).toLocaleDateString()}</div>
+                        <div style={{ fontSize: '0.875rem', color: '#64748b' }}>{b.periodo}</div>
+                      </td>
+                      <td style={{ padding: '1rem', fontWeight: '500' }}>
+                        {b.nome} {b.cliente_id && <span style={{ background: '#dbeafe', color: '#1d4ed8', padding: '0.1rem 0.4rem', borderRadius: '4px', fontSize: '0.7rem', marginLeft: '0.5rem' }}>VIP</span>}
+                      </td>
+                      <td style={{ padding: '1rem' }}>{b.telemovel}</td>
+                      <td style={{ padding: '1rem' }}>{b.matricula || '-'}</td>
+                      <td style={{ padding: '1rem' }}>{b.servico}</td>
+                      <td style={{ padding: '1rem' }}>
+                        <span style={{ 
+                          padding: '0.25rem 0.75rem', 
+                          borderRadius: '9999px', 
+                          fontSize: '0.875rem', 
+                          fontWeight: 'bold',
+                          background: b.estado === 'pendente' ? '#fef3c7' : b.estado === 'aceite' ? '#d1fae5' : '#fee2e2',
+                          color: b.estado === 'pendente' ? '#b45309' : b.estado === 'aceite' ? '#047857' : '#b91c1c'
+                        }}>
+                          {b.estado.toUpperCase()}
+                        </span>
+                      </td>
+                      <td style={{ padding: '1rem', textAlign: 'right' }}>
+                        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                          {b.estado === 'pendente' && (
+                            <>
+                              <button onClick={() => handleBookingAction(b.id, 'aceite')} style={{ background: '#10b981', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>Aceitar</button>
+                              <button onClick={() => handleBookingAction(b.id, 'rejeitado')} style={{ background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>Rejeitar</button>
+                            </>
+                          )}
+                          {!b.cliente_id && (
+                            <button onClick={() => handleConvertBookingToCustomer(b)} style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                              <Plus size={16} /> Criar Ficha
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {bookings.length === 0 && (
+                    <tr>
+                      <td colSpan="7" style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>Sem marcações registadas.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* Customer Details Modal */}
@@ -973,11 +1186,21 @@ export default function AdminDashboard({ currentUser }) {
                     {customerWashes.length}
                   </p>
                 </div>
-                <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-                  <p style={{ fontSize: '0.875rem', color: '#047857', marginBottom: '0.25rem' }}>Lavagens Oferecidas</p>
-                  <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#059669' }}>
-                    {selectedCustomerForDetails.lavagens_gratuitas || 0}
-                  </p>
+                <div style={{ background: 'rgba(217, 119, 6, 0.1)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(217, 119, 6, 0.2)' }}>
+                  <p style={{ fontSize: '0.875rem', color: '#b45309', marginBottom: '0.25rem' }}>Vales Disponíveis (20€)</p>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#d97706' }}>
+                      {Math.floor((selectedCustomerForDetails.carimbos_acumulados || 0) / 10) - (selectedCustomerForDetails.vales_descontados || 0)}
+                    </p>
+                    {Math.floor((selectedCustomerForDetails.carimbos_acumulados || 0) / 10) - (selectedCustomerForDetails.vales_descontados || 0) > 0 && (
+                      <button 
+                        onClick={handleDescontarVale}
+                        style={{ background: '#d97706', color: 'white', border: 'none', padding: '0.4rem 0.75rem', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 2px 4px rgba(217,119,6,0.2)' }}
+                      >
+                        Descontar
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
 

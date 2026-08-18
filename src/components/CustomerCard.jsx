@@ -24,8 +24,11 @@ export default function CustomerCard({
   if (!customer) return null;
 
   const stamps = customer.carimbos_acumulados || 0;
-  const freeWashes = customer.lavagens_gratuitas || 0;
-  const isWinner = freeWashes > 0;
+  const valesDescontados = customer.vales_descontados || 0;
+  const totalVales = Math.floor(stamps / 10);
+  const valesDisponiveis = totalVales - valesDescontados;
+  const isWinner = valesDisponiveis > 0;
+  const carimbosAtuais = stamps % 10;
   
   const [showHistory, setShowHistory] = useState(false);
   const [history, setHistory] = useState([]);
@@ -115,11 +118,11 @@ export default function CustomerCard({
       <div style={{ marginBottom: '1.5rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
           <h4 style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--text-primary)', margin: 0 }}>Carimbos de Lavagem</h4>
-          <span style={{ fontSize: '0.875rem', color: '#94a3b8', fontWeight: 'bold' }}>{stamps}/10</span>
+          <span style={{ fontSize: '0.875rem', color: '#94a3b8', fontWeight: 'bold' }}>{carimbosAtuais}/10</span>
         </div>
         <div className="stamp-grid">
           {Array.from({ length: 10 }).map((_, idx) => {
-            const isActive = idx < stamps;
+            const isActive = idx < carimbosAtuais;
             const isFree = idx === 9;
             return (
               <div
@@ -137,20 +140,38 @@ export default function CustomerCard({
         </div>
         {isWinner && (
           <div style={{ 
-            marginTop: '1rem', 
-            padding: '1rem', 
-            background: 'linear-gradient(to right, #fef08a, #fde047)', 
-            borderRadius: '0.75rem', 
-            color: '#854d0e',
+            marginTop: '1.5rem', 
+            padding: '1.5rem', 
+            background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)', 
+            borderRadius: '1rem', 
+            color: '#fff',
             display: 'flex',
             alignItems: 'center',
-            gap: '0.75rem',
-            boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+            gap: '1rem',
+            boxShadow: '0 10px 15px -3px rgba(217, 119, 6, 0.4), 0 4px 6px -2px rgba(217, 119, 6, 0.2)',
+            position: 'relative',
+            overflow: 'hidden'
           }}>
-            <Award size={24} style={{ flexShrink: 0 }} />
-            <div>
-              <div style={{ fontWeight: '900', fontSize: '1rem' }}>PARABÉNS!</div>
-              <div style={{ fontSize: '0.9rem', lineHeight: '1.4' }}>Tem <b>{freeWashes} Lavagem Grátis</b> disponível! Será descontada na próxima visita.</div>
+            <div style={{ position: 'absolute', top: '-10px', right: '-10px', opacity: 0.1, transform: 'scale(2)' }}>
+              <Award size={100} />
+            </div>
+            
+            <div style={{ 
+              background: 'rgba(255,255,255,0.2)', 
+              padding: '1rem', 
+              borderRadius: '50%',
+              backdropFilter: 'blur(4px)' 
+            }}>
+              <Award size={32} />
+            </div>
+            
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <div style={{ fontWeight: '900', fontSize: '1.25rem', letterSpacing: '0.05em', textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                VOUCHER DOURADO
+              </div>
+              <div style={{ fontSize: '1rem', lineHeight: '1.4', marginTop: '0.25rem', textShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
+                Tem <b>{valesDisponiveis} Vale{valesDisponiveis > 1 ? 's' : ''} de 20€</b> para usar em serviços especiais!
+              </div>
             </div>
           </div>
         )}

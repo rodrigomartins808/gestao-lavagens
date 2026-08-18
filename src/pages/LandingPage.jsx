@@ -17,7 +17,7 @@ export default function LandingPage() {
     matricula: '',
     servico: 'Lavagem Completa',
     data_desejada: minDate,
-    hora_chegada: '09:00',
+    hora_chegada: '08:00',
     hora_levantamento: '12:00'
   });
 
@@ -34,11 +34,20 @@ export default function LandingPage() {
     dateOptions.push({ value: dateStr, label });
   }
 
-  const timeOptions = [];
-  for (let h = 9; h <= 20; h++) {
+  const chegadaOptions = [];
+  for (let h = 8; h <= 19; h++) {
     for (let m = 0; m < 60; m += 30) {
+      if (h === 19 && m > 30) continue;
+      chegadaOptions.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
+    }
+  }
+
+  const levantamentoOptions = [];
+  for (let h = 8; h <= 20; h++) {
+    for (let m = 0; m < 60; m += 30) {
+      if (h === 8 && m === 0) continue; // começa às 08:30
       if (h === 20 && m > 30) continue;
-      timeOptions.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
+      levantamentoOptions.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
     }
   }
   const [bookingStatus, setBookingStatus] = useState('');
@@ -81,7 +90,7 @@ export default function LandingPage() {
         matricula: '',
         servico: 'Lavagem Completa',
         data_desejada: minDate,
-        hora_chegada: '09:00',
+        hora_chegada: '08:00',
         hora_levantamento: '12:00'
       });
     } catch (err) {
@@ -306,13 +315,13 @@ export default function LandingPage() {
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <label style={{ fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem', color: '#374151' }}>Chegada *</label>
                     <select required value={bookingForm.hora_chegada} onChange={e => setBookingForm({...bookingForm, hora_chegada: e.target.value})} style={{ padding: '0.75rem', borderRadius: '0.5rem', border: '1.5px solid #d1d5db', outline: 'none', transition: 'border-color 0.2s', width: '100%', appearance: 'none', background: 'url("data:image/svg+xml;utf8,<svg fill=%27%239ca3af%27 height=%2724%27 viewBox=%270 0 24 24%27 width=%2724%27 xmlns=%27http://www.w3.org/2000/svg%27><path d=%27M7 10l5 5 5-5z%27/></svg>") no-repeat right 0.75rem center/1.25rem white' }} onFocus={e => e.target.style.borderColor = 'var(--accent-red)'} onBlur={e => e.target.style.borderColor = '#d1d5db'}>
-                      {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
+                      {chegadaOptions.map(t => <option key={t} value={t}>{t}</option>)}
                     </select>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <label style={{ fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem', color: '#374151' }}>Levantamento *</label>
                     <select required value={bookingForm.hora_levantamento} onChange={e => setBookingForm({...bookingForm, hora_levantamento: e.target.value})} style={{ padding: '0.75rem', borderRadius: '0.5rem', border: '1.5px solid #d1d5db', outline: 'none', transition: 'border-color 0.2s', width: '100%', appearance: 'none', background: 'url("data:image/svg+xml;utf8,<svg fill=%27%239ca3af%27 height=%2724%27 viewBox=%270 0 24 24%27 width=%2724%27 xmlns=%27http://www.w3.org/2000/svg%27><path d=%27M7 10l5 5 5-5z%27/></svg>") no-repeat right 0.75rem center/1.25rem white' }} onFocus={e => e.target.style.borderColor = 'var(--accent-red)'} onBlur={e => e.target.style.borderColor = '#d1d5db'}>
-                      {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
+                      {levantamentoOptions.map(t => <option key={t} value={t}>{t}</option>)}
                     </select>
                   </div>
                 </div>

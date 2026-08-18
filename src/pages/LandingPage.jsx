@@ -68,9 +68,8 @@ export default function LandingPage() {
     <div className="landing-page" style={{ minHeight: '100vh', backgroundColor: '#ffffff', color: '#000000' }}>
       {/* Header */}
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem 5%', backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', position: 'sticky', top: 0, zIndex: 100 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <img src={logo} alt="GarageM Logo" style={{ height: '40px', borderRadius: '8px' }} />
-          <h1 style={{ fontSize: '1.5rem', fontWeight: '900', margin: 0, color: '#000000' }}>GarageM</h1>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <img src={logo} alt="GarageM Logo" style={{ height: '60px', borderRadius: '8px' }} />
         </div>
         <button 
           onClick={() => navigate('/cartao')}

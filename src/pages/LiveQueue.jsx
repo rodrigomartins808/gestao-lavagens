@@ -69,10 +69,7 @@ export default function LiveQueue() {
 
   const maskPlate = (plate) => {
     if (!plate) return '---';
-    if (plate.length >= 6) {
-      return plate.substring(0, 2) + '-**-' + plate.substring(plate.length - 2);
-    }
-    return '***';
+    return plate.toUpperCase();
   };
 
   return (

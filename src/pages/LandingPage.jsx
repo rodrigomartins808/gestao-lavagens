@@ -334,7 +334,6 @@ export default function LandingPage() {
                       <option>Lavagem Completa</option>
                       <option>Serviços Especiais</option>
                       <option>Mecânica Rápida</option>
-                      <option>Venda e Entrega de Gás</option>
                     </select>
                   </div>
                 </div>

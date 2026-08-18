@@ -11,7 +11,8 @@ export default function CustomerPortal({ currentUser }) {
   const [bookingForm, setBookingForm] = useState({
     servico: 'Lavagem Completa',
     data_desejada: '',
-    periodo: 'Manhã',
+    hora_chegada: '09:00',
+    hora_levantamento: '12:00',
     matricula: ''
   });
 
@@ -23,17 +24,19 @@ export default function CustomerPortal({ currentUser }) {
     e.preventDefault();
     setBookingStatus('submitting');
     try {
-      await dataService.addBooking({
+      const formToSubmit = {
         nome: customerData.nome,
         telemovel: customerData.telemovel,
         matricula: bookingForm.matricula || (customerData.vehicles && customerData.vehicles.length > 0 ? customerData.vehicles[0].matricula : ''),
         servico: bookingForm.servico,
         data_desejada: bookingForm.data_desejada,
-        periodo: bookingForm.periodo,
+        periodo: `${bookingForm.hora_chegada} às ${bookingForm.hora_levantamento}`,
         cliente_id: customerData.id
-      });
+      };
+
+      await dataService.addBooking(formToSubmit);
       setBookingStatus('success');
-      setBookingForm({ ...bookingForm, data_desejada: '' });
+      setBookingForm({ ...bookingForm, data_desejada: '', hora_chegada: '09:00', hora_levantamento: '12:00' });
     } catch (err) {
       console.error(err);
       setBookingStatus('error');
@@ -126,17 +129,18 @@ export default function CustomerPortal({ currentUser }) {
                 </select>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.25rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.25rem' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#334155' }}>Data *</label>
                   <input type="date" required min={minDate} value={bookingForm.data_desejada} onChange={e => setBookingForm({...bookingForm, data_desejada: e.target.value})} style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', outline: 'none' }} />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#334155' }}>Período *</label>
-                  <select value={bookingForm.periodo} onChange={e => setBookingForm({...bookingForm, periodo: e.target.value})} style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', outline: 'none', background: 'white' }}>
-                    <option>Manhã</option>
-                    <option>Tarde</option>
-                  </select>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#334155' }}>Chegada *</label>
+                  <input type="time" required step="1800" value={bookingForm.hora_chegada} onChange={e => setBookingForm({...bookingForm, hora_chegada: e.target.value})} style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', outline: 'none', background: 'white' }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#334155' }}>Levantamento *</label>
+                  <input type="time" required step="1800" value={bookingForm.hora_levantamento} onChange={e => setBookingForm({...bookingForm, hora_levantamento: e.target.value})} style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', outline: 'none', background: 'white' }} />
                 </div>
               </div>
 

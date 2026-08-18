@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Fuel, Droplets, Wrench, Calendar, MapPin, ChevronRight, User } from 'lucide-react';
+import { Fuel, Droplets, Wrench, Calendar, MapPin, ChevronRight, User, Flame } from 'lucide-react';
 import dataService from '../services/dataService';
+import logo from '../assets/logo.jpeg';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -12,7 +13,8 @@ export default function LandingPage() {
     matricula: '',
     servico: 'Lavagem Completa',
     data_desejada: '',
-    periodo: 'Manhã'
+    hora_chegada: '09:00',
+    hora_levantamento: '12:00'
   });
   const [bookingStatus, setBookingStatus] = useState('');
 
@@ -37,7 +39,15 @@ export default function LandingPage() {
     e.preventDefault();
     setBookingStatus('submitting');
     try {
-      await dataService.addBooking(bookingForm);
+      const formToSubmit = {
+        ...bookingForm,
+        periodo: `${bookingForm.hora_chegada} às ${bookingForm.hora_levantamento}`
+      };
+      // remover campos extra antes de enviar, caso o addBooking passe tudo pro DB
+      delete formToSubmit.hora_chegada;
+      delete formToSubmit.hora_levantamento;
+
+      await dataService.addBooking(formToSubmit);
       setBookingStatus('success');
       setBookingForm({
         nome: '',
@@ -45,7 +55,8 @@ export default function LandingPage() {
         matricula: '',
         servico: 'Lavagem Completa',
         data_desejada: '',
-        periodo: 'Manhã'
+        hora_chegada: '09:00',
+        hora_levantamento: '12:00'
       });
     } catch (err) {
       console.error(err);
@@ -54,20 +65,18 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="landing-page" style={{ minHeight: '100vh', backgroundColor: '#f8fafc', color: '#0f172a' }}>
+    <div className="landing-page" style={{ minHeight: '100vh', backgroundColor: '#ffffff', color: '#000000' }}>
       {/* Header */}
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem 5%', backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', position: 'sticky', top: 0, zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{ width: '40px', height: '40px', background: 'var(--accent-primary)', color: 'white', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.2rem' }}>
-            GM
-          </div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: '900', margin: 0, color: 'var(--text-primary)' }}>GarageM</h1>
+          <img src={logo} alt="GarageM Logo" style={{ height: '40px', borderRadius: '8px' }} />
+          <h1 style={{ fontSize: '1.5rem', fontWeight: '900', margin: 0, color: '#000000' }}>GarageM</h1>
         </div>
         <button 
           onClick={() => navigate('/cartao')}
-          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#f1f5f9', color: '#334155', border: 'none', padding: '0.5rem 1rem', borderRadius: '9999px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s' }}
-          onMouseEnter={e => e.currentTarget.style.background = '#e2e8f0'}
-          onMouseLeave={e => e.currentTarget.style.background = '#f1f5f9'}
+          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#ef4444', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '9999px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s' }}
+          onMouseEnter={e => e.currentTarget.style.background = '#dc2626'}
+          onMouseLeave={e => e.currentTarget.style.background = '#ef4444'}
         >
           <User size={18} />
           Área de Cliente
@@ -75,69 +84,77 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section style={{ padding: '4rem 5%', background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', color: 'white', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <h2 style={{ fontSize: '3rem', fontWeight: '900', marginBottom: '1rem', lineHeight: '1.2' }}>O Melhor Cuidado <br/><span style={{ color: '#38bdf8' }}>Para o Seu Carro</span></h2>
-        <p style={{ fontSize: '1.25rem', color: '#94a3b8', maxWidth: '600px', marginBottom: '2.5rem' }}>
+      <section style={{ padding: '6rem 5%', backgroundColor: 'white', color: 'black', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', borderBottom: '1px solid #f1f5f9' }}>
+        <h2 style={{ fontSize: '3rem', fontWeight: '900', marginBottom: '1rem', lineHeight: '1.2' }}>O Melhor Cuidado <br/><span style={{ color: '#ef4444' }}>Para o Seu Carro</span></h2>
+        <p style={{ fontSize: '1.25rem', color: '#475569', maxWidth: '600px', marginBottom: '2.5rem' }}>
           Lavagem automóvel premium, mecânica rápida e combustível aos melhores preços. Tudo num só lugar.
         </p>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: '#38bdf8', color: '#0f172a', padding: '1rem 2rem', borderRadius: '9999px', fontWeight: 'bold', fontSize: '1.1rem', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: '#ef4444', color: 'white', padding: '1rem 2rem', borderRadius: '9999px', fontWeight: 'bold', fontSize: '1.1rem', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 6px rgba(239, 68, 68, 0.3)' }}>
             Agendar Lavagem <ChevronRight size={20} />
           </button>
-          <button onClick={() => document.getElementById('servicos').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'rgba(255,255,255,0.1)', color: 'white', padding: '1rem 2rem', borderRadius: '9999px', fontWeight: 'bold', fontSize: '1.1rem', border: '1px solid rgba(255,255,255,0.2)', cursor: 'pointer' }}>
+          <button onClick={() => document.getElementById('servicos').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'white', color: 'black', padding: '1rem 2rem', borderRadius: '9999px', fontWeight: 'bold', fontSize: '1.1rem', border: '2px solid black', cursor: 'pointer' }}>
             Ver Serviços
           </button>
         </div>
       </section>
 
       {/* Preços em Direto */}
-      <section style={{ padding: '3rem 5%', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ background: 'white', padding: '2rem', borderRadius: '1rem', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', display: 'flex', flexWrap: 'wrap', gap: '3rem', justifyContent: 'center', width: '100%', maxWidth: '1000px', marginTop: '-5rem' }}>
+      <section style={{ padding: '3rem 5%', display: 'flex', justifyContent: 'center', backgroundColor: '#f8fafc' }}>
+        <div style={{ background: 'white', padding: '2rem', borderRadius: '1rem', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', display: 'flex', flexWrap: 'wrap', gap: '3rem', justifyContent: 'center', width: '100%', maxWidth: '1000px', marginTop: '-5rem', border: '2px solid black' }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ color: '#64748b', fontSize: '0.875rem', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}><Fuel size={16} /> Gasóleo Simples</div>
-            <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#0f172a' }}>{fuelPrices.gasoleo}€</div>
+            <div style={{ color: '#ef4444', fontSize: '0.875rem', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}><Fuel size={16} /> Gasóleo Simples</div>
+            <div style={{ fontSize: '2.5rem', fontWeight: '900', color: 'black' }}>{fuelPrices.gasoleo}€</div>
           </div>
-          <div style={{ width: '1px', background: '#e2e8f0' }}></div>
+          <div style={{ width: '2px', background: 'black' }}></div>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ color: '#64748b', fontSize: '0.875rem', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}><Fuel size={16} /> Gasolina 95</div>
-            <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#0f172a' }}>{fuelPrices.gasolina}€</div>
+            <div style={{ color: '#ef4444', fontSize: '0.875rem', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}><Fuel size={16} /> Gasolina 95</div>
+            <div style={{ fontSize: '2.5rem', fontWeight: '900', color: 'black' }}>{fuelPrices.gasolina}€</div>
           </div>
-          <div style={{ width: '1px', background: '#e2e8f0' }}></div>
+          <div style={{ width: '2px', background: 'black' }}></div>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ color: '#64748b', fontSize: '0.875rem', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}><Fuel size={16} /> GPL Auto</div>
-            <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#0f172a' }}>{fuelPrices.gas}€</div>
+            <div style={{ color: '#ef4444', fontSize: '0.875rem', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}><Fuel size={16} /> GPL Auto</div>
+            <div style={{ fontSize: '2.5rem', fontWeight: '900', color: 'black' }}>{fuelPrices.gas}€</div>
           </div>
         </div>
       </section>
 
       {/* Serviços */}
-      <section id="servicos" style={{ padding: '4rem 5%', maxWidth: '1200px', margin: '0 auto' }}>
-        <h3 style={{ fontSize: '2rem', fontWeight: '900', textAlign: 'center', marginBottom: '3rem' }}>Os Nossos Serviços</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+      <section id="servicos" style={{ padding: '4rem 5%', maxWidth: '1200px', margin: '0 auto', backgroundColor: '#f8fafc' }}>
+        <h3 style={{ fontSize: '2rem', fontWeight: '900', textAlign: 'center', marginBottom: '3rem', color: 'black' }}>Os Nossos Serviços</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem' }}>
           
-          <div style={{ background: 'white', padding: '2rem', borderRadius: '1rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
-            <div style={{ width: '50px', height: '50px', background: 'rgba(56, 189, 248, 0.1)', color: '#0284c7', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
+          <div style={{ background: 'white', padding: '2rem', borderRadius: '1rem', border: '1px solid black', boxShadow: '4px 4px 0px black' }}>
+            <div style={{ width: '50px', height: '50px', background: '#ef4444', color: 'white', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
               <Droplets size={24} />
             </div>
-            <h4 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>Lavagem Premium</h4>
-            <p style={{ color: '#64748b', lineHeight: '1.6' }}>Desde uma lavagem simples exterior até a uma lavagem completa com aspiração e limpeza de interiores ao pormenor.</p>
+            <h4 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: 'black' }}>Lavagem Premium</h4>
+            <p style={{ color: '#475569', lineHeight: '1.6' }}>Desde uma lavagem simples exterior até a uma lavagem completa com aspiração e limpeza de interiores ao pormenor.</p>
           </div>
 
-          <div style={{ background: 'white', padding: '2rem', borderRadius: '1rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
-            <div style={{ width: '50px', height: '50px', background: 'rgba(217, 119, 6, 0.1)', color: '#d97706', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
+          <div style={{ background: 'white', padding: '2rem', borderRadius: '1rem', border: '1px solid black', boxShadow: '4px 4px 0px black' }}>
+            <div style={{ width: '50px', height: '50px', background: '#ef4444', color: 'white', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
               <User size={24} />
             </div>
-            <h4 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>Serviços Especiais</h4>
-            <p style={{ color: '#64748b', lineHeight: '1.6' }}>Polimentos, higienização a ozono, limpeza profunda de estofos e hidratação de peles para deixar o seu carro como novo.</p>
+            <h4 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: 'black' }}>Serviços Especiais</h4>
+            <p style={{ color: '#475569', lineHeight: '1.6' }}>Polimentos, higienização a ozono, limpeza profunda de estofos e hidratação de peles para deixar o seu carro como novo.</p>
           </div>
 
-          <div style={{ background: 'white', padding: '2rem', borderRadius: '1rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
-            <div style={{ width: '50px', height: '50px', background: 'rgba(16, 185, 129, 0.1)', color: '#059669', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
+          <div style={{ background: 'white', padding: '2rem', borderRadius: '1rem', border: '1px solid black', boxShadow: '4px 4px 0px black' }}>
+            <div style={{ width: '50px', height: '50px', background: '#ef4444', color: 'white', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
               <Wrench size={24} />
             </div>
-            <h4 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>Mecânica Rápida</h4>
-            <p style={{ color: '#64748b', lineHeight: '1.6', marginBottom: '1rem' }}>Mudança de óleo, travões, revisões periódicas e pequenos arranjos mecânicos feitos por profissionais.</p>
-            <span style={{ display: 'inline-block', background: '#f1f5f9', padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.875rem', fontWeight: 'bold', color: '#475569' }}>Preço sob consulta</span>
+            <h4 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: 'black' }}>Mecânica Rápida</h4>
+            <p style={{ color: '#475569', lineHeight: '1.6', marginBottom: '1rem' }}>Mudança de óleo, travões, revisões periódicas e pequenos arranjos mecânicos feitos por profissionais.</p>
+            <span style={{ display: 'inline-block', background: 'black', padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.875rem', fontWeight: 'bold', color: 'white' }}>Preço sob consulta</span>
+          </div>
+
+          <div style={{ background: 'white', padding: '2rem', borderRadius: '1rem', border: '1px solid black', boxShadow: '4px 4px 0px black' }}>
+            <div style={{ width: '50px', height: '50px', background: '#ef4444', color: 'white', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
+              <Flame size={24} />
+            </div>
+            <h4 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: 'black' }}>Venda e Entrega de Gás</h4>
+            <p style={{ color: '#475569', lineHeight: '1.6', marginBottom: '1rem' }}>Venda de garrafas de gás com possibilidade de entrega diretamente em sua casa, de forma rápida e segura.</p>
           </div>
 
         </div>
@@ -187,21 +204,22 @@ export default function LandingPage() {
                   </select>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.25rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.25rem' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#334155' }}>Data *</label>
-                    <input type="date" required min={minDate} value={bookingForm.data_desejada} onChange={e => setBookingForm({...bookingForm, data_desejada: e.target.value})} style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', outline: 'none' }} />
+                    <input type="date" required min={minDate} value={bookingForm.data_desejada} onChange={e => setBookingForm({...bookingForm, data_desejada: e.target.value})} style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid black', outline: 'none' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#334155' }}>Período *</label>
-                    <select value={bookingForm.periodo} onChange={e => setBookingForm({...bookingForm, periodo: e.target.value})} style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', outline: 'none', background: 'white' }}>
-                      <option>Manhã</option>
-                      <option>Tarde</option>
-                    </select>
+                    <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#334155' }}>Chegada *</label>
+                    <input type="time" required step="1800" value={bookingForm.hora_chegada} onChange={e => setBookingForm({...bookingForm, hora_chegada: e.target.value})} style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid black', outline: 'none', background: 'white' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#334155' }}>Levantamento *</label>
+                    <input type="time" required step="1800" value={bookingForm.hora_levantamento} onChange={e => setBookingForm({...bookingForm, hora_levantamento: e.target.value})} style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid black', outline: 'none', background: 'white' }} />
                   </div>
                 </div>
 
-                <button type="submit" disabled={bookingStatus === 'submitting'} style={{ marginTop: '1rem', background: '#38bdf8', color: '#0f172a', padding: '1rem', borderRadius: '0.5rem', fontWeight: 'bold', fontSize: '1.1rem', border: 'none', cursor: bookingStatus === 'submitting' ? 'wait' : 'pointer', transition: 'all 0.2s' }}>
+                <button type="submit" disabled={bookingStatus === 'submitting'} style={{ marginTop: '1rem', background: '#ef4444', color: 'white', padding: '1rem', borderRadius: '0.5rem', fontWeight: 'bold', fontSize: '1.1rem', border: 'none', cursor: bookingStatus === 'submitting' ? 'wait' : 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 6px rgba(239, 68, 68, 0.3)' }}>
                   {bookingStatus === 'submitting' ? 'A enviar...' : 'Solicitar Marcação'}
                 </button>
               </form>
@@ -210,7 +228,7 @@ export default function LandingPage() {
 
           {/* Map */}
           <div>
-            <h3 style={{ fontSize: '2rem', fontWeight: '900', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><MapPin size={28} color="#38bdf8" /> Onde Estamos</h3>
+            <h3 style={{ fontSize: '2rem', fontWeight: '900', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'black' }}><MapPin size={28} color="#ef4444" /> Onde Estamos</h3>
             <p style={{ color: '#64748b', marginBottom: '2rem' }}>Venha visitar-nos e deixe o seu carro nas mãos de profissionais.</p>
             <div style={{ width: '100%', height: '400px', borderRadius: '1rem', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
               <iframe 
@@ -228,7 +246,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer style={{ background: '#0f172a', color: '#94a3b8', padding: '2rem 5%', textAlign: 'center' }}>
+      <footer style={{ background: 'black', color: 'white', padding: '2rem 5%', textAlign: 'center' }}>
         <p>© {new Date().getFullYear()} GarageM. Todos os direitos reservados.</p>
         <button onClick={() => navigate('/privacidade')} style={{ background: 'none', border: 'none', color: '#cbd5e1', textDecoration: 'underline', cursor: 'pointer', marginTop: '0.5rem' }}>Política de Privacidade</button>
       </footer>

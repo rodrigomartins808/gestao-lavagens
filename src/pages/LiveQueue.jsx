@@ -60,7 +60,7 @@ export default function LiveQueue() {
 
   // Filtrar marcações para hoje e pendentes
   const todayStr = new Date().toISOString().split('T')[0];
-  const pendingBookings = bookings.filter(b => b.data_desejada === todayStr && b.estado !== 'concluido' && b.estado !== 'em_curso');
+  const pendingBookings = bookings.filter(b => b.data_desejada && b.data_desejada.split('T')[0] === todayStr && b.estado !== 'concluido' && b.estado !== 'em_curso');
   pendingBookings.sort((a, b) => {
     const timeA = a.periodo ? a.periodo.split(' ')[0] : '23:59';
     const timeB = b.periodo ? b.periodo.split(' ')[0] : '23:59';

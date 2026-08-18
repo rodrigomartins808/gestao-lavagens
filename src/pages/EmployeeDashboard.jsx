@@ -107,8 +107,8 @@ export default function EmployeeDashboard({ currentUser }) {
         const todayStr = new Date().toISOString().split('T')[0];
         const matchBooking = bookings.find(b => 
           b.matricula && entry.matricula &&
-          b.matricula.replace(/\\s+/g, '').toUpperCase() === entry.matricula.replace(/\\s+/g, '').toUpperCase() &&
-          b.data_desejada === todayStr && 
+          b.matricula.replace(/\s+/g, '').toUpperCase() === entry.matricula.replace(/\s+/g, '').toUpperCase() &&
+          b.data_desejada && b.data_desejada.split('T')[0] === todayStr && 
           b.estado !== 'concluido' && b.estado !== 'em_curso'
         );
         setDetectedBooking(matchBooking || null);
@@ -358,7 +358,7 @@ export default function EmployeeDashboard({ currentUser }) {
   };
 
   const todayStr = new Date().toISOString().split('T')[0];
-  const pendingBookings = bookings.filter(b => b.data_desejada === todayStr && b.estado !== 'concluido' && b.estado !== 'em_curso');
+  const pendingBookings = bookings.filter(b => b.data_desejada && b.data_desejada.split('T')[0] === todayStr && b.estado !== 'concluido' && b.estado !== 'em_curso');
   pendingBookings.sort((a, b) => {
     const timeA = a.periodo ? a.periodo.split(' ')[0] : '23:59';
     const timeB = b.periodo ? b.periodo.split(' ')[0] : '23:59';

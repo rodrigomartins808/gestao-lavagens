@@ -35,9 +35,9 @@ export default function LandingPage() {
   }
 
   const timeOptions = [];
-  for (let h = 9; h <= 19; h++) {
+  for (let h = 9; h <= 20; h++) {
     for (let m = 0; m < 60; m += 30) {
-      if (h === 19 && m > 0) continue;
+      if (h === 20 && m > 30) continue;
       timeOptions.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
     }
   }

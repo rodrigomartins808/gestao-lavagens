@@ -72,7 +72,7 @@ export default function LandingPage() {
           <img src={logo} alt="GarageM Logo" style={{ height: '60px', borderRadius: 'var(--radius-md)' }} />
         </div>
         
-        <nav style={{ display: 'none', md: { display: 'flex' }, gap: 'var(--space-6)', fontWeight: '600', fontSize: '0.95rem' }} className="desktop-nav">
+        <nav className="main-nav" style={{ display: 'flex', gap: 'var(--space-6)', fontWeight: '600', fontSize: '1rem', alignItems: 'center' }}>
           <a href="#sobre" style={{ color: '#333', textDecoration: 'none', transition: 'color 0.2s' }}>Sobre Nós</a>
           <a href="#servicos" style={{ color: '#333', textDecoration: 'none', transition: 'color 0.2s' }}>Serviços</a>
           <a href="#precos" style={{ color: '#333', textDecoration: 'none', transition: 'color 0.2s' }}>Combustível</a>
@@ -137,10 +137,6 @@ export default function LandingPage() {
             <div style={{ background: '#1f2937', padding: 'var(--space-6)', borderRadius: 'var(--radius-lg)', border: '1px solid #374151' }}>
               <div style={{ color: '#9ca3af', fontSize: '1rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Fuel size={20} /> Gasolina 95</div>
               <div style={{ fontSize: '3.5rem', fontWeight: '900', color: '#f97316', fontFamily: 'monospace', letterSpacing: '-0.05em' }}>{fuelPrices.gasolina}€</div>
-            </div>
-            <div style={{ background: '#1f2937', padding: 'var(--space-6)', borderRadius: 'var(--radius-lg)', border: '1px solid #374151' }}>
-              <div style={{ color: '#9ca3af', fontSize: '1rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Fuel size={20} /> GPL Auto</div>
-              <div style={{ fontSize: '3.5rem', fontWeight: '900', color: '#f97316', fontFamily: 'monospace', letterSpacing: '-0.05em' }}>{fuelPrices.gas}€</div>
             </div>
           </div>
         </div>

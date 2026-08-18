@@ -391,6 +391,16 @@ export const getBookings = async () => {
   return data || [];
 };
 
+export const getBookingsByDate = async (dateStr) => {
+  const { data, error } = await supabase
+    .from('bookings')
+    .select('data_desejada, hora_chegada, servico, estado')
+    .gte('data_desejada', dateStr)
+    .neq('estado', 'rejeitado');
+  if (error) throw error;
+  return (data || []).filter(b => b.data_desejada && b.data_desejada.split('T')[0] === dateStr && b.estado !== 'concluido');
+};
+
 export const updateBookingStatus = async (id, estado) => {
   const { error } = await supabase.from('bookings').update({ estado }).eq('id', id);
   if (error) throw error;
@@ -399,5 +409,5 @@ export const updateBookingStatus = async (id, estado) => {
 
 export default {
   loginStaff, loginCustomer, getAllCustomers, getCustomerById, searchCustomers, createCustomer, updateCustomer, deleteCustomer, getNextCustomerNumber, getInactiveCustomers, getVehiclesByCustomer, addVehicle, removeVehicle, getWashesByCustomer, registerWashEntry, updateWashStatus, completeWashAndAssign, getActiveWashes, getAllWashesHistory, getWashById, getTodayStats, getGlobalStats, getMonthStats, getExportData, getWashesPerDay, getWashesPerMonth, getCustomerLifetimeValue,
-  getFuelPrices, updateFuelPrices, addBooking, getBookings, updateBookingStatus
+  getFuelPrices, updateFuelPrices, addBooking, getBookings, getBookingsByDate, updateBookingStatus
 };

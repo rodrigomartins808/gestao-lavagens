@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LogOut, Bell, CheckCircle, Clock, User, PlusCircle, Car, Play, Check, Search, Phone, Award } from 'lucide-react';
+import { LogOut, Bell, CheckCircle, Clock, User, PlusCircle, Car, Play, Check, Search, Phone, Award, Calendar } from 'lucide-react';
 import dataService from '../services/dataService';
 import whatsappService from '../services/whatsappService';
 import { supabase } from '../lib/supabase';
@@ -11,6 +11,7 @@ import AddVehicleModal from '../components/AddVehicleModal';
 export default function EmployeeDashboard({ currentUser }) {
   const [stats, setStats] = useState({ totalWashes: 0, totalRevenue: 0, newCustomers: 0 });
   const [activeWashes, setActiveWashes] = useState([]);
+  const [bookings, setBookings] = useState([]);
   const [activeTab, setActiveTab] = useState('producao'); // producao | clientes
   
   // Entry Form State
@@ -23,6 +24,7 @@ export default function EmployeeDashboard({ currentUser }) {
     cor: ''
   });
   const [detectedCustomer, setDetectedCustomer] = useState(null);
+  const [detectedBooking, setDetectedBooking] = useState(null);
   const [isSubmittingEntry, setIsSubmittingEntry] = useState(false);
 
   // Delivery Modal State
@@ -48,6 +50,9 @@ export default function EmployeeDashboard({ currentUser }) {
       
       const todayStats = await dataService.getTodayStats();
       setStats(todayStats || { totalWashes: 0, totalRevenue: 0, newCustomers: 0 });
+
+      const bks = await dataService.getBookings();
+      setBookings(bks || []);
     } catch (error) {
       console.error("Erro ao carregar dados:", error);
     }
@@ -94,9 +99,24 @@ export default function EmployeeDashboard({ currentUser }) {
     return () => clearInterval(interval);
   }, []);
 
-  // Auto-detect customer
+  // Auto-detect customer and booking
   useEffect(() => {
     const detect = async () => {
+      // Booking detection
+      if (entry.matricula && entry.matricula.length >= 6) {
+        const todayStr = new Date().toISOString().split('T')[0];
+        const matchBooking = bookings.find(b => 
+          b.matricula && entry.matricula &&
+          b.matricula.replace(/\\s+/g, '').toUpperCase() === entry.matricula.replace(/\\s+/g, '').toUpperCase() &&
+          b.data_desejada === todayStr && 
+          b.estado !== 'concluido' && b.estado !== 'em_curso'
+        );
+        setDetectedBooking(matchBooking || null);
+      } else {
+        setDetectedBooking(null);
+      }
+
+      // Customer detection
       if (entry.telemovel.length >= 9 || entry.matricula.length >= 6) {
         const query = entry.telemovel || entry.matricula;
         const results = await dataService.searchCustomers(query);
@@ -116,7 +136,7 @@ export default function EmployeeDashboard({ currentUser }) {
     };
     const timeoutId = setTimeout(detect, 500);
     return () => clearTimeout(timeoutId);
-  }, [entry.telemovel, entry.matricula]);
+  }, [entry.telemovel, entry.matricula, bookings]);
 
   const handleEntrySubmit = async (e) => {
     e.preventDefault();
@@ -148,6 +168,10 @@ export default function EmployeeDashboard({ currentUser }) {
           modelo: modelo || '',
           cor: entry.cor || '' // Note: The database table might not have 'cor' column natively in this schema unless we added it, but addVehicle inserts whatever is in the object. We'll pass it anyway just in case.
         });
+      }
+
+      if (detectedBooking) {
+        await dataService.updateBookingStatus(detectedBooking.id, 'em_curso');
       }
       
       // WhatsApp Tracking Message
@@ -333,6 +357,14 @@ export default function EmployeeDashboard({ currentUser }) {
     }
   };
 
+  const todayStr = new Date().toISOString().split('T')[0];
+  const pendingBookings = bookings.filter(b => b.data_desejada === todayStr && b.estado !== 'concluido' && b.estado !== 'em_curso');
+  pendingBookings.sort((a, b) => {
+    const timeA = a.periodo ? a.periodo.split(' ')[0] : '23:59';
+    const timeB = b.periodo ? b.periodo.split(' ')[0] : '23:59';
+    return timeA.localeCompare(timeB);
+  });
+
   return (
     <div className="dashboard min-h-screen bg-gray-50 pb-12">
       <div style={{ padding: '0 0 1.5rem 0', marginBottom: '1rem', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
@@ -432,7 +464,33 @@ export default function EmployeeDashboard({ currentUser }) {
         {activeTab === 'producao' && (
           <>
             {/* Coluna Esquerda: Receção / Dar Entrada */}
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              
+              {/* Secção Marcações */}
+              <div className="card" style={{ padding: '1.5rem' }}>
+                <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#0f172a' }}>
+                  <Calendar color="#3b82f6" /> Marcações de Hoje
+                </h2>
+                {pendingBookings.length === 0 ? (
+                  <div style={{ color: '#64748b', fontSize: '0.95rem' }}>Nenhuma marcação pendente.</div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {pendingBookings.map(b => {
+                      const timeStr = b.periodo ? b.periodo.split(' ')[0] : '';
+                      return (
+                        <div key={b.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '0.75rem 1rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
+                          <div>
+                            <div style={{ fontWeight: 'bold', color: '#0f172a' }}>{(b.matricula || '').toUpperCase()}</div>
+                            <div style={{ fontSize: '0.85rem', color: '#64748b' }}>{b.nome} • {b.servico}</div>
+                          </div>
+                          <div style={{ fontWeight: 'bold', color: '#ef4444' }}>{timeStr}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
               <div className="card" style={{ padding: '1.5rem', position: 'sticky', top: '1rem', zIndex: 10 }}>
                 <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <PlusCircle color="#3b82f6" /> Dar Entrada de Viatura
@@ -451,6 +509,32 @@ export default function EmployeeDashboard({ currentUser }) {
                       style={{ textTransform: 'uppercase', fontSize: '1.25rem', letterSpacing: '2px', fontWeight: 'bold', textAlign: 'center' }}
                     />
                   </div>
+
+                  {detectedBooking && (
+                    <div style={{ padding: '0.75rem', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '0.5rem', display: 'flex', alignItems: 'stretch', justifyContent: 'space-between', marginTop: '-0.5rem', flexDirection: 'column', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#1e40af' }}>
+                          <Calendar size={16} />
+                          <span style={{ fontSize: '0.875rem' }}>Marcação Encontrada:</span>
+                          <strong style={{ fontSize: '0.875rem' }}>{detectedBooking.nome} ({detectedBooking.servico})</strong>
+                        </div>
+                        <button 
+                          type="button" 
+                          style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '0.25rem', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
+                          onClick={() => {
+                            setEntry(prev => ({
+                              ...prev,
+                              telemovel: prev.telemovel || detectedBooking.telemovel,
+                              tipo_servico: detectedBooking.servico || 'Lavagem Exterior',
+                              hora_pedida: prev.hora_pedida || (detectedBooking.periodo ? detectedBooking.periodo.split(' ')[0] : '')
+                            }));
+                          }}
+                        >
+                          <CheckCircle size={14} /> Auto-preencher
+                        </button>
+                      </div>
+                    </div>
+                  )}
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Telemóvel do Cliente *</label>

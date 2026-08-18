@@ -41,6 +41,7 @@ export default function LandingPage() {
     try {
       const formToSubmit = {
         ...bookingForm,
+        matricula: bookingForm.matricula.replace(/\s+/g, '').toUpperCase(),
         periodo: `${bookingForm.hora_chegada} às ${bookingForm.hora_levantamento}`
       };
       // remover campos extra antes de enviar, caso o addBooking passe tudo pro DB
@@ -255,8 +256,8 @@ export default function LandingPage() {
                 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.25rem' }}>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <label style={{ fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem', color: '#374151' }}>Matrícula (Opção)</label>
-                    <input type="text" placeholder="XX-XX-XX" value={bookingForm.matricula} onChange={e => setBookingForm({...bookingForm, matricula: e.target.value})} style={{ padding: '0.75rem', borderRadius: '0.5rem', border: '1.5px solid #d1d5db', outline: 'none', transition: 'border-color 0.2s', width: '100%' }} onFocus={e => e.target.style.borderColor = 'var(--accent-red)'} onBlur={e => e.target.style.borderColor = '#d1d5db'} />
+                    <label style={{ fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem', color: '#374151' }}>Matrícula *</label>
+                    <input type="text" placeholder="XX-XX-XX" required value={bookingForm.matricula} onChange={e => setBookingForm({...bookingForm, matricula: e.target.value})} style={{ padding: '0.75rem', borderRadius: '0.5rem', border: '1.5px solid #d1d5db', outline: 'none', transition: 'border-color 0.2s', width: '100%', textTransform: 'uppercase' }} onFocus={e => e.target.style.borderColor = 'var(--accent-red)'} onBlur={e => e.target.style.borderColor = '#d1d5db'} />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <label style={{ fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem', color: '#374151' }}>Serviço *</label>

@@ -4,6 +4,7 @@ import logo from '../assets/logo.jpeg';
 
 export default function LiveQueue() {
   const [washes, setWashes] = useState([]);
+  const [bookings, setBookings] = useState([]);
   const [time, setTime] = useState(new Date());
 
   // Auto-scroll logic for TV
@@ -33,8 +34,15 @@ export default function LiveQueue() {
   useEffect(() => {
     // Carregar lavagens a cada 10 segundos
     const loadWashes = async () => {
-      const data = await dataService.getActiveWashes();
-      setWashes(data || []);
+      try {
+        const data = await dataService.getActiveWashes();
+        setWashes(data || []);
+        
+        const bks = await dataService.getBookings();
+        setBookings(bks || []);
+      } catch (err) {
+        console.error("Erro ao carregar dados da TV", err);
+      }
     };
     
     loadWashes();
@@ -49,6 +57,23 @@ export default function LiveQueue() {
 
   const emPreparacao = washes.filter(w => w.estado === 'em_preparacao');
   const finalizados = washes.filter(w => w.estado === 'finalizado');
+
+  // Filtrar marcações para hoje e pendentes
+  const todayStr = new Date().toISOString().split('T')[0];
+  const pendingBookings = bookings.filter(b => b.data_desejada === todayStr && b.estado !== 'concluido' && b.estado !== 'em_curso');
+  pendingBookings.sort((a, b) => {
+    const timeA = a.periodo ? a.periodo.split(' ')[0] : '23:59';
+    const timeB = b.periodo ? b.periodo.split(' ')[0] : '23:59';
+    return timeA.localeCompare(timeB);
+  });
+
+  const maskPlate = (plate) => {
+    if (!plate) return '---';
+    if (plate.length >= 6) {
+      return plate.substring(0, 2) + '-**-' + plate.substring(plate.length - 2);
+    }
+    return '***';
+  };
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', padding: '2rem', display: 'flex', flexDirection: 'column' }}>
@@ -73,7 +98,7 @@ export default function LiveQueue() {
         gridTemplateColumns: '1fr 1fr', 
         gap: '4rem', 
         padding: '0 2rem',
-        height: 'calc(100vh - 145px)',
+        height: 'calc(100vh - 260px)',
         overflow: 'hidden'
       }}>
         
@@ -201,6 +226,42 @@ export default function LiveQueue() {
           </div>
         </div>
 
+      </div>
+
+      {/* Próximas Chegadas */}
+      <div style={{ padding: '0 2rem', marginTop: 'auto' }}>
+        <div style={{ 
+          background: '#0f172a', 
+          borderRadius: '1rem', 
+          padding: '1.25rem 2rem',
+          display: 'flex', alignItems: 'center', gap: '2rem',
+          boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+          color: 'white',
+          overflowX: 'hidden'
+        }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#cbd5e1' }}>
+            📅 Próximas Chegadas:
+          </h2>
+          
+          <div className="bookings-scroller" style={{ display: 'flex', gap: '2rem', overflowX: 'auto', flex: 1, paddingBottom: '0.25rem' }}>
+            {pendingBookings.length === 0 ? (
+              <div style={{ color: '#64748b', fontStyle: 'italic' }}>Sem marcações pendentes para hoje.</div>
+            ) : (
+              pendingBookings.map(b => {
+                const timeStr = b.periodo ? b.periodo.split(' ')[0] : '';
+                return (
+                  <div key={b.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', background: '#1e293b', padding: '0.5rem 1rem', borderRadius: '0.5rem', whiteSpace: 'nowrap' }}>
+                    <span style={{ fontWeight: '900', color: '#38bdf8', letterSpacing: '1px' }}>{maskPlate(b.matricula)}</span>
+                    <span style={{ width: '1px', height: '16px', background: '#334155' }}></span>
+                    <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>{b.servico}</span>
+                    <span style={{ width: '1px', height: '16px', background: '#334155' }}></span>
+                    <span style={{ fontWeight: 'bold', color: '#f8fafc' }}>{timeStr}</span>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
       </div>
 
       <style dangerouslySetInnerHTML={{__html: `

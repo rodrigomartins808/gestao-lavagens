@@ -8,6 +8,7 @@ import { migrateToSupabase } from '../services/migrationService';
 
 export default function AdminDashboard({ currentUser }) {
   const [activeTab, setActiveTab] = useState('painel');
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [stats, setStats] = useState({ today: null, month: null, global: null });
   const [customers, setCustomers] = useState([]);
   const [inactiveCustomers, setInactiveCustomers] = useState([]);
@@ -38,6 +39,11 @@ export default function AdminDashboard({ currentUser }) {
   const [newCustomerData, setNewCustomerData] = useState({ nome: '', telemovel: '', nif: '' });
   const [selectedCustomerForVehicle, setSelectedCustomerForVehicle] = useState(null);
   const [newVehicleData, setNewVehicleData] = useState({ matricula: '', marca: '', modelo: '' });
+
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 3000);
+  };
 
   useEffect(() => {
     loadData();
@@ -183,7 +189,7 @@ export default function AdminDashboard({ currentUser }) {
       XLSX.writeFile(wb, `posto_gestao_backup_${new Date().toISOString().split('T')[0]}.xlsx`);
     } catch (error) {
       console.error("Erro ao exportar:", error);
-      alert("Ocorreu um erro ao exportar os dados.");
+      showToast("Ocorreu um erro ao exportar os dados.", "error");
     }
   };
 
@@ -193,7 +199,7 @@ export default function AdminDashboard({ currentUser }) {
     const monthWashes = data.washes.filter(w => w.data.startsWith(currentMonth) && w.valor > 0);
     
     if (monthWashes.length === 0) {
-      alert("Não existem lavagens faturadas neste mês.");
+      showToast("Não existem lavagens faturadas neste mês.", "error");
       return;
     }
     
@@ -226,7 +232,7 @@ export default function AdminDashboard({ currentUser }) {
 
   const handleExportInactive = () => {
     if (inactiveCustomers.length === 0) {
-      alert("Não existem clientes inativos.");
+      showToast("Não existem clientes inativos.", "error");
       return;
     }
     const exportData = inactiveCustomers.map(c => ({
@@ -248,7 +254,7 @@ export default function AdminDashboard({ currentUser }) {
   const handleExportTopCustomers = () => {
     const top = [...customers].sort((a, b) => (b.carimbos_acumulados || 0) - (a.carimbos_acumulados || 0)).slice(0, 20);
     if (top.length === 0) {
-      alert("Sem clientes registados.");
+      showToast("Sem clientes registados.", "error");
       return;
     }
     const exportData = top.map(c => ({
@@ -287,7 +293,7 @@ export default function AdminDashboard({ currentUser }) {
   const handleCreateCustomer = async (e) => {
     e.preventDefault();
     if (!newCustomerData.nome || !newCustomerData.telemovel) {
-      alert("Nome e telemóvel são obrigatórios.");
+      showToast("Nome e telemóvel são obrigatórios.", "error");
       return;
     }
     try {
@@ -297,14 +303,14 @@ export default function AdminDashboard({ currentUser }) {
       loadData();
     } catch (err) {
       console.error(err);
-      alert("Erro ao criar cliente.");
+      showToast("Erro ao criar cliente.", "error");
     }
   };
 
   const handleAddVehicleAdmin = async (e) => {
     e.preventDefault();
     if (!newVehicleData.matricula) {
-      alert("Matrícula é obrigatória.");
+      showToast("Matrícula é obrigatória.", "error");
       return;
     }
     try {
@@ -317,7 +323,7 @@ export default function AdminDashboard({ currentUser }) {
       loadData();
     } catch (err) {
       console.error(err);
-      alert("Erro ao adicionar viatura.");
+      showToast("Erro ao adicionar viatura.", "error");
     }
   };
 
@@ -333,7 +339,7 @@ export default function AdminDashboard({ currentUser }) {
       loadData();
     } catch (err) {
       console.error(err);
-      alert("Erro ao remover viatura.");
+      showToast("Erro ao remover viatura.", "error");
     }
   };
 
@@ -356,10 +362,10 @@ export default function AdminDashboard({ currentUser }) {
       // Update in the main list too
       const updatedCustomers = customers.map(c => c.id === updated.id ? { ...c, vales_descontados: currentVales + 1 } : c);
       setCustomers(updatedCustomers);
-      alert('Vale descontado com sucesso!');
+      showToast('Vale descontado com sucesso!', 'success');
     } catch (err) {
       console.error(err);
-      alert('Erro ao descontar vale.');
+      showToast('Erro ao descontar vale.', 'error');
     }
   };
 
@@ -373,10 +379,10 @@ export default function AdminDashboard({ currentUser }) {
   const handleSaveFuelPrices = async () => {
     try {
       await dataService.updateFuelPrices(fuelPrices);
-      alert('Preços atualizados com sucesso! A Landing Page já está a mostrar os novos preços.');
+      showToast('Preços atualizados com sucesso! A Landing Page já está a mostrar os novos preços.', 'success');
     } catch (err) {
       console.error(err);
-      alert('Erro ao atualizar preços.');
+      showToast('Erro ao atualizar preços.', 'error');
     }
   };
 
@@ -387,7 +393,7 @@ export default function AdminDashboard({ currentUser }) {
       setBookings(updatedBookings);
     } catch (err) {
       console.error(err);
-      alert('Erro ao atualizar estado da marcação.');
+      showToast('Erro ao atualizar estado da marcação.', 'error');
     }
   };
 
@@ -408,6 +414,29 @@ export default function AdminDashboard({ currentUser }) {
 
   return (
     <div className="dashboard min-h-screen" style={{ display: 'flex' }}>
+      {/* TOAST NOTIFICATION */}
+      {toast.show && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          backgroundColor: toast.type === 'error' ? '#ef4444' : '#10b981',
+          color: 'white',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          zIndex: 9999,
+          fontWeight: 'bold',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          {toast.type === 'error' ? <AlertTriangle size={20} /> : <Award size={20} />}
+          {toast.message}
+        </div>
+      )}
+
       {/* Sidebar - Vanilla CSS fixing broken layout */}
       <aside style={{ width: '250px', background: 'var(--bg-panel)', padding: '1.5rem', display: 'flex', flexDirection: 'column', borderRight: 'var(--glass-border)' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2rem' }}>

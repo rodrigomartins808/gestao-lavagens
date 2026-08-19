@@ -511,7 +511,7 @@ export default function LandingPage() {
                 height="100%"
                 frameBorder="0"
                 style={{ border: 0, minHeight: '350px', display: 'block' }}
-                src="https://www.openstreetmap.org/export/embed.html?bbox=-8.5260%2C41.4075%2C-8.5185%2C41.4120&layer=mapnik&marker=41.4097%2C-8.5222"
+                src="https://www.openstreetmap.org/export/embed.html?bbox=-8.5248%2C41.4055%2C-8.5173%2C41.4098&layer=mapnik&marker=41.4076%2C-8.5211"
                 allowFullScreen
                 loading="lazy">
               </iframe>

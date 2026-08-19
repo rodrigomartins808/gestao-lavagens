@@ -370,7 +370,7 @@ export default function LandingPage() {
       </section>
 
       {/* Preços em Direto (Minimalista) */}
-      <section id="precos" style={{ padding: 'var(--space-10) 5%', backgroundColor: '#f7f5f2', borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
+      <section id="precos" style={{ padding: 'var(--space-10) 5%', backgroundColor: '#f7f5f2' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '2rem' }}>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>

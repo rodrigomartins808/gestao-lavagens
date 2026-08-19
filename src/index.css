@@ -63,15 +63,6 @@
   animation: fadeInUp 0.5s ease forwards;
 }
 
-@keyframes pulse-btn {
-  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-  70% { transform: scale(1.03); box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
-  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-}
-.btn-pulse {
-  animation: pulse-btn 2s infinite;
-}
-
 .reveal-on-scroll {
   opacity: 0;
   transform: translateY(40px);

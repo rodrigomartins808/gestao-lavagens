@@ -445,26 +445,7 @@ h1, h2, h3, h4, h5, h6 {
   animation: stampPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.stamp.free {
-  border: 2px solid var(--accent-amber);
-  background: rgba(245, 158, 11, 0.1);
-  color: var(--accent-amber);
-  box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
-}
-
-.stamp.free::after {
-  content: 'GRÁTIS';
-  position: absolute;
-  bottom: -20px;
-  font-size: 0.6rem;
-  white-space: nowrap;
-}
-
-.stamp.active.free {
-  background: var(--accent-primary);
-  color: #000;
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
-}
+/* Removed .stamp.free rules per user request */
 
 /* Tables */
 .data-table {

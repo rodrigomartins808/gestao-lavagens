@@ -83,7 +83,7 @@ export default function CustomerPortal({ currentUser }) {
         {/* Marcações */}
         <div style={{ background: 'white', padding: '2rem', borderRadius: '1rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
           <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', color: 'var(--text-primary)' }}>
-            <Calendar style={{ marginRight: '0.5rem', color: '#38bdf8' }} /> Pedir Marcação
+            <Calendar style={{ marginRight: '0.5rem', color: 'var(--accent-red)' }} /> Pedir Marcação
           </h3>
           <p style={{ color: '#64748b', marginBottom: '1.5rem', fontSize: '0.9rem' }}>Os seus dados (nome e telemóvel) serão enviados automaticamente. A nossa equipa entrará em contacto para confirmar.</p>
           {/* Nova Marcação Inteligente */}

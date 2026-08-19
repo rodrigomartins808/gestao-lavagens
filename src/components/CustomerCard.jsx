@@ -123,17 +123,12 @@ export default function CustomerCard({
         <div className="stamp-grid">
           {Array.from({ length: 10 }).map((_, idx) => {
             const isActive = idx < carimbosAtuais;
-            const isFree = idx === 9;
             return (
               <div
                 key={idx}
-                className={`stamp ${isActive ? 'active' : ''} ${isFree ? 'free' : ''}`}
+                className={`stamp ${isActive ? 'active' : ''}`}
               >
-                {isActive ? (
-                  <Check size={20} className="text-white" />
-                ) : isFree ? (
-                  <Award size={20} className="text-yellow-500" />
-                ) : null}
+                {isActive && <Check size={20} className="text-white" />}
               </div>
             );
           })}
@@ -237,7 +232,7 @@ export default function CustomerCard({
                       padding: '0.3rem 0.75rem',
                       borderRadius: '0.375rem'
                     }}>
-                      {wash.valor > 0 ? `${wash.valor.toFixed(2)}€` : 'Grátis'}
+                      {wash.valor > 0 ? `${wash.valor.toFixed(2)}€` : 'Oferta'}
                     </div>
                   </div>
                 )

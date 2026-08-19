@@ -309,10 +309,10 @@ export default function LandingPage() {
           Combustível, mecânica rápida e a melhor lavagem automóvel da cidade. Onde a confiança tem nome próprio.
         </p>
         <div style={{ display: 'flex', gap: 'var(--space-4)', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 'var(--space-16)' }}>
-          <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'var(--accent-red)', color: 'white', padding: '1rem 2.5rem', borderRadius: 'var(--radius-full)', fontWeight: '700', fontSize: '1.125rem', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
-            Agendar Lavagem <ChevronRight size={20} />
+          <button className="btn-pulse" onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'var(--accent-red)', color: 'white', padding: '1.25rem 3rem', borderRadius: 'var(--radius-full)', fontWeight: '800', fontSize: '1.25rem', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.75rem', transition: 'all 0.3s', boxShadow: '0 4px 14px 0 rgba(239, 68, 68, 0.5)' }}>
+            Agendar Marcações <Calendar size={24} />
           </button>
-          <button onClick={() => document.getElementById('servicos').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'white', color: '#111827', padding: '1rem 2.5rem', borderRadius: 'var(--radius-full)', fontWeight: '700', fontSize: '1.125rem', border: '2px solid #e5e7eb', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.borderColor = '#111827'; e.currentTarget.style.background = '#f9fafb'; }} onMouseLeave={e => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.background = 'white'; }}>
+          <button onClick={() => document.getElementById('servicos').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'white', color: '#111827', padding: '1.25rem 3rem', borderRadius: 'var(--radius-full)', fontWeight: '700', fontSize: '1.25rem', border: '2px solid #e5e7eb', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.borderColor = '#111827'; e.currentTarget.style.background = '#f9fafb'; }} onMouseLeave={e => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.background = 'white'; }}>
             Ver Serviços
           </button>
         </div>
@@ -323,55 +323,6 @@ export default function LandingPage() {
           <p style={{ color: '#6b7280', fontSize: '1.25rem', fontWeight: '500', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
             <span style={{ padding: '1rem', border: '2px dashed #374151', borderRadius: 'var(--radius-lg)' }}>[Fotografia do Posto / Edifício a colocar aqui]</span>
           </p>
-        </div>
-      </section>
-
-      {/* Preços em Direto (Painel Digital) */}
-      <section id="precos" style={{ padding: 'var(--space-12) 5%', backgroundColor: '#111827', color: 'white', borderTop: '4px solid var(--accent-red)' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 'var(--space-6)', flexWrap: 'wrap', gap: '1rem' }}>
-            <div>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '700', margin: 0 }}>Cotação de Combustíveis</h2>
-              <p style={{ color: '#9ca3af', fontSize: '0.875rem', marginTop: '0.25rem' }}>Última atualização: Hoje • Preços podem variar no local</p>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10b981', fontSize: '0.875rem', fontWeight: '600', background: 'rgba(16, 185, 129, 0.1)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)' }}>
-              <span style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', display: 'inline-block', boxShadow: '0 0 8px #10b981' }}></span> Preços em Tempo Real
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-6)' }}>
-            <div style={{ background: '#1f2937', padding: 'var(--space-6)', borderRadius: 'var(--radius-lg)', border: '1px solid #374151' }}>
-              <div style={{ color: '#9ca3af', fontSize: '1rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Fuel size={20} /> Gasóleo Simples</div>
-              <div style={{ fontSize: '3.5rem', fontWeight: '900', color: '#f97316', fontFamily: 'monospace', letterSpacing: '-0.05em' }}>{fuelPrices.gasoleo}€</div>
-            </div>
-            <div style={{ background: '#1f2937', padding: 'var(--space-6)', borderRadius: 'var(--radius-lg)', border: '1px solid #374151' }}>
-              <div style={{ color: '#9ca3af', fontSize: '1rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Fuel size={20} /> Gasolina 95</div>
-              <div style={{ fontSize: '3.5rem', fontWeight: '900', color: '#f97316', fontFamily: 'monospace', letterSpacing: '-0.05em' }}>{fuelPrices.gasolina}€</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Sobre Nós */}
-      <section id="sobre" style={{ padding: 'var(--space-24) 5%', backgroundColor: '#f9fafb' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-12)', alignItems: 'center' }}>
-          <div style={{ paddingRight: '2rem' }}>
-            <h2 style={{ fontSize: '2.5rem', fontWeight: '800', color: '#111827', marginBottom: 'var(--space-6)', lineHeight: '1.1' }}>Mais do que um posto. Uma paragem obrigatória.</h2>
-            <p style={{ fontSize: '1.125rem', color: '#4b5563', marginBottom: 'var(--space-4)', lineHeight: '1.7' }}>
-              A GarageM não é apenas um local de passagem. O nosso edifício faz parte da história do centro de Famalicão há mais de 25 anos. Passámos por marcas internacionais como a BP e Prio, mas hoje orgulhamo-nos de ser um espaço com identidade própria e independente.
-            </p>
-            <p style={{ fontSize: '1.125rem', color: '#4b5563', lineHeight: '1.7' }}>
-              Aqui, não é apenas mais um número. Conhecemos os nossos clientes pelo nome, sabemos o que o seu carro precisa e fazemos questão de manter essa proximidade humana. É essa confiança que nos mantém aqui todos os dias.
-            </p>
-          </div>
-          <div style={{ position: 'relative', height: '100%', minHeight: '400px', background: '#e5e7eb', borderRadius: 'var(--radius-xl)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '12rem', fontWeight: '900', color: '#f3f4f6', zIndex: 0, userSelect: 'none', whiteSpace: 'nowrap' }}>
-              est. 199X
-            </div>
-            <p style={{ color: '#9ca3af', fontWeight: '600', zIndex: 1, textAlign: 'center', padding: '1rem', border: '2px dashed #d1d5db', borderRadius: 'var(--radius-lg)' }}>
-              [Placeholder para Fotografia Histórica / Edifício]
-            </p>
-          </div>
         </div>
       </section>
 
@@ -390,6 +341,32 @@ export default function LandingPage() {
             ))}
           </div>
 
+        </div>
+      </section>
+
+      {/* Preços em Direto (Painel Digital) */}
+      <section id="precos" style={{ padding: 'var(--space-12) 5%', backgroundColor: '#f9fafb', color: '#111827', borderTop: '4px solid var(--accent-red)' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 'var(--space-6)', flexWrap: 'wrap', gap: '1rem' }}>
+            <div>
+              <h2 style={{ fontSize: '2.5rem', fontWeight: '800', margin: 0 }}>Cotação de Combustíveis</h2>
+              <p style={{ color: '#4b5563', fontSize: '1.125rem', marginTop: '0.25rem' }}>Última atualização: Hoje • Preços podem variar no local</p>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10b981', fontSize: '0.875rem', fontWeight: '600', background: 'rgba(16, 185, 129, 0.1)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)' }}>
+              <span style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', display: 'inline-block', boxShadow: '0 0 8px #10b981' }}></span> Preços em Tempo Real
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-6)' }}>
+            <div style={{ background: 'white', padding: 'var(--space-8)', borderRadius: 'var(--radius-lg)', border: '1px solid #e5e7eb', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
+              <div style={{ color: '#4b5563', fontSize: '1.125rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Fuel size={24} /> Gasóleo Simples</div>
+              <div style={{ fontSize: '4rem', fontWeight: '900', color: 'var(--accent-red)', fontFamily: 'monospace', letterSpacing: '-0.05em' }}>{fuelPrices.gasoleo}€</div>
+            </div>
+            <div style={{ background: 'white', padding: 'var(--space-8)', borderRadius: 'var(--radius-lg)', border: '1px solid #e5e7eb', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
+              <div style={{ color: '#4b5563', fontSize: '1.125rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Fuel size={24} /> Gasolina 95</div>
+              <div style={{ fontSize: '4rem', fontWeight: '900', color: 'var(--accent-red)', fontFamily: 'monospace', letterSpacing: '-0.05em' }}>{fuelPrices.gasolina}€</div>
+            </div>
+          </div>
         </div>
       </section>
 

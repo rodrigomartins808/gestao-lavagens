@@ -549,9 +549,12 @@ export default function LandingPage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 'var(--space-8)', marginBottom: 'var(--space-12)' }}>
           
           <div>
-            <img src={logo} alt="GarageM" style={{ height: '40px', borderRadius: '4px', filter: 'grayscale(100%) brightness(200%)', marginBottom: 'var(--space-4)' }} />
+            <div style={{ fontSize: '2.5rem', fontWeight: '900', fontFamily: 'system-ui, -apple-system, sans-serif', marginBottom: 'var(--space-4)', letterSpacing: '-0.05em', userSelect: 'none', display: 'flex', alignItems: 'center' }}>
+              <span style={{ color: 'white' }}>Garage</span>
+              <span style={{ color: 'transparent', WebkitTextStroke: '2px var(--accent-red)' }}>M</span>
+            </div>
             <p style={{ color: '#9ca3af', lineHeight: '1.6', marginBottom: 'var(--space-4)', maxWidth: '280px' }}>
-              O posto de abastecimento e serviços automóvel no coração de Famalicão. 
+              O posto de abastecimento e lavagem automóvel no coração de Famalicão. 
             </p>
           </div>
 
@@ -584,7 +587,6 @@ export default function LandingPage() {
           <p>© {new Date().getFullYear()} GarageM. Todos os direitos reservados.</p>
           <div style={{ display: 'flex', gap: '1.5rem' }}>
             <button onClick={() => navigate('/privacidade')} style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color='white'} onMouseLeave={e => e.currentTarget.style.color='#6b7280'}>Política de Privacidade</button>
-            <button style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color='white'} onMouseLeave={e => e.currentTarget.style.color='#6b7280'}>Termos e Condições</button>
           </div>
         </div>
       </footer>

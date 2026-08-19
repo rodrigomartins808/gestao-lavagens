@@ -1084,6 +1084,10 @@ export default function AdminDashboard({ currentUser }) {
                   <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>GPL Auto (€)</label>
                   <input type="text" value={fuelPrices.gas} onChange={e => setFuelPrices({...fuelPrices, gas: e.target.value})} style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
                 </div>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>Gás Botija (Desde, €)</label>
+                  <input type="text" value={fuelPrices.botija || '30.00'} onChange={e => setFuelPrices({...fuelPrices, botija: e.target.value})} style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+                </div>
               </div>
               
               <button onClick={handleSaveFuelPrices} className="btn btn-primary" style={{ marginTop: '2rem', width: '100%', padding: '1rem' }}>

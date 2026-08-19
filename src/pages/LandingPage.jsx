@@ -316,10 +316,15 @@ export default function LandingPage() {
               </div>
               <div style={{ width: isMobile ? '100%' : '1px', height: isMobile ? '1px' : '36px', background: 'rgba(0,0,0,0.1)' }}></div>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#9ca3af', marginBottom: '0.15rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Flame size={12} /> Gás (Galp, Rubis, Cepsa)</span>
+                <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#9ca3af', marginBottom: '0.15rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Fuel size={12} /> GPL Auto</span>
+                <span style={{ fontSize: '2rem', fontWeight: '900', color: '#111827', letterSpacing: '-0.05em', lineHeight: '1' }}>{fuelPrices.gas || '0.89'}€</span>
+              </div>
+              <div style={{ width: isMobile ? '100%' : '1px', height: isMobile ? '1px' : '36px', background: 'rgba(0,0,0,0.1)' }}></div>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#9ca3af', marginBottom: '0.15rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Flame size={12} /> Gás (Galp, Rubis...)</span>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
                   <span style={{ fontSize: '1rem', fontWeight: '600', color: '#9ca3af' }}>Desde</span>
-                  <span style={{ fontSize: '2rem', fontWeight: '900', color: '#111827', letterSpacing: '-0.05em', lineHeight: '1' }}>30.00€</span>
+                  <span style={{ fontSize: '2rem', fontWeight: '900', color: '#111827', letterSpacing: '-0.05em', lineHeight: '1' }}>{fuelPrices.botija || '30.00'}€</span>
                 </div>
               </div>
             </div>

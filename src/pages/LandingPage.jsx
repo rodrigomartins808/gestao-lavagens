@@ -40,9 +40,15 @@ const ServiceBlock = ({ service, index }) => {
         
         <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {service.items.map(item => (
-            <li key={item.name} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: '700', color: '#ffffff', fontSize: '1.25rem', background: 'rgba(255,255,255,0.05)', padding: '0.75rem 1rem', borderRadius: '0.5rem', border: '1px solid rgba(255,255,255,0.1)' }}>
-              <CheckCircle2 size={24} color="var(--accent-red)" /> 
-              {item.name}: <span style={{ color: '#60a5fa', fontWeight: '800', marginLeft: 'auto', fontSize: '1.5rem' }}>{item.price}</span>
+            <li key={item.name} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '0.5rem', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                <CheckCircle2 size={24} color="var(--accent-red)" style={{ marginRight: '0.75rem' }} /> 
+                <span style={{ fontWeight: '700', color: '#ffffff', fontSize: '1.25rem' }}>{item.name}</span>
+                <span style={{ color: '#60a5fa', fontWeight: '800', marginLeft: 'auto', fontSize: '1.5rem' }}>{item.price}</span>
+              </div>
+              {item.desc && (
+                <p style={{ color: '#9ca3af', fontSize: '1rem', margin: '0.25rem 0 0 2.25rem', lineHeight: '1.4' }}>{item.desc}</p>
+              )}
             </li>
           ))}
         </ul>
@@ -50,12 +56,18 @@ const ServiceBlock = ({ service, index }) => {
       
       {/* Imagens Slider */}
       <div style={{ flex: 1, position: 'relative', height: '450px', width: '100%', order: index % 2 === 0 ? 2 : 1 }} className="service-img-col">
-        <div style={{ position: 'relative', width: '100%', height: '100%', borderRadius: 'var(--radius-xl)', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', border: '4px solid #1f2937' }}>
-          <img 
-            src={service.images[currentImage]} 
-            alt={`${service.title} imagem ${currentImage+1}`}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'all 0.4s ease' }}
-          />
+        <div style={{ position: 'relative', width: '100%', height: '100%', borderRadius: 'var(--radius-xl)', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', border: '4px solid #1f2937', background: '#111827' }}>
+          {service.images.map((img, i) => (
+            <img 
+              key={img}
+              src={img} 
+              alt={`${service.title} imagem ${i+1}`}
+              style={{ 
+                position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', 
+                opacity: i === currentImage ? 1 : 0, transition: 'opacity 0.6s ease-in-out' 
+              }}
+            />
+          ))}
           
           {service.images.length > 1 && (
             <>
@@ -105,11 +117,11 @@ export default function LandingPage() {
     {
       id: 'lavagem',
       icon: <Droplets size={28} />,
-      title: 'Lavagem Automóvel Premium',
+      title: 'Lavagem Automóvel',
       description: 'Cuidamos do seu carro ao pormenor. Desde uma lavagem simples com produtos de alta qualidade, até à limpeza profunda de interiores.',
       items: [
-        { name: 'Lavagem Simples', price: '8.50€' },
-        { name: 'Lavagem Completa', price: '15.00€' }
+        { name: 'Lavagem Simples', desc: 'Lavagem exterior e secagem', price: '8.50€' },
+        { name: 'Lavagem Completa', desc: 'Lavagem exterior, aspiração e limpeza de vidros', price: '15.00€' }
       ],
       images: [
         'https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
@@ -306,28 +318,48 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section style={{ paddingTop: 'var(--space-24)', paddingBottom: 'var(--space-16)', paddingLeft: '5%', paddingRight: '5%', backgroundColor: 'white', color: '#111827', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+      <section style={{ 
+          position: 'relative',
+          paddingTop: 'var(--space-32)', 
+          paddingBottom: 'var(--space-24)', 
+          paddingLeft: '5%', 
+          paddingRight: '5%', 
+          color: 'white', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          textAlign: 'center',
+          overflow: 'hidden'
+      }}>
+        {/* Background Layer with Dark Overlay */}
+        <div style={{
+          position: 'absolute', inset: 0, zIndex: -1,
+          backgroundImage: 'url("https://images.unsplash.com/photo-1544256718-3bcf237f3974?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80")',
+          backgroundSize: 'cover', backgroundPosition: 'center'
+        }}></div>
+        <div style={{ position: 'absolute', inset: 0, zIndex: -1, background: 'rgba(17, 24, 39, 0.85)' }}></div>
+
         <h1 style={{ fontSize: 'clamp(3rem, 5vw, 4.5rem)', fontWeight: '800', marginBottom: 'var(--space-4)', lineHeight: '1.1', maxWidth: '900px', letterSpacing: '-0.02em' }}>
           Desde sempre no centro de Famalicão, <span style={{ color: 'var(--accent-red)' }}>sempre ao seu lado.</span>
         </h1>
-        <p style={{ fontSize: '1.25rem', color: '#4b5563', maxWidth: '650px', marginBottom: 'var(--space-8)', lineHeight: '1.6' }}>
+        <p style={{ fontSize: '1.25rem', color: '#d1d5db', maxWidth: '650px', marginBottom: 'var(--space-8)', lineHeight: '1.6' }}>
           Combustível, mecânica rápida e a melhor lavagem automóvel da cidade. Onde a confiança tem nome próprio.
         </p>
         <div style={{ display: 'flex', gap: 'var(--space-4)', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 'var(--space-16)' }}>
           <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'var(--accent-red)', color: 'white', padding: '1rem 2.5rem', borderRadius: 'var(--radius-full)', fontWeight: '700', fontSize: '1.125rem', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
             Agendar Lavagem <ChevronRight size={20} />
           </button>
-          <button onClick={() => document.getElementById('servicos').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'white', color: '#111827', padding: '1rem 2.5rem', borderRadius: 'var(--radius-full)', fontWeight: '700', fontSize: '1.125rem', border: '2px solid #e5e7eb', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.borderColor = '#111827'; e.currentTarget.style.background = '#f9fafb'; }} onMouseLeave={e => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.background = 'white'; }}>
+          <button onClick={() => document.getElementById('servicos').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'rgba(255,255,255,0.1)', color: 'white', padding: '1rem 2.5rem', borderRadius: 'var(--radius-full)', fontWeight: '700', fontSize: '1.125rem', border: '2px solid rgba(255,255,255,0.2)', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.2)'; }} onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}>
             Ver Serviços
           </button>
         </div>
 
-        {/* Hero Image Placeholder */}
-        <div style={{ width: '100%', maxWidth: '1200px', height: '500px', borderRadius: 'var(--radius-xl)', background: '#111827', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ position: 'absolute', inset: 0, opacity: 0.1, backgroundImage: 'radial-gradient(#ffffff 2px, transparent 2px)', backgroundSize: '30px 30px' }}></div>
-          <p style={{ color: '#6b7280', fontSize: '1.25rem', fontWeight: '500', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-            <span style={{ padding: '1rem', border: '2px dashed #374151', borderRadius: 'var(--radius-lg)' }}>[Fotografia do Posto / Edifício a colocar aqui]</span>
-          </p>
+        {/* Hero Image Placeholder (New Facade) */}
+        <div style={{ width: '100%', maxWidth: '1000px', borderRadius: 'var(--radius-xl)', position: 'relative', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)', border: '4px solid rgba(255,255,255,0.1)' }}>
+          <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80" alt="Fachada Atual GarageM" style={{ width: '100%', height: 'auto', display: 'block' }} />
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '1.5rem', background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)' }}>
+            <p style={{ margin: 0, color: 'white', fontWeight: '500', fontSize: '1.1rem', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>A nossa fachada atual — sempre prontos para o receber.</p>
+          </div>
         </div>
       </section>
 
@@ -336,8 +368,8 @@ export default function LandingPage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           
           <div style={{ textAlign: 'center', marginBottom: '6rem' }} className="reveal-on-scroll">
-            <h2 style={{ fontSize: '3rem', fontWeight: '800', color: 'white', margin: 0 }}>Os nossos serviços</h2>
-            <p style={{ color: '#9ca3af', fontSize: '1.125rem', marginTop: '1rem' }}>Qualidade premium ao seu dispor, todos os dias.</p>
+            <h2 style={{ fontSize: '3.5rem', fontWeight: '900', color: 'white', margin: 0 }}>Os nossos serviços</h2>
+            <p style={{ color: '#9ca3af', fontSize: '1.25rem', marginTop: '1rem' }}>O que temos ao seu dispor todos os dias</p>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10rem' }}>

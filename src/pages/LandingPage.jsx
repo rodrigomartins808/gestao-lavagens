@@ -22,6 +22,76 @@ export default function LandingPage() {
   });
 
   // Helpers para Dropdowns Personalizados
+  const [activeServiceId, setActiveServiceId] = useState('lavagem');
+
+  // Dados dos serviços
+  const servicesData = [
+    {
+      id: 'lavagem',
+      icon: <Droplets size={28} />,
+      title: 'Lavagem Automóvel Premium',
+      description: 'Cuidamos do seu carro ao pormenor. Desde uma lavagem simples com produtos de alta qualidade, até à limpeza profunda de interiores.',
+      items: [
+        { name: 'Lavagem Simples', price: '8.50€' },
+        { name: 'Lavagem Completa', price: '15.00€' }
+      ],
+      images: [
+        'https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+        'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+        'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
+      ]
+    },
+    {
+      id: 'mecanica',
+      icon: <Wrench size={28} />,
+      title: 'Mecânica Rápida',
+      description: 'Mudança de óleo, travões, revisões periódicas e pequenos arranjos mecânicos feitos com precisão e rapidez pela nossa equipa.',
+      items: [
+        { name: 'Mecânica Rápida', price: 'Sob consulta' }
+      ],
+      images: [
+        'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+        'https://images.unsplash.com/photo-1632823462947-a87754d9c792?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
+      ]
+    },
+    {
+      id: 'especiais',
+      icon: <Clock size={28} />,
+      title: 'Serviços Especiais',
+      description: 'Polimentos, higienização a ozono, limpeza profunda de estofos e tratamento de peles para devolver o aspeto de novo.',
+      items: [
+        { name: 'Tratamento Especial', price: 'Sob marcação' }
+      ],
+      images: [
+        'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+        'https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
+      ]
+    }
+  ];
+
+  useEffect(() => {
+    // Configurar Intersection Observer para mudar o serviço ativo ao fazer scroll
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveServiceId(entry.target.id.replace('service-', ''));
+          }
+        });
+      },
+      { rootMargin: '-40% 0px -40% 0px' }
+    );
+
+    servicesData.forEach((s) => {
+      const el = document.getElementById(`service-${s.id}`);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [servicesData]);
+
+  const activeService = servicesData.find(s => s.id === activeServiceId) || servicesData[0];
+
   const dateOptions = [];
   const today = new Date();
   const daysPT = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
@@ -234,62 +304,77 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Serviços */}
-      <section id="servicos" style={{ padding: 'var(--space-24) 5%', maxWidth: '1200px', margin: '0 auto', backgroundColor: 'white' }}>
-        <div style={{ marginBottom: 'var(--space-12)' }}>
-          <h2 style={{ fontSize: '2.5rem', fontWeight: '800', color: '#111827', margin: 0 }}>Os nossos serviços</h2>
-        </div>
-        
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
+      {/* Serviços Animados */}
+      <section id="servicos" style={{ backgroundColor: '#111827', position: 'relative' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 5%' }} className="services-layout">
           
-          {/* Serviço Destaque (Lavagem) */}
-          <div style={{ background: '#111827', color: 'white', padding: 'var(--space-12)', borderRadius: 'var(--radius-xl)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'var(--space-8)', alignItems: 'center', borderBottom: '4px solid var(--accent-red)' }}>
-            <div>
+          {/* Coluna Esquerda - Texto Sticky */}
+          <div className="services-left">
+            <div style={{ color: 'white', transition: 'all 0.5s ease', width: '100%' }}>
               <div style={{ width: '56px', height: '56px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--accent-red)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 'var(--space-6)' }}>
-                <Droplets size={28} />
+                {activeService.icon}
               </div>
-              <h3 style={{ fontSize: '2rem', fontWeight: '800', marginBottom: 'var(--space-4)' }}>Lavagem Automóvel Premium</h3>
-              <p style={{ color: '#d1d5db', lineHeight: '1.7', fontSize: '1.125rem', marginBottom: 'var(--space-6)' }}>Desde uma lavagem simples exterior com produtos que protegem a pintura, até a uma lavagem completa com aspiração profunda e limpeza de interiores ao pormenor.</p>
+              <h2 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: 'var(--space-4)' }} key={activeService.id + "-title"} className="fade-in-up">
+                {activeService.title}
+              </h2>
+              <p style={{ color: '#d1d5db', lineHeight: '1.7', fontSize: '1.125rem', marginBottom: 'var(--space-6)' }} key={activeService.id + "-desc"} className="fade-in-up">
+                {activeService.description}
+              </p>
               
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: '600' }}><CheckCircle2 size={20} color="var(--accent-red)" /> Lavagem Exterior: <span style={{ color: '#9ca3af', fontWeight: '400' }}>A partir de X€ (sob consulta)</span></li>
-                <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: '600' }}><CheckCircle2 size={20} color="var(--accent-red)" /> Lavagem Completa: <span style={{ color: '#9ca3af', fontWeight: '400' }}>A partir de X€ (sob consulta)</span></li>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }} key={activeService.id + "-items"} className="fade-in-up">
+                {activeService.items.map(item => (
+                  <li key={item.name} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: '600' }}>
+                    <CheckCircle2 size={20} color="var(--accent-red)" /> 
+                    {item.name}: <span style={{ color: '#9ca3af', fontWeight: '400' }}>{item.price}</span>
+                  </li>
+                ))}
               </ul>
             </div>
-            <div style={{ background: '#1f2937', height: '100%', minHeight: '300px', borderRadius: 'var(--radius-lg)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px dashed #4b5563' }}>
-              <span style={{ color: '#6b7280' }}>[Placeholder Imagem Lavagem]</span>
-            </div>
+          </div>
+          
+          {/* Coluna Direita - Imagens */}
+          <div className="services-right">
+            {servicesData.map((service, index) => (
+              <div 
+                id={`service-${service.id}`} 
+                key={service.id} 
+                className="service-scroll-section"
+                style={{ 
+                  height: '100vh', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  paddingTop: index === 0 ? '20vh' : '0'
+                }}
+              >
+                <div className="service-image-container">
+                  {service.images.map((img, i) => (
+                    <img 
+                      key={img} 
+                      src={img} 
+                      alt={`${service.title} imagem ${i+1}`}
+                      style={{
+                        position: i === 0 ? 'relative' : 'absolute',
+                        width: i === 0 ? '100%' : '60%',
+                        height: i === 0 ? '100%' : '50%',
+                        objectFit: 'cover',
+                        borderRadius: 'var(--radius-xl)',
+                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+                        border: '4px solid #1f2937',
+                        zIndex: 10 - i,
+                        top: i === 1 ? '10%' : (i === 2 ? '60%' : 'auto'),
+                        right: i === 1 ? '-10%' : 'auto',
+                        left: i === 2 ? '-10%' : 'auto',
+                        transform: i === 1 ? 'rotate(3deg)' : (i === 2 ? 'rotate(-3deg)' : 'none'),
+                        transition: 'transform 0.3s ease'
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
 
-          {/* Restantes Serviços */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'var(--space-6)' }}>
-            <div style={{ background: '#f9fafb', padding: 'var(--space-8)', borderRadius: 'var(--radius-xl)', border: '1px solid #e5e7eb' }}>
-              <div style={{ width: '48px', height: '48px', background: 'white', color: '#111827', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 'var(--space-4)', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-                <Wrench size={24} />
-              </div>
-              <h4 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '1rem', color: '#111827' }}>Mecânica Rápida</h4>
-              <p style={{ color: '#4b5563', lineHeight: '1.6', marginBottom: '1.5rem' }}>Mudança de óleo, travões, revisões periódicas e pequenos arranjos mecânicos feitos com precisão.</p>
-              <div style={{ display: 'inline-block', background: '#e5e7eb', color: '#374151', padding: '0.25rem 0.75rem', borderRadius: 'var(--radius-sm)', fontSize: '0.875rem', fontWeight: '600' }}>Preço sob consulta</div>
-            </div>
-
-            <div style={{ background: '#f9fafb', padding: 'var(--space-8)', borderRadius: 'var(--radius-xl)', border: '1px solid #e5e7eb' }}>
-              <div style={{ width: '48px', height: '48px', background: 'white', color: '#111827', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 'var(--space-4)', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-                <Flame size={24} />
-              </div>
-              <h4 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '1rem', color: '#111827' }}>Venda de Gás</h4>
-              <p style={{ color: '#4b5563', lineHeight: '1.6', marginBottom: '1.5rem' }}>Disponibilizamos garrafas de gás com possibilidade de entrega diretamente em sua casa.</p>
-              <div style={{ display: 'inline-block', background: '#e5e7eb', color: '#374151', padding: '0.25rem 0.75rem', borderRadius: 'var(--radius-sm)', fontSize: '0.875rem', fontWeight: '600' }}>Várias marcas disponíveis</div>
-            </div>
-
-            <div style={{ background: '#f9fafb', padding: 'var(--space-8)', borderRadius: 'var(--radius-xl)', border: '1px solid #e5e7eb' }}>
-              <div style={{ width: '48px', height: '48px', background: 'white', color: '#111827', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 'var(--space-4)', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-                <Clock size={24} />
-              </div>
-              <h4 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '1rem', color: '#111827' }}>Serviços Especiais</h4>
-              <p style={{ color: '#4b5563', lineHeight: '1.6', marginBottom: '1.5rem' }}>Polimentos, higienização a ozono, limpeza profunda de estofos e tratamento de peles.</p>
-              <div style={{ display: 'inline-block', background: '#e5e7eb', color: '#374151', padding: '0.25rem 0.75rem', borderRadius: 'var(--radius-sm)', fontSize: '0.875rem', fontWeight: '600' }}>Preço sob marcação</div>
-            </div>
-          </div>
         </div>
       </section>
 

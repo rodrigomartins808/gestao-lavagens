@@ -229,7 +229,18 @@ export default function EmployeeDashboard({ currentUser }) {
       setCreateProfile(!vehicleExists);
     } else {
       setDeliveryCustomer(null);
-      setProfileData({ nome: '', nif: '' });
+      let suggestedName = '';
+      try {
+        const allBookings = await dataService.getBookings();
+        const washBooking = allBookings.find(b => b.matricula.toUpperCase() === wash.matricula.toUpperCase());
+        if (washBooking) {
+           suggestedName = washBooking.nome || '';
+        }
+      } catch (e) {
+        console.error("Erro a buscar marcação para nome", e);
+      }
+      
+      setProfileData({ nome: suggestedName, nif: '' });
       setCreateProfile(false);
     }
   };

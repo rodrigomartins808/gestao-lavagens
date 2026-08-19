@@ -382,7 +382,7 @@ export default function LandingPage() {
           {/* Cotação em Direto - Integrada */}
           <div style={{ background: 'white', borderRadius: '1rem', padding: '1.25rem 2rem', marginBottom: '6rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <div style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', boxShadow: '0 0 12px rgba(16, 185, 129, 0.8)' }}></div>
+              <div className="live-dot" style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', flexShrink: 0 }}></div>
               <span style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#9ca3af' }}>Cotação em Direto</span>
             </div>
             <div style={{ display: 'flex', gap: '3rem', flexWrap: 'wrap', alignItems: 'center' }}>

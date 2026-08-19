@@ -210,7 +210,7 @@ export default function LandingPage() {
           <>
             <nav style={{ display: 'flex', gap: '2rem', fontWeight: '600', color: '#4b5563', fontSize: '1.05rem' }}>
               <button onClick={() => document.getElementById('servicos').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.05rem', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-red)'} onMouseLeave={e => e.currentTarget.style.color = '#4b5563'}>Serviços</button>
-              <button onClick={() => document.getElementById('precos').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.05rem', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-red)'} onMouseLeave={e => e.currentTarget.style.color = '#4b5563'}>Combustível</button>
+
               <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.05rem', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-red)'} onMouseLeave={e => e.currentTarget.style.color = '#4b5563'}>Marcações</button>
               <button onClick={() => document.getElementById('sobre').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.05rem', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-red)'} onMouseLeave={e => e.currentTarget.style.color = '#4b5563'}>Sobre Nós</button>
             </nav>
@@ -237,7 +237,7 @@ export default function LandingPage() {
       {isMobile && isMobileMenuOpen && (
         <div style={{ position: 'fixed', top: '76px', left: 0, right: 0, background: 'white', padding: '1.5rem 5%', display: 'flex', flexDirection: 'column', gap: '1.25rem', zIndex: 99, boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', borderTop: '1px solid #f3f4f6' }}>
           <button onClick={() => { setIsMobileMenuOpen(false); document.getElementById('servicos').scrollIntoView({ behavior: 'smooth' }); }} style={{ padding: '0.5rem 0', textAlign: 'left', background: 'none', border: 'none', fontSize: '1.2rem', fontWeight: '600', color: '#111827' }}>Serviços</button>
-          <button onClick={() => { setIsMobileMenuOpen(false); document.getElementById('precos').scrollIntoView({ behavior: 'smooth' }); }} style={{ padding: '0.5rem 0', textAlign: 'left', background: 'none', border: 'none', fontSize: '1.2rem', fontWeight: '600', color: '#111827' }}>Combustível</button>
+
           <button onClick={() => { setIsMobileMenuOpen(false); document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' }); }} style={{ padding: '0.5rem 0', textAlign: 'left', background: 'none', border: 'none', fontSize: '1.2rem', fontWeight: '600', color: '#111827' }}>Marcações</button>
           <button onClick={() => { setIsMobileMenuOpen(false); document.getElementById('sobre').scrollIntoView({ behavior: 'smooth' }); }} style={{ padding: '0.5rem 0', textAlign: 'left', background: 'none', border: 'none', fontSize: '1.2rem', fontWeight: '600', color: '#111827' }}>Sobre Nós</button>
           <div style={{ width: '100%', height: '1px', background: '#e5e7eb', margin: '0.5rem 0' }}></div>

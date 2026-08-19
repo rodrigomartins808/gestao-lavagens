@@ -364,6 +364,42 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Preços em Direto (Minimalista) */}
+      <section id="precos" style={{ padding: 'var(--space-8) 5%', backgroundColor: 'white' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '2rem' }}>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+             <div style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', boxShadow: '0 0 12px rgba(16, 185, 129, 0.8)' }}></div>
+             <span style={{ fontSize: '0.8rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#9ca3af' }}>Cotação em Direto</span>
+          </div>
+
+          <div style={{ display: 'flex', gap: '4rem', flexWrap: 'wrap', alignItems: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#9ca3af', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Fuel size={14} /> Gasóleo Simples</span>
+              <span style={{ fontSize: '2.5rem', fontWeight: '900', color: '#111827', letterSpacing: '-0.05em', lineHeight: '1' }}>{fuelPrices.gasoleo}€</span>
+            </div>
+            
+            <div style={{ width: '1px', height: '40px', background: '#e5e7eb' }}></div>
+
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#9ca3af', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Fuel size={14} /> Gasolina 95</span>
+              <span style={{ fontSize: '2.5rem', fontWeight: '900', color: '#111827', letterSpacing: '-0.05em', lineHeight: '1' }}>{fuelPrices.gasolina}€</span>
+            </div>
+
+            <div style={{ width: '1px', height: '40px', background: '#e5e7eb' }}></div>
+
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#9ca3af', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Flame size={14} /> Gás (Galp, Rubis, Cepsa)</span>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+                 <span style={{ fontSize: '1rem', fontWeight: '600', color: '#6b7280' }}>Desde</span>
+                 <span style={{ fontSize: '2.5rem', fontWeight: '900', color: '#111827', letterSpacing: '-0.05em', lineHeight: '1' }}>30.00€</span>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </section>
+
       {/* Serviços Animados - Opção B */}
       <section id="servicos" style={{ backgroundColor: '#111827', position: 'relative', padding: 'var(--space-24) 5%', overflow: 'hidden' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
@@ -379,41 +415,6 @@ export default function LandingPage() {
             ))}
           </div>
 
-        </div>
-      </section>
-
-      {/* Preços em Direto (Painel Digital) */}
-      <section id="precos" style={{ padding: 'var(--space-12) 5%', backgroundColor: '#111827', color: 'white', borderTop: '4px solid var(--accent-red)' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 'var(--space-6)', flexWrap: 'wrap', gap: '1rem' }}>
-            <div>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '700', margin: 0 }}>Cotação de Combustíveis</h2>
-              <p style={{ color: '#9ca3af', fontSize: '0.875rem', marginTop: '0.25rem' }}>Última atualização: Hoje • Preços podem variar no local</p>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10b981', fontSize: '0.875rem', fontWeight: '600', background: 'rgba(16, 185, 129, 0.1)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)' }}>
-              <span style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', display: 'inline-block', boxShadow: '0 0 8px #10b981' }}></span> Preços em Tempo Real
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'var(--space-6)' }}>
-            <div style={{ background: '#1f2937', padding: 'var(--space-5)', borderRadius: 'var(--radius-lg)', border: '1px solid #374151' }}>
-              <div style={{ color: '#9ca3af', fontSize: '0.9rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Fuel size={18} /> Gasóleo Simples</div>
-              <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#f97316', fontFamily: 'monospace', letterSpacing: '-0.05em' }}>{fuelPrices.gasoleo}€</div>
-            </div>
-            <div style={{ background: '#1f2937', padding: 'var(--space-5)', borderRadius: 'var(--radius-lg)', border: '1px solid #374151' }}>
-              <div style={{ color: '#9ca3af', fontSize: '0.9rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Fuel size={18} /> Gasolina 95</div>
-              <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#f97316', fontFamily: 'monospace', letterSpacing: '-0.05em' }}>{fuelPrices.gasolina}€</div>
-            </div>
-            <div style={{ background: '#1f2937', padding: 'var(--space-5)', borderRadius: 'var(--radius-lg)', border: '1px solid #374151', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <div style={{ color: '#9ca3af', fontSize: '0.9rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Flame size={18} /> Gás (Galp, Rubis, Cepsa)</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <div style={{ fontSize: '2rem', fontWeight: '900', color: '#f97316', fontFamily: 'monospace', letterSpacing: '-0.05em', lineHeight: '1' }}>Desde 30.00€</div>
-                <div style={{ color: '#10b981', fontSize: '0.8rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                  <span style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', display: 'inline-block' }}></span> Disponível em loja
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 

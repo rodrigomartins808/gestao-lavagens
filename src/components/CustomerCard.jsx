@@ -236,11 +236,18 @@ export default function CustomerCard({
                         if (wash.carimbos_ganhos === 0) return 'Vale 20€ Usado';
                         if (wash.valor > 0) return `${wash.valor.toFixed(2)}€`;
                         
-                        // Estimativa caso não tenha valor
-                        if (wash.tipo_lavagem.includes('Completa')) return '20.00€';
-                        if (wash.tipo_lavagem.includes('Interior')) return '12.00€';
-                        if (wash.tipo_lavagem.includes('Especial')) return '30.00€';
-                        return '10.00€';
+                        const t = wash.tipo_lavagem || '';
+                        // Valores reais baseados na tabela de preços oficial
+                        if (t.includes('Simples') || t.includes('Exterior')) return '8.50€';
+                        if (t.includes('Interior')) return '9.50€';
+                        if (t.includes('Completa')) return '15.00€';
+                        if (t.includes('estofos') || t.includes('Estofos')) return '75.00€';
+                        if (t.includes('plásticos')) return '25.00€';
+                        if (t.includes('Ozono')) return '20.00€';
+                        if (t.includes('bolor')) return '10.00€';
+                        if (t.includes('calcário')) return '22.50€';
+                        
+                        return '--€';
                       })()}
                     </div>
                   </div>

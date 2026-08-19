@@ -61,7 +61,7 @@ const BookingForm = ({ customerData, isMobile }) => {
     'Higienização a Ozono': 2,
     'Remoção de bolor': 1,
     'Remoção calcário dos vidros': 1,
-    'Higienização de Estofos': 10
+    'Higienização de Estofos': 12
   };
 
   const getServiceDuration = (servico) => SERVICE_DURATIONS[servico] || 1;

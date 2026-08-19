@@ -213,9 +213,10 @@ const BookingForm = ({ customerData, isMobile }) => {
             <option>Lavagem Simples</option>
             <option>Lavagem Completa</option>
             <option>Higienização de Estofos</option>
-            <option>Impermeabilização Auto</option>
-            <option>Hidratação de Peles</option>
-            <option>Lavagem de Motor</option>
+            <option>Revitalização de plásticos (internos e externos)</option>
+            <option>Higienização a Ozono</option>
+            <option>Remoção de bolor</option>
+            <option>Remoção calcário dos vidros</option>
           </select>
         </div>
       </div>

@@ -40,10 +40,12 @@ const ServiceBlock = ({ service, index, isMobile }) => {
         <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           {service.items.map(item => (
             <li key={item.name} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', background: 'white', padding: '1rem 1.25rem', borderRadius: '0.75rem', border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                <CheckCircle2 size={22} color="var(--accent-red)" style={{ marginRight: '0.75rem', flexShrink: 0 }} /> 
-                <span style={{ fontWeight: '700', color: '#111827', fontSize: '1.1rem' }}>{item.name}</span>
-                <span style={{ color: 'var(--accent-red)', fontWeight: '800', marginLeft: 'auto', fontSize: '1.1rem', whiteSpace: 'nowrap', paddingLeft: '1rem' }}>{item.price}</span>
+              <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', width: '100%', gap: isMobile ? '0.25rem' : '0' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <CheckCircle2 size={22} color="var(--accent-red)" style={{ marginRight: '0.75rem', flexShrink: 0 }} /> 
+                  <span style={{ fontWeight: '700', color: '#111827', fontSize: isMobile ? '1rem' : '1.1rem' }}>{item.name}</span>
+                </div>
+                <span style={{ color: 'var(--accent-red)', fontWeight: '800', marginLeft: isMobile ? '2.125rem' : 'auto', fontSize: isMobile ? '0.95rem' : '1.1rem', whiteSpace: isMobile ? 'normal' : 'nowrap', paddingLeft: isMobile ? '0' : '1rem' }}>{item.price}</span>
               </div>
               {item.desc && (
                 <p style={{ color: '#6b7280', fontSize: '0.9rem', margin: '0.15rem 0 0 2rem', lineHeight: '1.4' }}>{item.desc}</p>

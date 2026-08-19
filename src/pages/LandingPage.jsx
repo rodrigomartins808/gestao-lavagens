@@ -511,7 +511,7 @@ export default function LandingPage() {
                 height="100%" 
                 frameBorder="0" 
                 style={{ border: 0, minHeight: '350px', display: 'block' }} 
-                src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=pt-PT&amp;q=R.%20S%C3%A3o%20Jo%C3%A3o%20de%20Deus,%204760-114%20Vila%20Nova%20de%20Famalic%C3%A3o&amp;t=&amp;z=17&amp;ie=UTF8&amp;iwloc=B&amp;output=embed" 
+                src="https://maps.google.com/maps?width=100%25&height=600&hl=pt-PT&q=R.%20S%C3%A3o%20Jo%C3%A3o%20de%20Deus,%204760-114%20Vila%20Nova%20de%20Famalic%C3%A3o&t=&z=17&ie=UTF8&iwloc=B&output=embed" 
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade">

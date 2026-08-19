@@ -30,7 +30,7 @@ const ServiceBlock = ({ service, index }) => {
       {/* Texto */}
       <div style={{ flex: 1, order: index % 2 === 0 ? 1 : 2 }} className="service-text-col">
         {/* Icone removido a pedido do utilizador */}
-        <h3 style={{ fontSize: '2rem', fontWeight: '800', marginBottom: 'var(--space-4)', color: '#ffffff', lineHeight: '1.2' }}>
+        <h3 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: 'var(--space-4)', color: '#ffffff', lineHeight: '1.2' }}>
           {service.title}
         </h3>
         <p style={{ color: '#d1d5db', lineHeight: '1.7', fontSize: '1.125rem', marginBottom: 'var(--space-6)' }}>
@@ -349,7 +349,7 @@ export default function LandingPage() {
         <p style={{ fontSize: '1.25rem', color: '#d1d5db', maxWidth: '650px', marginBottom: 'var(--space-8)', lineHeight: '1.6' }}>
           Combustível, mecânica rápida e a melhor lavagem automóvel da cidade. Onde a confiança tem nome próprio.
         </p>
-        <div style={{ display: 'flex', gap: 'var(--space-4)', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 'var(--space-24)' }}>
+        <div style={{ display: 'flex', gap: 'var(--space-4)', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 'var(--space-16)' }}>
           <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'var(--accent-red)', color: 'white', padding: '1rem 2.5rem', borderRadius: 'var(--radius-full)', fontWeight: '700', fontSize: '1.125rem', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
             Agendar Lavagem <ChevronRight size={20} />
           </button>
@@ -364,8 +364,26 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Serviços Animados - Opção B */}
+      <section id="servicos" style={{ backgroundColor: '#111827', position: 'relative', padding: 'var(--space-24) 5%', overflow: 'hidden' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          
+          <div style={{ textAlign: 'center', marginBottom: '6rem' }} className="reveal-on-scroll">
+            <h2 style={{ fontSize: '3.5rem', fontWeight: '900', color: 'white', margin: 0, lineHeight: '1.1' }}>Os nossos serviços</h2>
+            <p style={{ color: '#9ca3af', fontSize: '1.25rem', marginTop: '0.25rem' }}>O que temos ao seu dispor todos os dias</p>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10rem' }}>
+            {servicesData.map((service, index) => (
+              <ServiceBlock key={service.id} service={service} index={index} />
+            ))}
+          </div>
+
+        </div>
+      </section>
+
       {/* Preços em Direto (Painel Digital) */}
-      <section id="precos" style={{ padding: 'var(--space-32) 5%', backgroundColor: '#111827', color: 'white', borderTop: '4px solid var(--accent-red)' }}>
+      <section id="precos" style={{ padding: 'var(--space-12) 5%', backgroundColor: '#111827', color: 'white', borderTop: '4px solid var(--accent-red)' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 'var(--space-6)', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
@@ -377,20 +395,20 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-6)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'var(--space-6)' }}>
             <div style={{ background: '#1f2937', padding: 'var(--space-5)', borderRadius: 'var(--radius-lg)', border: '1px solid #374151' }}>
-              <div style={{ color: '#9ca3af', fontSize: '1rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Fuel size={20} /> Gasóleo Simples</div>
-              <div style={{ fontSize: '2rem', fontWeight: '900', color: '#f97316', fontFamily: 'monospace', letterSpacing: '-0.05em' }}>{fuelPrices.gasoleo}€</div>
+              <div style={{ color: '#9ca3af', fontSize: '0.9rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Fuel size={18} /> Gasóleo Simples</div>
+              <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#f97316', fontFamily: 'monospace', letterSpacing: '-0.05em' }}>{fuelPrices.gasoleo}€</div>
             </div>
             <div style={{ background: '#1f2937', padding: 'var(--space-5)', borderRadius: 'var(--radius-lg)', border: '1px solid #374151' }}>
-              <div style={{ color: '#9ca3af', fontSize: '1rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Fuel size={20} /> Gasolina 95</div>
-              <div style={{ fontSize: '2rem', fontWeight: '900', color: '#f97316', fontFamily: 'monospace', letterSpacing: '-0.05em' }}>{fuelPrices.gasolina}€</div>
+              <div style={{ color: '#9ca3af', fontSize: '0.9rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Fuel size={18} /> Gasolina 95</div>
+              <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#f97316', fontFamily: 'monospace', letterSpacing: '-0.05em' }}>{fuelPrices.gasolina}€</div>
             </div>
             <div style={{ background: '#1f2937', padding: 'var(--space-5)', borderRadius: 'var(--radius-lg)', border: '1px solid #374151', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <div style={{ color: '#9ca3af', fontSize: '1rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Flame size={20} /> Gás (Galp, Rubis, Cepsa)</div>
+              <div style={{ color: '#9ca3af', fontSize: '0.9rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Flame size={18} /> Gás (Galp, Rubis, Cepsa)</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <div style={{ fontSize: '2rem', fontWeight: '900', color: '#f97316', fontFamily: 'monospace', letterSpacing: '-0.05em', lineHeight: '1' }}>Desde 30.00€</div>
-                <div style={{ color: '#10b981', fontSize: '0.875rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                <div style={{ color: '#10b981', fontSize: '0.8rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                   <span style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', display: 'inline-block' }}></span> Disponível em loja
                 </div>
               </div>
@@ -399,26 +417,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Serviços Animados - Opção B */}
-      <section id="servicos" style={{ backgroundColor: '#111827', position: 'relative', padding: 'var(--space-32) 5%', overflow: 'hidden' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          
-          <div style={{ textAlign: 'center', marginBottom: '8rem' }} className="reveal-on-scroll">
-            <h2 style={{ fontSize: '2rem', fontWeight: '900', color: 'white', margin: 0, lineHeight: '1.1' }}>Os nossos serviços</h2>
-            <p style={{ color: '#9ca3af', fontSize: '1.25rem', marginTop: '0.25rem' }}>O que temos ao seu dispor todos os dias</p>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12rem' }}>
-            {servicesData.map((service, index) => (
-              <ServiceBlock key={service.id} service={service} index={index} />
-            ))}
-          </div>
-
-        </div>
-      </section>
-
       {/* Marcações e Mapa */}
-      <section id="agendar" style={{ padding: 'var(--space-32) 5%', background: '#f9fafb', borderTop: '1px solid #e5e7eb' }}>
+      <section id="agendar" style={{ padding: 'var(--space-24) 5%', background: '#f9fafb', borderTop: '1px solid #e5e7eb' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: 'var(--space-16)' }}>
           
           {/* Form */}
@@ -523,10 +523,10 @@ export default function LandingPage() {
       </section>
 
       {/* Sobre Nós */}
-      <section id="sobre" style={{ padding: 'var(--space-32) 5%', backgroundColor: '#f9fafb' }}>
+      <section id="sobre" style={{ padding: 'var(--space-24) 5%', backgroundColor: '#f9fafb' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-12)', alignItems: 'center' }}>
           <div style={{ paddingRight: '2rem' }}>
-            <h2 style={{ fontSize: '2rem', fontWeight: '800', color: '#111827', marginBottom: 'var(--space-6)', lineHeight: '1.1' }}>Mais do que um posto. Uma paragem obrigatória.</h2>
+            <h2 style={{ fontSize: '2.5rem', fontWeight: '800', color: '#111827', marginBottom: 'var(--space-6)', lineHeight: '1.1' }}>Mais do que um posto. Uma paragem obrigatória.</h2>
             <p style={{ fontSize: '1.125rem', color: '#4b5563', marginBottom: 'var(--space-4)', lineHeight: '1.7' }}>
               A GarageM não é apenas um local de passagem. O nosso edifício faz parte da história do centro de Famalicão há mais de 25 anos. Passámos por marcas internacionais como a BP e Prio, mas hoje orgulhamo-nos de ser um espaço com identidade própria e independente.
             </p>

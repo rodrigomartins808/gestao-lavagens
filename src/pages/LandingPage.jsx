@@ -28,9 +28,7 @@ const ServiceBlock = ({ service, index }) => {
     >
       {/* Texto */}
       <div style={{ flex: 1, order: index % 2 === 0 ? 1 : 2 }} className="service-text-col">
-        <div style={{ width: '64px', height: '64px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--accent-red)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 'var(--space-6)' }}>
-          {service.icon}
-        </div>
+        {/* Icone removido a pedido do utilizador */}
         <h3 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: 'var(--space-4)', color: '#ffffff', lineHeight: '1.2' }}>
           {service.title}
         </h3>
@@ -135,7 +133,7 @@ export default function LandingPage() {
       title: 'Mecânica Rápida',
       description: 'Mudança de óleo, travões, revisões periódicas e pequenos arranjos mecânicos feitos com precisão e rapidez pela nossa equipa.',
       items: [
-        { name: 'Mecânica Rápida', price: 'Sob consulta' }
+        { name: 'Serviços simples de mecânica', price: 'Sob consulta presencial' }
       ],
       images: [
         'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
@@ -148,7 +146,10 @@ export default function LandingPage() {
       title: 'Serviços Especiais',
       description: 'Polimentos, higienização a ozono, limpeza profunda de estofos e tratamento de peles para devolver o aspeto de novo.',
       items: [
-        { name: 'Tratamento Especial', price: 'Sob marcação' }
+        { name: 'Polimento de Óticas', price: '30.00€' },
+        { name: 'Higienização a Ozono', price: '25.00€' },
+        { name: 'Limpeza de Estofos', price: '60.00€' },
+        { name: 'Tratamento de Peles', price: '40.00€' }
       ],
       images: [
         'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
@@ -402,6 +403,15 @@ export default function LandingPage() {
             <div style={{ background: '#1f2937', padding: 'var(--space-6)', borderRadius: 'var(--radius-lg)', border: '1px solid #374151' }}>
               <div style={{ color: '#9ca3af', fontSize: '1rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Fuel size={20} /> Gasolina 95</div>
               <div style={{ fontSize: '3.5rem', fontWeight: '900', color: '#f97316', fontFamily: 'monospace', letterSpacing: '-0.05em' }}>{fuelPrices.gasolina}€</div>
+            </div>
+            <div style={{ background: '#1f2937', padding: 'var(--space-6)', borderRadius: 'var(--radius-lg)', border: '1px solid #374151', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div style={{ color: '#9ca3af', fontSize: '1rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Flame size={20} /> Gás (Várias Marcas)</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#f97316', fontFamily: 'monospace', letterSpacing: '-0.05em', lineHeight: '1' }}>Desde {fuelPrices.gas}€</div>
+                <div style={{ color: '#10b981', fontSize: '0.875rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                  <span style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', display: 'inline-block' }}></span> Disponível em loja
+                </div>
+              </div>
             </div>
           </div>
         </div>

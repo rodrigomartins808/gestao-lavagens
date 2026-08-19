@@ -123,7 +123,17 @@
     height: 40vh;
   }
 }
-
+@media (max-width: 768px) {
+  .service-block-container {
+    flex-direction: column !important;
+  }
+  .service-text-col, .service-img-col {
+    order: unset !important;
+  }
+  .service-img-col {
+    height: 300px !important;
+  }
+}
 body {
   font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   background-color: var(--bg-darker);

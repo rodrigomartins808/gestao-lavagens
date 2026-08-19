@@ -1,8 +1,84 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Fuel, Droplets, Wrench, Calendar, MapPin, ChevronRight, User, Flame, Phone, Clock, CheckCircle2 } from 'lucide-react';
+import { Fuel, Droplets, Wrench, Calendar, MapPin, ChevronRight, ChevronLeft, User, Flame, Phone, Clock, CheckCircle2 } from 'lucide-react';
 import dataService from '../services/dataService';
 import logo from '../assets/logo.jpeg';
+
+// -- Add ServiceBlock above LandingPage --
+const ServiceBlock = ({ service, index }) => {
+  const [currentImage, setCurrentImage] = useState(0);
+
+  const nextImage = () => {
+    setCurrentImage((prev) => (prev + 1) % service.images.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImage((prev) => (prev - 1 + service.images.length) % service.images.length);
+  };
+
+  return (
+    <div 
+      className="reveal-on-scroll service-block-container"
+      style={{ 
+        display: 'flex', 
+        flexDirection: 'row', // Default will be row, we will handle responsive in CSS
+        gap: '4rem',
+        alignItems: 'center'
+      }}
+    >
+      {/* Texto */}
+      <div style={{ flex: 1, order: index % 2 === 0 ? 1 : 2 }} className="service-text-col">
+        <div style={{ width: '64px', height: '64px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--accent-red)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 'var(--space-6)' }}>
+          {service.icon}
+        </div>
+        <h3 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: 'var(--space-4)', color: '#ffffff', lineHeight: '1.2' }}>
+          {service.title}
+        </h3>
+        <p style={{ color: '#d1d5db', lineHeight: '1.7', fontSize: '1.125rem', marginBottom: 'var(--space-6)' }}>
+          {service.description}
+        </p>
+        
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {service.items.map(item => (
+            <li key={item.name} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: '700', color: '#ffffff', fontSize: '1.25rem', background: 'rgba(255,255,255,0.05)', padding: '0.75rem 1rem', borderRadius: '0.5rem', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <CheckCircle2 size={24} color="var(--accent-red)" /> 
+              {item.name}: <span style={{ color: '#60a5fa', fontWeight: '800', marginLeft: 'auto', fontSize: '1.5rem' }}>{item.price}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      
+      {/* Imagens Slider */}
+      <div style={{ flex: 1, position: 'relative', height: '450px', width: '100%', order: index % 2 === 0 ? 2 : 1 }} className="service-img-col">
+        <div style={{ position: 'relative', width: '100%', height: '100%', borderRadius: 'var(--radius-xl)', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', border: '4px solid #1f2937' }}>
+          <img 
+            src={service.images[currentImage]} 
+            alt={`${service.title} imagem ${currentImage+1}`}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'all 0.4s ease' }}
+          />
+          
+          {service.images.length > 1 && (
+            <>
+              <button onClick={prevImage} style={{ position: 'absolute', top: '50%', left: '1rem', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', borderRadius: '50%', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 20 }}>
+                <ChevronLeft size={24} />
+              </button>
+              <button onClick={nextImage} style={{ position: 'absolute', top: '50%', right: '1rem', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', borderRadius: '50%', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 20 }}>
+                <ChevronRight size={24} />
+              </button>
+              
+              {/* Dots */}
+              <div style={{ position: 'absolute', bottom: '1rem', left: '0', right: '0', display: 'flex', justifyContent: 'center', gap: '0.5rem', zIndex: 20 }}>
+                {service.images.map((_, i) => (
+                  <div key={i} style={{ width: '10px', height: '10px', borderRadius: '50%', background: i === currentImage ? 'var(--accent-red)' : 'rgba(255,255,255,0.5)', transition: 'background 0.3s ease' }} />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -308,64 +384,9 @@ export default function LandingPage() {
             <p style={{ color: '#9ca3af', fontSize: '1.125rem', marginTop: '1rem' }}>Qualidade premium ao seu dispor, todos os dias.</p>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10rem' }}>
             {servicesData.map((service, index) => (
-              <div 
-                key={service.id} 
-                className="reveal-on-scroll"
-                style={{ 
-                  display: 'flex', 
-                  flexDirection: window.innerWidth > 768 ? (index % 2 === 0 ? 'row' : 'row-reverse') : 'column',
-                  gap: '4rem',
-                  alignItems: 'center'
-                }}
-              >
-                {/* Texto */}
-                <div style={{ flex: 1 }}>
-                  <div style={{ width: '64px', height: '64px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--accent-red)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 'var(--space-6)' }}>
-                    {service.icon}
-                  </div>
-                  <h3 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: 'var(--space-4)', color: '#ffffff', lineHeight: '1.2' }}>
-                    {service.title}
-                  </h3>
-                  <p style={{ color: '#d1d5db', lineHeight: '1.7', fontSize: '1.125rem', marginBottom: 'var(--space-6)' }}>
-                    {service.description}
-                  </p>
-                  
-                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    {service.items.map(item => (
-                      <li key={item.name} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: '600', color: '#f3f4f6', fontSize: '1.125rem' }}>
-                        <CheckCircle2 size={24} color="var(--accent-red)" /> 
-                        {item.name}: <span style={{ color: '#9ca3af', fontWeight: '400' }}>{item.price}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                
-                {/* Imagens */}
-                <div style={{ flex: 1, position: 'relative', height: window.innerWidth > 768 ? '450px' : '300px', width: '100%' }}>
-                  {service.images.slice(0, 2).map((img, i) => (
-                    <img 
-                      key={img} 
-                      src={img} 
-                      alt={`${service.title} imagem ${i+1}`}
-                      style={{
-                        position: 'absolute',
-                        width: '75%',
-                        height: '80%',
-                        objectFit: 'cover',
-                        borderRadius: 'var(--radius-xl)',
-                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-                        border: '4px solid #1f2937',
-                        zIndex: 10 - i,
-                        top: i === 0 ? '0' : '20%',
-                        right: i === 0 ? (index % 2 === 0 ? '0' : 'auto') : (index % 2 === 0 ? 'auto' : '0'),
-                        left: i === 0 ? (index % 2 === 0 ? 'auto' : '0') : (index % 2 === 0 ? '0' : 'auto'),
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
+              <ServiceBlock key={service.id} service={service} index={index} />
             ))}
           </div>
 

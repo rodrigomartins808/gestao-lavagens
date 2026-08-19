@@ -295,7 +295,12 @@ export default function LandingPage() {
       {/* Header */}
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 'var(--space-4) 5%', backgroundColor: '#f7f5f2', boxShadow: '0 1px 0 rgba(0,0,0,0.08)', position: 'sticky', top: 0, zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <img src={logo} alt="GarageM Logo" style={{ height: '60px', borderRadius: 'var(--radius-md)' }} />
+          <img 
+            src={logo} 
+            alt="GarageM Logo" 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            style={{ height: '60px', cursor: 'pointer', mixBlendMode: 'multiply' }} 
+          />
         </div>
         
         <nav style={{ display: 'flex', gap: '2rem', fontWeight: '600', color: '#4b5563', fontSize: '1.05rem' }}>

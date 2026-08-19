@@ -291,9 +291,9 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="landing-page" style={{ minHeight: '100vh', backgroundColor: '#ffffff', color: '#333333' }}>
+    <div className="landing-page" style={{ minHeight: '100vh', backgroundColor: '#f7f5f2', color: '#1a1a1a' }}>
       {/* Header */}
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 'var(--space-4) 5%', backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', position: 'sticky', top: 0, zIndex: 100 }}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 'var(--space-4) 5%', backgroundColor: '#f7f5f2', boxShadow: '0 1px 0 rgba(0,0,0,0.08)', position: 'sticky', top: 0, zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <img src={logo} alt="GarageM Logo" style={{ height: '60px', borderRadius: 'var(--radius-md)' }} />
         </div>
@@ -365,7 +365,7 @@ export default function LandingPage() {
       </section>
 
       {/* Preços em Direto (Minimalista) */}
-      <section id="precos" style={{ padding: 'var(--space-8) 5%', backgroundColor: 'white' }}>
+      <section id="precos" style={{ padding: 'var(--space-10) 5%', backgroundColor: '#f7f5f2', borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '2rem' }}>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -375,24 +375,24 @@ export default function LandingPage() {
 
           <div style={{ display: 'flex', gap: '4rem', flexWrap: 'wrap', alignItems: 'center' }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#9ca3af', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Fuel size={14} /> Gasóleo Simples</span>
-              <span style={{ fontSize: '2.5rem', fontWeight: '900', color: '#111827', letterSpacing: '-0.05em', lineHeight: '1' }}>{fuelPrices.gasoleo}€</span>
+              <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#78716c', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Fuel size={14} /> Gasóleo Simples</span>
+              <span style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1c1917', letterSpacing: '-0.05em', lineHeight: '1' }}>{fuelPrices.gasoleo}€</span>
             </div>
             
-            <div style={{ width: '1px', height: '40px', background: '#e5e7eb' }}></div>
+            <div style={{ width: '1px', height: '40px', background: 'rgba(0,0,0,0.12)' }}></div>
 
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#9ca3af', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Fuel size={14} /> Gasolina 95</span>
-              <span style={{ fontSize: '2.5rem', fontWeight: '900', color: '#111827', letterSpacing: '-0.05em', lineHeight: '1' }}>{fuelPrices.gasolina}€</span>
+              <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#78716c', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Fuel size={14} /> Gasolina 95</span>
+              <span style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1c1917', letterSpacing: '-0.05em', lineHeight: '1' }}>{fuelPrices.gasolina}€</span>
             </div>
 
-            <div style={{ width: '1px', height: '40px', background: '#e5e7eb' }}></div>
+            <div style={{ width: '1px', height: '40px', background: 'rgba(0,0,0,0.12)' }}></div>
 
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#9ca3af', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Flame size={14} /> Gás (Galp, Rubis, Cepsa)</span>
+              <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#78716c', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Flame size={14} /> Gás (Galp, Rubis, Cepsa)</span>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
-                 <span style={{ fontSize: '1rem', fontWeight: '600', color: '#6b7280' }}>Desde</span>
-                 <span style={{ fontSize: '2.5rem', fontWeight: '900', color: '#111827', letterSpacing: '-0.05em', lineHeight: '1' }}>30.00€</span>
+                 <span style={{ fontSize: '1rem', fontWeight: '600', color: '#78716c' }}>Desde</span>
+                 <span style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1c1917', letterSpacing: '-0.05em', lineHeight: '1' }}>30.00€</span>
               </div>
             </div>
           </div>
@@ -419,11 +419,11 @@ export default function LandingPage() {
       </section>
 
       {/* Marcações e Mapa */}
-      <section id="agendar" style={{ padding: 'var(--space-24) 5%', background: '#f9fafb', borderTop: '1px solid #e5e7eb' }}>
+      <section id="agendar" className="section-dots" style={{ padding: 'var(--space-24) 5%', background: '#f7f5f2' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: 'var(--space-16)' }}>
           
           {/* Form */}
-          <div style={{ background: 'white', padding: 'var(--space-8)', borderRadius: 'var(--radius-xl)', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)' }}>
+          <div style={{ background: 'white', padding: 'var(--space-8)', borderRadius: 'var(--radius-xl)', boxShadow: '0 8px 32px rgba(0,0,0,0.10), 0 1px 0 rgba(255,255,255,0.9)' }}>
             <h3 style={{ fontSize: '2rem', fontWeight: '800', marginBottom: 'var(--space-2)', color: '#111827' }}>Agendar Serviço</h3>
             <p style={{ color: '#4b5563', marginBottom: 'var(--space-8)', lineHeight: '1.6' }}>Preencha o formulário e garantimos o seu lugar. Entraremos em contacto para confirmar.</p>
             
@@ -507,7 +507,7 @@ export default function LandingPage() {
               <h3 style={{ fontSize: '2rem', fontWeight: '800', marginBottom: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#111827' }}><MapPin size={28} color="var(--accent-red)" /> Onde nos encontrar</h3>
               <p style={{ color: '#4b5563', lineHeight: '1.6' }}>R. São João de Deus, 4760-114<br/>Vila Nova de Famalicão</p>
             </div>
-            <div style={{ width: '100%', height: '100%', minHeight: '300px', borderRadius: 'var(--radius-xl)', overflow: 'hidden', border: '1px solid #e5e7eb', background: '#e5e7eb' }}>
+            <div style={{ width: '100%', height: '100%', minHeight: '300px', borderRadius: 'var(--radius-xl)', overflow: 'hidden', border: '1px solid rgba(0,0,0,0.1)', background: '#e8e4df' }}>
               <iframe 
                 title="Google Maps Location"
                 width="100%" 
@@ -524,7 +524,7 @@ export default function LandingPage() {
       </section>
 
       {/* Sobre Nós */}
-      <section id="sobre" style={{ padding: 'var(--space-24) 5%', backgroundColor: '#f9fafb' }}>
+      <section id="sobre" className="section-dots" style={{ padding: 'var(--space-24) 5%', backgroundColor: '#f7f5f2' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-12)', alignItems: 'center' }}>
           <div style={{ paddingRight: '2rem' }}>
             <h2 style={{ fontSize: '2.5rem', fontWeight: '800', color: '#111827', marginBottom: 'var(--space-6)', lineHeight: '1.1' }}>Mais do que um posto. Uma paragem obrigatória.</h2>

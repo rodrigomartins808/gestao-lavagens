@@ -30,23 +30,23 @@ const ServiceBlock = ({ service, index }) => {
       {/* Texto */}
       <div style={{ flex: 1, order: index % 2 === 0 ? 1 : 2 }} className="service-text-col">
         {/* Icone removido a pedido do utilizador */}
-        <h3 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: 'var(--space-4)', color: '#ffffff', lineHeight: '1.2' }}>
+        <h3 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: 'var(--space-4)', color: '#111827', lineHeight: '1.2' }}>
           {service.title}
         </h3>
-        <p style={{ color: '#d1d5db', lineHeight: '1.7', fontSize: '1.125rem', marginBottom: 'var(--space-6)' }}>
+        <p style={{ color: '#4b5563', lineHeight: '1.7', fontSize: '1.125rem', marginBottom: 'var(--space-6)' }}>
           {service.description}
         </p>
         
-        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           {service.items.map(item => (
-            <li key={item.name} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '0.5rem', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <li key={item.name} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', background: 'white', padding: '1rem 1.25rem', borderRadius: '0.75rem', border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
               <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                <CheckCircle2 size={24} color="var(--accent-red)" style={{ marginRight: '0.75rem' }} /> 
-                <span style={{ fontWeight: '700', color: '#ffffff', fontSize: '1.25rem' }}>{item.name}</span>
-                <span style={{ color: '#60a5fa', fontWeight: '800', marginLeft: 'auto', fontSize: '1.5rem' }}>{item.price}</span>
+                <CheckCircle2 size={22} color="var(--accent-red)" style={{ marginRight: '0.75rem', flexShrink: 0 }} /> 
+                <span style={{ fontWeight: '700', color: '#111827', fontSize: '1.1rem' }}>{item.name}</span>
+                <span style={{ color: 'var(--accent-red)', fontWeight: '800', marginLeft: 'auto', fontSize: '1.25rem' }}>{item.price}</span>
               </div>
               {item.desc && (
-                <p style={{ color: '#9ca3af', fontSize: '1rem', margin: '0.25rem 0 0 2.25rem', lineHeight: '1.4' }}>{item.desc}</p>
+                <p style={{ color: '#6b7280', fontSize: '0.9rem', margin: '0.15rem 0 0 2rem', lineHeight: '1.4' }}>{item.desc}</p>
               )}
             </li>
           ))}
@@ -55,7 +55,7 @@ const ServiceBlock = ({ service, index }) => {
       
       {/* Imagens Slider */}
       <div style={{ flex: 1, position: 'relative', height: '450px', width: '100%', order: index % 2 === 0 ? 2 : 1 }} className="service-img-col">
-        <div style={{ position: 'relative', width: '100%', height: '100%', borderRadius: 'var(--radius-xl)', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', border: '4px solid #1f2937', background: '#111827' }}>
+        <div style={{ position: 'relative', width: '100%', height: '100%', borderRadius: 'var(--radius-xl)', overflow: 'hidden', boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)', border: '1px solid rgba(0,0,0,0.08)', background: '#e8e4df' }}>
           {service.images.map((img, i) => (
             <img 
               key={img}
@@ -400,13 +400,13 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Serviços Animados - Opção B */}
-      <section id="servicos" style={{ backgroundColor: '#111827', position: 'relative', padding: 'var(--space-24) 5%', overflow: 'hidden' }}>
+      {/* Serviços Animados */}
+      <section id="servicos" style={{ backgroundColor: '#f7f5f2', position: 'relative', padding: 'var(--space-24) 5%', overflow: 'hidden' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           
           <div style={{ textAlign: 'center', marginBottom: '6rem' }} className="reveal-on-scroll">
-            <h2 style={{ fontSize: '3.5rem', fontWeight: '900', color: 'white', margin: 0, lineHeight: '1.1' }}>Os nossos serviços</h2>
-            <p style={{ color: '#9ca3af', fontSize: '1.25rem', marginTop: '0.25rem' }}>O que temos ao seu dispor todos os dias</p>
+            <h2 style={{ fontSize: '3.5rem', fontWeight: '900', color: '#111827', margin: 0, lineHeight: '1.1' }}>Os nossos serviços</h2>
+            <p style={{ color: '#6b7280', fontSize: '1.25rem', marginTop: '0.25rem' }}>O que temos ao seu dispor todos os dias</p>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10rem' }}>

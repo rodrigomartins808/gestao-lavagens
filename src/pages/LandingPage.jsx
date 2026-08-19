@@ -314,7 +314,7 @@ export default function LandingPage() {
               <div style={{ width: '56px', height: '56px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--accent-red)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 'var(--space-6)' }}>
                 {activeService.icon}
               </div>
-              <h2 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: 'var(--space-4)' }} key={activeService.id + "-title"} className="fade-in-up">
+              <h2 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: 'var(--space-4)', color: '#ffffff' }} key={activeService.id + "-title"} className="fade-in-up">
                 {activeService.title}
               </h2>
               <p style={{ color: '#d1d5db', lineHeight: '1.7', fontSize: '1.125rem', marginBottom: 'var(--space-6)' }} key={activeService.id + "-desc"} className="fade-in-up">
@@ -323,7 +323,7 @@ export default function LandingPage() {
               
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }} key={activeService.id + "-items"} className="fade-in-up">
                 {activeService.items.map(item => (
-                  <li key={item.name} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: '600' }}>
+                  <li key={item.name} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: '600', color: '#f3f4f6' }}>
                     <CheckCircle2 size={20} color="var(--accent-red)" /> 
                     {item.name}: <span style={{ color: '#9ca3af', fontWeight: '400' }}>{item.price}</span>
                   </li>

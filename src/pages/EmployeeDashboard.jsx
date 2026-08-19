@@ -342,7 +342,7 @@ export default function EmployeeDashboard({ currentUser }) {
           whatsappService.openWhatsApp(deliveryWash.telemovel, [
             `Obrigado pela visita! 💧`,
             `Acabou de ganhar +1 carimbo. (Total: ${newStamps}/10)`,
-            `Faltam ${10 - newStamps} para a sua lavagem grátis!`,
+            `Faltam ${10 - newStamps} para o seu Vale de Desconto em Serviços Especiais!`,
             '',
             `Pode ver o seu cartão aqui: ${window.location.hostname === 'localhost' ? 'https://garagemmlavagens.vercel.app' : window.location.origin}/cartao?id=${finalCustomerId}`
           ].join('\n'));
@@ -368,7 +368,7 @@ export default function EmployeeDashboard({ currentUser }) {
       // WhatsApp message for free wash
       whatsappService.openWhatsApp(deliveryCustomer.telemovel, [
         `Olá ${deliveryCustomer.nome.split(' ')[0]}!`,
-        `Acabou de usar a sua 🎁 Lavagem Grátis! Esperamos que o seu carro fique impecável.`,
+        `Acabou de usar o seu 🎁 Vale de Desconto em Serviços Especiais! Esperamos que o seu carro fique impecável.`,
         '',
         `Obrigado pela preferência e até à próxima! 💧`
       ].join('\n'));
@@ -855,7 +855,7 @@ export default function EmployeeDashboard({ currentUser }) {
                       <CheckCircle size={20} /> Cliente Fidelizado!
                     </h3>
                     {deliveryCustomer.lavagens_gratuitas > 0 ? (
-                      <p style={{ marginTop: '0.5rem', color: '#854d0e', fontWeight: 'bold' }}>🎁 O cliente tem 1 Lavagem Grátis disponível!</p>
+                      <p style={{ marginTop: '0.5rem', color: '#854d0e', fontWeight: 'bold' }}>🎁 O cliente tem 1 Vale de Desconto para Serviços Especiais disponível!</p>
                     ) : (
                       <p style={{ marginTop: '0.5rem', color: '#64748b' }}>Mais um carimbo ganho hoje. ({deliveryCustomer.carimbos_acumulados}/10)</p>
                     )}

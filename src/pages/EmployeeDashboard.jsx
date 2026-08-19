@@ -217,18 +217,19 @@ export default function EmployeeDashboard({ currentUser }) {
 
   const handleOpenDelivery = async (wash) => {
     setDeliveryWash(wash);
-    setProfileData({ nome: '', nif: '' });
     
     if (wash.cliente_id) {
       const customer = await dataService.getCustomerById(wash.cliente_id);
       const vehicles = await dataService.getVehiclesByCustomer(wash.cliente_id);
       setDeliveryCustomer({ ...customer, viaturas: vehicles });
+      setProfileData({ nome: customer.nome, nif: customer.nif || '' });
       
       // Auto-check association if vehicle doesn't exist
       const vehicleExists = vehicles.some(v => v.matricula.toUpperCase() === wash.matricula.toUpperCase());
       setCreateProfile(!vehicleExists);
     } else {
       setDeliveryCustomer(null);
+      setProfileData({ nome: '', nif: '' });
       setCreateProfile(false);
     }
   };
@@ -249,7 +250,7 @@ export default function EmployeeDashboard({ currentUser }) {
         const newCustomer = await dataService.createCustomer({
           nome: profileData.nome,
           telemovel: deliveryWash.telemovel,
-          nif: profileData.nif
+          nif: profileData.nif || null
         });
         
         const marcaModelo = (deliveryWash.marca_modelo || '').trim();
@@ -276,6 +277,11 @@ export default function EmployeeDashboard({ currentUser }) {
       } else if (finalCustomerId) {
         // Já tinha cliente detetado desde o início
         gaveStamps = true;
+        
+        // Atualizar o NIF do cliente caso tenha sido inserido/alterado agora
+        if (deliveryCustomer && deliveryCustomer.nif !== profileData.nif) {
+          await dataService.updateCustomer(finalCustomerId, { nif: profileData.nif || null });
+        }
         
         // Se a opção de associar viatura foi marcada
         if (createProfile) {
@@ -842,6 +848,11 @@ export default function EmployeeDashboard({ currentUser }) {
                     ) : (
                       <p style={{ marginTop: '0.5rem', color: '#64748b' }}>Mais um carimbo ganho hoje. ({deliveryCustomer.carimbos_acumulados}/10)</p>
                     )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm text-gray-700 mb-1">NIF do Cliente (Opcional)</label>
+                    <input type="text" className="input" placeholder="Não definido" value={profileData.nif} onChange={e => setProfileData({...profileData, nif: e.target.value})} />
                   </div>
                   
                   {deliveryCustomer.viaturas && !deliveryCustomer.viaturas.some(v => v.matricula.toUpperCase() === deliveryWash.matricula.toUpperCase()) && (

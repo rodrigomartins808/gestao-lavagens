@@ -127,7 +127,7 @@ export default function LandingPage() {
       id: 'mecanica',
       icon: <Wrench size={28} />,
       title: 'Mecânica Rápida',
-      description: 'Mudança de óleo, travões e pequenos arranjos mecânicos feitos com precisão pela nossa equipa.',
+      description: 'Pequenos arranjos mecânicos feitos com precisão pela nossa equipa.',
       items: [
         { name: 'Serviços simples de mecânica', price: 'Sob consulta presencial' }
       ],

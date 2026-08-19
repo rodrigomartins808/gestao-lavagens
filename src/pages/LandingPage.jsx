@@ -43,7 +43,7 @@ const ServiceBlock = ({ service, index }) => {
               <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                 <CheckCircle2 size={22} color="var(--accent-red)" style={{ marginRight: '0.75rem', flexShrink: 0 }} /> 
                 <span style={{ fontWeight: '700', color: '#111827', fontSize: '1.1rem' }}>{item.name}</span>
-                <span style={{ color: 'var(--accent-red)', fontWeight: '800', marginLeft: 'auto', fontSize: '1.25rem' }}>{item.price}</span>
+                <span style={{ color: 'var(--accent-red)', fontWeight: '800', marginLeft: 'auto', fontSize: '1.1rem', whiteSpace: 'nowrap', paddingLeft: '1rem' }}>{item.price}</span>
               </div>
               {item.desc && (
                 <p style={{ color: '#6b7280', fontSize: '0.9rem', margin: '0.15rem 0 0 2rem', lineHeight: '1.4' }}>{item.desc}</p>
@@ -133,7 +133,7 @@ export default function LandingPage() {
       id: 'mecanica',
       icon: <Wrench size={28} />,
       title: 'Mecânica Rápida',
-      description: 'Mudança de óleo, travões, revisões periódicas e pequenos arranjos mecânicos feitos com precisão e rapidez pela nossa equipa.',
+      description: 'Mudança de óleo, travões e pequenos arranjos mecânicos feitos com precisão pela nossa equipa.',
       items: [
         { name: 'Serviços simples de mecânica', price: 'Sob consulta presencial' }
       ],
@@ -361,7 +361,7 @@ export default function LandingPage() {
         </div>
 
         {/* Hero Image Placeholder (New Facade) */}
-        <div style={{ width: '100%', maxWidth: '1000px', aspectRatio: '16/9', borderRadius: 'var(--radius-xl)', position: 'relative', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)', border: '4px solid rgba(255,255,255,0.1)' }}>
+        <div style={{ width: '100%', maxWidth: '1000px', aspectRatio: '16/9', borderRadius: 'var(--radius-xl)', position: 'relative', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
           <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80" alt="Fachada Atual GarageM" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '1.5rem', background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)' }}>
             <p style={{ margin: 0, color: 'white', fontWeight: '500', fontSize: '1.1rem', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>A nossa fachada atual — sempre prontos para o receber.</p>

@@ -505,18 +505,25 @@ export default function LandingPage() {
               <p style={{ color: '#4b5563', lineHeight: '1.6' }}>R. São João de Deus, 4760-114 Vila Nova de Famalicão</p>
             </div>
             <div style={{ width: '100%', height: '100%', minHeight: '350px', borderRadius: 'var(--radius-xl)', overflow: 'hidden', border: '1px solid rgba(0,0,0,0.1)' }}>
-              <iframe 
-                title="GarageM - R. São João de Deus, Vila Nova de Famalicão"
-                width="100%" 
-                height="100%" 
-                frameBorder="0" 
-                style={{ border: 0, minHeight: '350px', display: 'block' }} 
-                src="https://maps.google.com/maps?width=100%25&height=600&hl=pt-PT&q=R.%20S%C3%A3o%20Jo%C3%A3o%20de%20Deus,%204760-114%20Vila%20Nova%20de%20Famalic%C3%A3o&t=&z=17&ie=UTF8&iwloc=B&output=embed" 
+              <iframe
+                title="Localização GarageM - R. São João de Deus, Vila Nova de Famalicão"
+                width="100%"
+                height="100%"
+                frameBorder="0"
+                style={{ border: 0, minHeight: '350px', display: 'block' }}
+                src="https://www.openstreetmap.org/export/embed.html?bbox=-8.5260%2C41.4075%2C-8.5185%2C41.4120&layer=mapnik&marker=41.4097%2C-8.5222"
                 allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade">
+                loading="lazy">
               </iframe>
             </div>
+            <a 
+              href="https://www.google.com/maps/search/R.+S%C3%A3o+Jo%C3%A3o+de+Deus,+4760-114+Vila+Nova+de+Famalic%C3%A3o" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem', color: 'var(--accent-red)', fontWeight: '600', textDecoration: 'none', marginTop: '0.75rem' }}
+            >
+              <MapPin size={14} /> Abrir no Google Maps ↗
+            </a>
           </div>
 
         </div>

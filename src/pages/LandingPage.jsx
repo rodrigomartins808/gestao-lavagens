@@ -231,8 +231,8 @@ export default function LandingPage() {
   const getServicePoints = (servico) => {
     if (!servico) return 30;
     if (servico.includes('Simples')) return 20; // max 3 por 30m
-    if (servico.includes('Completa') || servico.includes('Especiais') || servico.includes('Mecânica')) return 30; // max 2 por 30m
-    return 10; // Gás
+    if (servico.includes('Gás')) return 10;
+    return 30; // max 2 por 30m para os restantes serviços pesados
   };
   const MAX_POINTS = 60;
 
@@ -489,7 +489,10 @@ export default function LandingPage() {
                     <select value={bookingForm.servico} onChange={e => setBookingForm({...bookingForm, servico: e.target.value})} style={{ padding: '0.75rem', borderRadius: '0.5rem', border: '1.5px solid #d1d5db', outline: 'none', background: 'white', transition: 'border-color 0.2s', width: '100%', appearance: 'none' }} onFocus={e => e.target.style.borderColor = 'var(--accent-red)'} onBlur={e => e.target.style.borderColor = '#d1d5db'}>
                       <option>Lavagem Simples</option>
                       <option>Lavagem Completa</option>
-                      <option>Serviços Especiais</option>
+                      <option>Higienização de Estofos</option>
+                      <option>Impermeabilização Auto</option>
+                      <option>Hidratação de Peles</option>
+                      <option>Lavagem de Motor</option>
                       <option>Mecânica Rápida</option>
                     </select>
                   </div>
@@ -519,7 +522,7 @@ export default function LandingPage() {
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <label style={{ fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem', color: '#374151' }}>Levantamento *</label>
                     <select required value={bookingForm.hora_levantamento} onChange={e => setBookingForm({...bookingForm, hora_levantamento: e.target.value})} style={{ padding: '0.75rem', borderRadius: '0.5rem', border: '1.5px solid #d1d5db', outline: 'none', transition: 'border-color 0.2s', width: '100%', appearance: 'none', background: 'url("data:image/svg+xml;utf8,<svg fill=%27%239ca3af%27 height=%2724%27 viewBox=%270 0 24 24%27 width=%2724%27 xmlns=%27http://www.w3.org/2000/svg%27><path d=%27M7 10l5 5 5-5z%27/></svg>") no-repeat right 0.75rem center/1.25rem white' }} onFocus={e => e.target.style.borderColor = 'var(--accent-red)'} onBlur={e => e.target.style.borderColor = '#d1d5db'}>
-                      {levantamentoOptions.map(t => <option key={t} value={t}>{t}</option>)}
+                      {levantamentoOptions.filter(t => t > bookingForm.hora_chegada).map(t => <option key={t} value={t}>{t}</option>)}
                     </select>
                   </div>
                 </div>

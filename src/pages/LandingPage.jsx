@@ -503,7 +503,7 @@ export default function LandingPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
             <div>
               <h3 style={{ fontSize: '2rem', fontWeight: '800', marginBottom: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#111827' }}><MapPin size={28} color="var(--accent-red)" /> Onde nos encontrar</h3>
-              <p style={{ color: '#4b5563', lineHeight: '1.6' }}>Praça do Município, Vila Nova de Famalicão.<br/>Mesmo em frente à Câmara Municipal.</p>
+              <p style={{ color: '#4b5563', lineHeight: '1.6' }}>R. São João de Deus, 4760-114<br/>Vila Nova de Famalicão</p>
             </div>
             <div style={{ width: '100%', height: '100%', minHeight: '300px', borderRadius: 'var(--radius-xl)', overflow: 'hidden', border: '1px solid #e5e7eb', background: '#e5e7eb' }}>
               <iframe 
@@ -558,17 +558,16 @@ export default function LandingPage() {
           <div>
             <h4 style={{ color: 'white', fontSize: '1.125rem', fontWeight: '700', marginBottom: 'var(--space-4)' }}>Contactos</h4>
             <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><MapPin size={18} color="#9ca3af"/> Praça do Município, V.N. Famalicão</li>
-              <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Phone size={18} color="#9ca3af"/> <a href="tel:+351000000000" style={{ color: '#d1d5db', textDecoration: 'none' }}>+351 000 000 000</a> (Provisório)</li>
+              <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><MapPin size={18} color="#9ca3af"/> R. São João de Deus, 4760-114 V.N. Famalicão</li>
+              <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Phone size={18} color="#9ca3af"/> <a href="tel:928220150" style={{ color: '#d1d5db', textDecoration: 'none' }}>928 220 150</a></li>
             </ul>
           </div>
 
           <div>
-            <h4 style={{ color: 'white', fontSize: '1.125rem', fontWeight: '700', marginBottom: 'var(--space-4)' }}>Horário (Provisório)</h4>
+            <h4 style={{ color: 'white', fontSize: '1.125rem', fontWeight: '700', marginBottom: 'var(--space-4)' }}>Horário</h4>
             <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem', color: '#9ca3af' }}>
-              <li><strong>Segunda a Sexta:</strong> 08:00 - 20:00</li>
-              <li><strong>Sábados:</strong> 08:00 - 13:00</li>
-              <li><strong>Domingos:</strong> Fechado</li>
+              <li><strong>Segunda a Sábado:</strong> 07:45 - 21:00</li>
+              <li><strong>Domingo e Feriados:</strong> 08:00 - 14:00</li>
             </ul>
           </div>
 

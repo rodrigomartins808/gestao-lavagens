@@ -504,15 +504,17 @@ export default function LandingPage() {
               <h3 style={{ fontSize: '2rem', fontWeight: '800', marginBottom: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#111827' }}><MapPin size={28} color="var(--accent-red)" /> Onde nos encontrar</h3>
               <p style={{ color: '#4b5563', lineHeight: '1.6' }}>R. São João de Deus, 4760-114<br/>Vila Nova de Famalicão</p>
             </div>
-            <div style={{ width: '100%', height: '100%', minHeight: '300px', borderRadius: 'var(--radius-xl)', overflow: 'hidden', border: '1px solid rgba(0,0,0,0.1)', background: '#e8e4df' }}>
+            <div style={{ width: '100%', height: '100%', minHeight: '350px', borderRadius: 'var(--radius-xl)', overflow: 'hidden', border: '1px solid rgba(0,0,0,0.1)' }}>
               <iframe 
-                title="Google Maps Location"
+                title="GarageM - R. São João de Deus, Vila Nova de Famalicão"
                 width="100%" 
                 height="100%" 
                 frameBorder="0" 
-                style={{ border: 0, minHeight: '300px' }} 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2983.33644033604!2d-8.5222014!3d41.4097486!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDI0JzM1LjEiTiA4wrAzMScyMC4wIlc!5e0!3m2!1spt-PT!2spt!4v1620000000000!5m2!1spt-PT!2spt" 
-                allowFullScreen>
+                style={{ border: 0, minHeight: '350px', display: 'block' }} 
+                src="https://maps.google.com/maps?q=R.+S%C3%A3o+Jo%C3%A3o+de+Deus%2C+4760+Vila+Nova+de+Famalicao%2C+Portugal&t=&z=17&ie=UTF8&iwloc=&output=embed" 
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade">
               </iframe>
             </div>
           </div>

@@ -502,7 +502,7 @@ export default function LandingPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
             <div>
               <h3 style={{ fontSize: '2rem', fontWeight: '800', marginBottom: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#111827' }}><MapPin size={28} color="var(--accent-red)" /> Onde nos encontrar</h3>
-              <p style={{ color: '#4b5563', lineHeight: '1.6' }}>R. São João de Deus, 4760-114<br/>Vila Nova de Famalicão</p>
+              <p style={{ color: '#4b5563', lineHeight: '1.6' }}>R. São João de Deus, 4760-114 Vila Nova de Famalicão</p>
             </div>
             <div style={{ width: '100%', height: '100%', minHeight: '350px', borderRadius: 'var(--radius-xl)', overflow: 'hidden', border: '1px solid rgba(0,0,0,0.1)' }}>
               <iframe 
@@ -511,7 +511,7 @@ export default function LandingPage() {
                 height="100%" 
                 frameBorder="0" 
                 style={{ border: 0, minHeight: '350px', display: 'block' }} 
-                src="https://maps.google.com/maps?q=R.+S%C3%A3o+Jo%C3%A3o+de+Deus%2C+4760+Vila+Nova+de+Famalicao%2C+Portugal&t=&z=17&ie=UTF8&iwloc=&output=embed" 
+                src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=pt-PT&amp;q=R.%20S%C3%A3o%20Jo%C3%A3o%20de%20Deus,%204760-114%20Vila%20Nova%20de%20Famalic%C3%A3o&amp;t=&amp;z=17&amp;ie=UTF8&amp;iwloc=B&amp;output=embed" 
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade">

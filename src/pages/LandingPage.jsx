@@ -70,27 +70,22 @@ export default function LandingPage() {
   ];
 
   useEffect(() => {
-    // Configurar Intersection Observer para mudar o serviço ativo ao fazer scroll
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setActiveServiceId(entry.target.id.replace('service-', ''));
+            entry.target.classList.add('is-visible');
           }
         });
       },
-      { rootMargin: '-40% 0px -40% 0px' }
+      { threshold: 0.15 }
     );
 
-    servicesData.forEach((s) => {
-      const el = document.getElementById(`service-${s.id}`);
-      if (el) observer.observe(el);
-    });
+    const elements = document.querySelectorAll('.reveal-on-scroll');
+    elements.forEach((el) => observer.observe(el));
 
     return () => observer.disconnect();
   }, [servicesData]);
-
-  const activeService = servicesData.find(s => s.id === activeServiceId) || servicesData[0];
 
   const dateOptions = [];
   const today = new Date();
@@ -304,69 +299,68 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Serviços Animados */}
-      <section id="servicos" style={{ backgroundColor: '#111827', position: 'relative' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 5%' }} className="services-layout">
+      {/* Serviços Animados - Opção B */}
+      <section id="servicos" style={{ backgroundColor: '#111827', position: 'relative', padding: 'var(--space-24) 5%', overflow: 'hidden' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           
-          {/* Coluna Esquerda - Texto Sticky */}
-          <div className="services-left">
-            <div style={{ color: 'white', transition: 'all 0.5s ease', width: '100%' }}>
-              <div style={{ width: '56px', height: '56px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--accent-red)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 'var(--space-6)' }}>
-                {activeService.icon}
-              </div>
-              <h2 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: 'var(--space-4)', color: '#ffffff' }} key={activeService.id + "-title"} className="fade-in-up">
-                {activeService.title}
-              </h2>
-              <p style={{ color: '#d1d5db', lineHeight: '1.7', fontSize: '1.125rem', marginBottom: 'var(--space-6)' }} key={activeService.id + "-desc"} className="fade-in-up">
-                {activeService.description}
-              </p>
-              
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }} key={activeService.id + "-items"} className="fade-in-up">
-                {activeService.items.map(item => (
-                  <li key={item.name} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: '600', color: '#f3f4f6' }}>
-                    <CheckCircle2 size={20} color="var(--accent-red)" /> 
-                    {item.name}: <span style={{ color: '#9ca3af', fontWeight: '400' }}>{item.price}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          <div style={{ textAlign: 'center', marginBottom: '6rem' }} className="reveal-on-scroll">
+            <h2 style={{ fontSize: '3rem', fontWeight: '800', color: 'white', margin: 0 }}>Os nossos serviços</h2>
+            <p style={{ color: '#9ca3af', fontSize: '1.125rem', marginTop: '1rem' }}>Qualidade premium ao seu dispor, todos os dias.</p>
           </div>
-          
-          {/* Coluna Direita - Imagens */}
-          <div className="services-right">
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8rem' }}>
             {servicesData.map((service, index) => (
               <div 
-                id={`service-${service.id}`} 
                 key={service.id} 
-                className="service-scroll-section"
+                className="reveal-on-scroll"
                 style={{ 
-                  height: '100vh', 
                   display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  paddingTop: index === 0 ? '20vh' : '0'
+                  flexDirection: window.innerWidth > 768 ? (index % 2 === 0 ? 'row' : 'row-reverse') : 'column',
+                  gap: '4rem',
+                  alignItems: 'center'
                 }}
               >
-                <div className="service-image-container">
-                  {service.images.map((img, i) => (
+                {/* Texto */}
+                <div style={{ flex: 1 }}>
+                  <div style={{ width: '64px', height: '64px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--accent-red)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 'var(--space-6)' }}>
+                    {service.icon}
+                  </div>
+                  <h3 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: 'var(--space-4)', color: '#ffffff', lineHeight: '1.2' }}>
+                    {service.title}
+                  </h3>
+                  <p style={{ color: '#d1d5db', lineHeight: '1.7', fontSize: '1.125rem', marginBottom: 'var(--space-6)' }}>
+                    {service.description}
+                  </p>
+                  
+                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {service.items.map(item => (
+                      <li key={item.name} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: '600', color: '#f3f4f6', fontSize: '1.125rem' }}>
+                        <CheckCircle2 size={24} color="var(--accent-red)" /> 
+                        {item.name}: <span style={{ color: '#9ca3af', fontWeight: '400' }}>{item.price}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                
+                {/* Imagens */}
+                <div style={{ flex: 1, position: 'relative', height: window.innerWidth > 768 ? '450px' : '300px', width: '100%' }}>
+                  {service.images.slice(0, 2).map((img, i) => (
                     <img 
                       key={img} 
                       src={img} 
                       alt={`${service.title} imagem ${i+1}`}
                       style={{
-                        position: i === 0 ? 'relative' : 'absolute',
-                        width: i === 0 ? '100%' : '60%',
-                        height: i === 0 ? '100%' : '50%',
+                        position: 'absolute',
+                        width: '75%',
+                        height: '80%',
                         objectFit: 'cover',
                         borderRadius: 'var(--radius-xl)',
                         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
                         border: '4px solid #1f2937',
                         zIndex: 10 - i,
-                        top: i === 1 ? '10%' : (i === 2 ? '60%' : 'auto'),
-                        right: i === 1 ? '-10%' : 'auto',
-                        left: i === 2 ? '-10%' : 'auto',
-                        transform: i === 1 ? 'rotate(3deg)' : (i === 2 ? 'rotate(-3deg)' : 'none'),
-                        transition: 'transform 0.3s ease'
+                        top: i === 0 ? '0' : '20%',
+                        right: i === 0 ? (index % 2 === 0 ? '0' : 'auto') : (index % 2 === 0 ? 'auto' : '0'),
+                        left: i === 0 ? (index % 2 === 0 ? 'auto' : '0') : (index % 2 === 0 ? '0' : 'auto'),
                       }}
                     />
                   ))}

@@ -303,8 +303,8 @@ export default function LandingPage() {
         </nav>
 
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'var(--accent-red)', color: 'white', padding: '0.5rem 1.25rem', borderRadius: 'var(--radius-full)', fontWeight: '700', fontSize: '0.95rem', border: 'none', cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#dc2626'} onMouseLeave={e => e.currentTarget.style.background = 'var(--accent-red)'}>
-            Agendar Marcação
+          <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'var(--accent-red)', color: 'white', padding: '0.5rem 1.25rem', borderRadius: 'var(--radius-full)', fontWeight: '700', fontSize: '0.95rem', border: 'none', cursor: 'pointer', textAlign: 'center', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#dc2626'} onMouseLeave={e => e.currentTarget.style.background = 'var(--accent-red)'}>
+            Agendar Lavagem
           </button>
           <button 
             onClick={() => navigate('/cartao')}
@@ -349,9 +349,6 @@ export default function LandingPage() {
         <div style={{ display: 'flex', gap: 'var(--space-4)', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 'var(--space-16)' }}>
           <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'var(--accent-red)', color: 'white', padding: '1rem 2.5rem', borderRadius: 'var(--radius-full)', fontWeight: '700', fontSize: '1.125rem', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
             Agendar Lavagem <ChevronRight size={20} />
-          </button>
-          <button onClick={() => document.getElementById('servicos').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'rgba(255,255,255,0.1)', color: 'white', padding: '1rem 2.5rem', borderRadius: 'var(--radius-full)', fontWeight: '700', fontSize: '1.125rem', border: '2px solid rgba(255,255,255,0.2)', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.2)'; }} onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}>
-            Ver Serviços
           </button>
         </div>
 

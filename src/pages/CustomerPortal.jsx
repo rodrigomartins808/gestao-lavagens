@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { LogOut, Award, Calendar, Droplets } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
 import dataService from '../services/dataService';
 import BookingForm from '../components/BookingForm';
 import CustomerCard from '../components/CustomerCard';
@@ -10,11 +9,10 @@ export default function CustomerPortal({ currentUser }) {
   const [customerData, setCustomerData] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { logout } = useAuth();
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await dataService.logout();
       navigate('/');
     } catch (err) {
       console.error(err);

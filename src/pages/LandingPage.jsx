@@ -369,41 +369,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Preços em Direto (Minimalista) */}
-      <section id="precos" style={{ padding: 'var(--space-10) 5%', backgroundColor: '#f7f5f2' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '2rem' }}>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-             <div style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', boxShadow: '0 0 12px rgba(16, 185, 129, 0.8)' }}></div>
-             <span style={{ fontSize: '0.8rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#9ca3af' }}>Cotação em Direto</span>
-          </div>
-
-          <div style={{ display: 'flex', gap: '4rem', flexWrap: 'wrap', alignItems: 'center' }}>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#78716c', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Fuel size={14} /> Gasóleo Simples</span>
-              <span style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1c1917', letterSpacing: '-0.05em', lineHeight: '1' }}>{fuelPrices.gasoleo}€</span>
-            </div>
-            
-            <div style={{ width: '1px', height: '40px', background: 'rgba(0,0,0,0.12)' }}></div>
-
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#78716c', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Fuel size={14} /> Gasolina 95</span>
-              <span style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1c1917', letterSpacing: '-0.05em', lineHeight: '1' }}>{fuelPrices.gasolina}€</span>
-            </div>
-
-            <div style={{ width: '1px', height: '40px', background: 'rgba(0,0,0,0.12)' }}></div>
-
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#78716c', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Flame size={14} /> Gás (Galp, Rubis, Cepsa)</span>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
-                 <span style={{ fontSize: '1rem', fontWeight: '600', color: '#78716c' }}>Desde</span>
-                 <span style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1c1917', letterSpacing: '-0.05em', lineHeight: '1' }}>30.00€</span>
-              </div>
-            </div>
-          </div>
-          
-        </div>
-      </section>
 
       {/* Serviços Animados */}
       <section id="servicos" style={{ backgroundColor: '#f7f5f2', position: 'relative', padding: 'var(--space-24) 5%', overflow: 'hidden' }}>
@@ -412,6 +377,33 @@ export default function LandingPage() {
           <div style={{ textAlign: 'center', marginBottom: '6rem' }} className="reveal-on-scroll">
             <h2 style={{ fontSize: '3.5rem', fontWeight: '900', color: '#111827', margin: 0, lineHeight: '1.1' }}>Os nossos serviços</h2>
             <p style={{ color: '#6b7280', fontSize: '1.25rem', marginTop: '0.25rem' }}>O que temos ao seu dispor todos os dias</p>
+          </div>
+
+          {/* Cotação em Direto - Integrada */}
+          <div style={{ background: 'white', borderRadius: '1rem', padding: '1.25rem 2rem', marginBottom: '6rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', boxShadow: '0 0 12px rgba(16, 185, 129, 0.8)' }}></div>
+              <span style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#9ca3af' }}>Cotação em Direto</span>
+            </div>
+            <div style={{ display: 'flex', gap: '3rem', flexWrap: 'wrap', alignItems: 'center' }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#9ca3af', marginBottom: '0.15rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Fuel size={12} /> Gasóleo Simples</span>
+                <span style={{ fontSize: '2rem', fontWeight: '900', color: '#111827', letterSpacing: '-0.05em', lineHeight: '1' }}>{fuelPrices.gasoleo}€</span>
+              </div>
+              <div style={{ width: '1px', height: '36px', background: 'rgba(0,0,0,0.1)' }}></div>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#9ca3af', marginBottom: '0.15rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Fuel size={12} /> Gasolina 95</span>
+                <span style={{ fontSize: '2rem', fontWeight: '900', color: '#111827', letterSpacing: '-0.05em', lineHeight: '1' }}>{fuelPrices.gasolina}€</span>
+              </div>
+              <div style={{ width: '1px', height: '36px', background: 'rgba(0,0,0,0.1)' }}></div>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#9ca3af', marginBottom: '0.15rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Flame size={12} /> Gás (Galp, Rubis, Cepsa)</span>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
+                  <span style={{ fontSize: '1rem', fontWeight: '600', color: '#9ca3af' }}>Desde</span>
+                  <span style={{ fontSize: '2rem', fontWeight: '900', color: '#111827', letterSpacing: '-0.05em', lineHeight: '1' }}>30.00€</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10rem' }}>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Fuel, Droplets, Wrench, Calendar, MapPin, ChevronRight, ChevronLeft, User, Flame, Phone, Clock, CheckCircle2 } from 'lucide-react';
 import dataService from '../services/dataService';
 import logo from '../assets/logo.jpeg';
+import logoWhite from '../assets/logo-white.png';
 
 // -- Add ServiceBlock above LandingPage --
 const ServiceBlock = ({ service, index }) => {
@@ -549,10 +550,7 @@ export default function LandingPage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 'var(--space-8)', marginBottom: 'var(--space-12)' }}>
           
           <div>
-            <div style={{ fontSize: '2.5rem', fontWeight: '900', fontFamily: 'system-ui, -apple-system, sans-serif', marginBottom: 'var(--space-4)', letterSpacing: '-0.05em', userSelect: 'none', display: 'flex', alignItems: 'center' }}>
-              <span style={{ color: 'white' }}>Garage</span>
-              <span style={{ color: 'transparent', WebkitTextStroke: '2px var(--accent-red)' }}>M</span>
-            </div>
+            <img src={logoWhite} alt="GarageM" style={{ height: '32px', marginBottom: 'var(--space-4)' }} />
             <p style={{ color: '#9ca3af', lineHeight: '1.6', marginBottom: 'var(--space-4)', maxWidth: '280px' }}>
               O posto de abastecimento e lavagem automóvel no coração de Famalicão. 
             </p>

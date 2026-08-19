@@ -298,20 +298,20 @@ export default function LandingPage() {
           <img src={logo} alt="GarageM Logo" style={{ height: '60px', borderRadius: 'var(--radius-md)' }} />
         </div>
         
-        <nav style={{ display: 'flex', gap: '2rem', fontWeight: '600', color: '#4b5563', fontSize: '0.95rem' }}>
-          <button onClick={() => document.getElementById('servicos').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563' }}>Serviços</button>
-          <button onClick={() => document.getElementById('precos').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563' }}>Combustível</button>
-          <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563' }}>Marcações</button>
-          <button onClick={() => document.getElementById('sobre').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563' }}>Sobre Nós</button>
+        <nav style={{ display: 'flex', gap: '2.5rem', fontWeight: '600', color: '#4b5563', fontSize: '1.15rem' }}>
+          <button onClick={() => document.getElementById('servicos').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.15rem' }}>Serviços</button>
+          <button onClick={() => document.getElementById('precos').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.15rem' }}>Combustível</button>
+          <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.15rem' }}>Marcações</button>
+          <button onClick={() => document.getElementById('sobre').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.15rem' }}>Sobre Nós</button>
         </nav>
 
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'var(--accent-red)', color: 'white', padding: '0.5rem 1.25rem', borderRadius: 'var(--radius-full)', fontWeight: '700', fontSize: '0.95rem', border: 'none', cursor: 'pointer', textAlign: 'center', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#dc2626'} onMouseLeave={e => e.currentTarget.style.background = 'var(--accent-red)'}>
+          <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'var(--accent-red)', color: 'white', padding: '0.6rem 1.5rem', borderRadius: 'var(--radius-full)', fontWeight: '700', fontSize: '1.05rem', border: 'none', cursor: 'pointer', textAlign: 'center', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#dc2626'} onMouseLeave={e => e.currentTarget.style.background = 'var(--accent-red)'}>
             Agendar Lavagem
           </button>
           <button 
             onClick={() => navigate('/cartao')}
-            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'white', color: '#111827', border: '2px solid #e5e7eb', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'white', color: '#111827', border: '2px solid #e5e7eb', padding: '0.6rem 1.25rem', borderRadius: 'var(--radius-full)', fontWeight: '700', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s' }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = '#111827'; }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = '#e5e7eb'; }}
           >

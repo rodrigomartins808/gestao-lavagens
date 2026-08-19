@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Fuel, Droplets, Wrench, Calendar, MapPin, ChevronRight, ChevronLeft, User, Flame, Phone, Clock, CheckCircle2 } from 'lucide-react';
+import { Fuel, Droplets, Wrench, Calendar, MapPin, ChevronRight, ChevronLeft, User, Flame, Phone, Clock, CheckCircle2, Menu, X } from 'lucide-react';
 import dataService from '../services/dataService';
 import logo from '../assets/logo.jpeg';
 import logoWhite from '../assets/logo-white.png';
 
 // -- Add ServiceBlock above LandingPage --
-const ServiceBlock = ({ service, index }) => {
+const ServiceBlock = ({ service, index, isMobile }) => {
   const [currentImage, setCurrentImage] = useState(0);
 
   const nextImage = () => {
@@ -22,18 +22,18 @@ const ServiceBlock = ({ service, index }) => {
       className="reveal-on-scroll service-block-container"
       style={{ 
         display: 'flex', 
-        flexDirection: 'row', // Default will be row, we will handle responsive in CSS
-        gap: '4rem',
+        flexDirection: isMobile ? 'column' : 'row',
+        gap: isMobile ? '2rem' : '4rem',
         alignItems: 'center'
       }}
     >
       {/* Texto */}
-      <div style={{ flex: 1, order: index % 2 === 0 ? 1 : 2 }} className="service-text-col">
+      <div style={{ flex: 1, order: isMobile ? 2 : (index % 2 === 0 ? 1 : 2), width: '100%' }} className="service-text-col">
         {/* Icone removido a pedido do utilizador */}
-        <h3 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: 'var(--space-4)', color: '#111827', lineHeight: '1.2' }}>
+        <h3 style={{ fontSize: isMobile ? '2rem' : '2.5rem', fontWeight: '800', marginBottom: 'var(--space-4)', color: '#111827', lineHeight: '1.2' }}>
           {service.title}
         </h3>
-        <p style={{ color: '#4b5563', lineHeight: '1.7', fontSize: '1.125rem', marginBottom: 'var(--space-6)' }}>
+        <p style={{ color: '#4b5563', lineHeight: '1.7', fontSize: isMobile ? '1rem' : '1.125rem', marginBottom: 'var(--space-6)' }}>
           {service.description}
         </p>
         
@@ -54,7 +54,7 @@ const ServiceBlock = ({ service, index }) => {
       </div>
       
       {/* Imagens Slider */}
-      <div style={{ flex: 1, position: 'relative', height: '450px', width: '100%', order: index % 2 === 0 ? 2 : 1 }} className="service-img-col">
+      <div style={{ flex: 1, position: 'relative', height: isMobile ? '300px' : '450px', width: '100%', order: isMobile ? 1 : (index % 2 === 0 ? 2 : 1) }} className="service-img-col">
         <div style={{ position: 'relative', width: '100%', height: '100%', borderRadius: 'var(--radius-xl)', overflow: 'hidden', boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)', border: '1px solid rgba(0,0,0,0.08)', background: '#e8e4df' }}>
           {service.images.map((img, i) => (
             <img 
@@ -93,7 +93,16 @@ const ServiceBlock = ({ service, index }) => {
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [fuelPrices, setFuelPrices] = useState({ gasoleo: '1.49', gasolina: '1.69', gas: '0.89' });
+  
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const minDate = tomorrow.toISOString().split('T')[0];
@@ -302,35 +311,59 @@ export default function LandingPage() {
             style={{ height: '60px', cursor: 'pointer', mixBlendMode: 'multiply' }} 
           />
         </div>
-        
-        <nav style={{ display: 'flex', gap: '2rem', fontWeight: '600', color: '#4b5563', fontSize: '1.05rem' }}>
-          <button onClick={() => document.getElementById('servicos').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.05rem', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-red)'} onMouseLeave={e => e.currentTarget.style.color = '#4b5563'}>Serviços</button>
-          <button onClick={() => document.getElementById('precos').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.05rem', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-red)'} onMouseLeave={e => e.currentTarget.style.color = '#4b5563'}>Combustível</button>
-          <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.05rem', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-red)'} onMouseLeave={e => e.currentTarget.style.color = '#4b5563'}>Marcações</button>
-          <button onClick={() => document.getElementById('sobre').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.05rem', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-red)'} onMouseLeave={e => e.currentTarget.style.color = '#4b5563'}>Sobre Nós</button>
-        </nav>
+        {isMobile ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'var(--accent-red)', color: 'white', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', fontWeight: '700', fontSize: '0.9rem', border: 'none', cursor: 'pointer' }}>
+              Agendar
+            </button>
+            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#111827', display: 'flex', alignItems: 'center', padding: 0 }}>
+              {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
+          </div>
+        ) : (
+          <>
+            <nav style={{ display: 'flex', gap: '2rem', fontWeight: '600', color: '#4b5563', fontSize: '1.05rem' }}>
+              <button onClick={() => document.getElementById('servicos').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.05rem', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-red)'} onMouseLeave={e => e.currentTarget.style.color = '#4b5563'}>Serviços</button>
+              <button onClick={() => document.getElementById('precos').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.05rem', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-red)'} onMouseLeave={e => e.currentTarget.style.color = '#4b5563'}>Combustível</button>
+              <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.05rem', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-red)'} onMouseLeave={e => e.currentTarget.style.color = '#4b5563'}>Marcações</button>
+              <button onClick={() => document.getElementById('sobre').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.05rem', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-red)'} onMouseLeave={e => e.currentTarget.style.color = '#4b5563'}>Sobre Nós</button>
+            </nav>
 
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'var(--accent-red)', color: 'white', padding: '0.6rem 1.5rem', borderRadius: 'var(--radius-full)', fontWeight: '700', fontSize: '1.05rem', border: 'none', cursor: 'pointer', textAlign: 'center', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#dc2626'} onMouseLeave={e => e.currentTarget.style.background = 'var(--accent-red)'}>
-            Agendar Lavagem
-          </button>
-          <button 
-            onClick={() => navigate('/cartao')}
-            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'white', color: '#111827', border: '2px solid #e5e7eb', padding: '0.6rem 1.25rem', borderRadius: 'var(--radius-full)', fontWeight: '700', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s' }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = '#111827'; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = '#e5e7eb'; }}
-          >
-            <User size={18} />
-            Área de Cliente
-          </button>
-        </div>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'var(--accent-red)', color: 'white', padding: '0.6rem 1.5rem', borderRadius: 'var(--radius-full)', fontWeight: '700', fontSize: '1.05rem', border: 'none', cursor: 'pointer', textAlign: 'center', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#dc2626'} onMouseLeave={e => e.currentTarget.style.background = 'var(--accent-red)'}>
+                Agendar Lavagem
+              </button>
+              <button 
+                onClick={() => navigate('/cartao')}
+                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'white', color: '#111827', border: '2px solid #e5e7eb', padding: '0.6rem 1.25rem', borderRadius: 'var(--radius-full)', fontWeight: '700', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = '#111827'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#e5e7eb'; }}
+              >
+                <User size={18} />
+                Área de Cliente
+              </button>
+            </div>
+          </>
+        )}
       </header>
+
+      {/* Mobile Menu Dropdown */}
+      {isMobile && isMobileMenuOpen && (
+        <div style={{ position: 'fixed', top: '76px', left: 0, right: 0, background: 'white', padding: '1.5rem 5%', display: 'flex', flexDirection: 'column', gap: '1.25rem', zIndex: 99, boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', borderTop: '1px solid #f3f4f6' }}>
+          <button onClick={() => { setIsMobileMenuOpen(false); document.getElementById('servicos').scrollIntoView({ behavior: 'smooth' }); }} style={{ padding: '0.5rem 0', textAlign: 'left', background: 'none', border: 'none', fontSize: '1.2rem', fontWeight: '600', color: '#111827' }}>Serviços</button>
+          <button onClick={() => { setIsMobileMenuOpen(false); document.getElementById('precos').scrollIntoView({ behavior: 'smooth' }); }} style={{ padding: '0.5rem 0', textAlign: 'left', background: 'none', border: 'none', fontSize: '1.2rem', fontWeight: '600', color: '#111827' }}>Combustível</button>
+          <button onClick={() => { setIsMobileMenuOpen(false); document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' }); }} style={{ padding: '0.5rem 0', textAlign: 'left', background: 'none', border: 'none', fontSize: '1.2rem', fontWeight: '600', color: '#111827' }}>Marcações</button>
+          <button onClick={() => { setIsMobileMenuOpen(false); document.getElementById('sobre').scrollIntoView({ behavior: 'smooth' }); }} style={{ padding: '0.5rem 0', textAlign: 'left', background: 'none', border: 'none', fontSize: '1.2rem', fontWeight: '600', color: '#111827' }}>Sobre Nós</button>
+          <div style={{ width: '100%', height: '1px', background: '#e5e7eb', margin: '0.5rem 0' }}></div>
+          <button onClick={() => navigate('/cartao')} style={{ background: '#f9fafb', color: '#111827', border: '2px solid #e5e7eb', padding: '1rem', borderRadius: 'var(--radius-xl)', fontWeight: '700', fontSize: '1.1rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}><User size={18}/> Área de Cliente</button>
+        </div>
+      )}
 
       {/* Hero Section */}
       <section style={{ 
           position: 'relative',
-          paddingTop: 'var(--space-32)', 
-          paddingBottom: 'var(--space-24)', 
+          paddingTop: isMobile ? 'var(--space-20)' : 'var(--space-32)', 
+          paddingBottom: isMobile ? 'var(--space-16)' : 'var(--space-24)', 
           paddingLeft: '5%', 
           paddingRight: '5%', 
           color: 'white', 
@@ -348,10 +381,10 @@ export default function LandingPage() {
         }}></div>
         <div style={{ position: 'absolute', inset: 0, zIndex: -1, background: 'rgba(17, 24, 39, 0.85)' }}></div>
 
-        <h1 style={{ fontSize: 'clamp(3rem, 5vw, 4.5rem)', fontWeight: '800', marginBottom: 'var(--space-4)', lineHeight: '1.1', maxWidth: '900px', letterSpacing: '-0.02em' }}>
+        <h1 style={{ fontSize: isMobile ? '2.25rem' : 'clamp(3rem, 5vw, 4.5rem)', fontWeight: '800', marginBottom: isMobile ? 'var(--space-6)' : 'var(--space-4)', lineHeight: '1.1', maxWidth: '900px', letterSpacing: '-0.02em' }}>
           Desde sempre no centro de Famalicão, <span style={{ color: 'var(--accent-red)' }}>sempre ao seu lado.</span>
         </h1>
-        <p style={{ fontSize: '1.25rem', color: '#d1d5db', maxWidth: '650px', marginBottom: 'var(--space-8)', lineHeight: '1.6' }}>
+        <p style={{ fontSize: isMobile ? '1.1rem' : '1.25rem', color: '#d1d5db', maxWidth: '650px', marginBottom: 'var(--space-8)', lineHeight: '1.6' }}>
           Combustível, mecânica rápida e a melhor lavagem automóvel da cidade. Onde a confiança tem nome próprio.
         </p>
         <div style={{ display: 'flex', gap: 'var(--space-4)', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 'var(--space-16)' }}>
@@ -374,28 +407,28 @@ export default function LandingPage() {
       <section id="servicos" style={{ backgroundColor: '#f7f5f2', position: 'relative', padding: 'var(--space-24) 5%', overflow: 'hidden' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           
-          <div style={{ textAlign: 'center', marginBottom: '6rem' }} className="reveal-on-scroll">
-            <h2 style={{ fontSize: '3.5rem', fontWeight: '900', color: '#111827', margin: 0, lineHeight: '1.1' }}>Os nossos serviços</h2>
-            <p style={{ color: '#6b7280', fontSize: '1.25rem', marginTop: '0.25rem' }}>O que temos ao seu dispor todos os dias</p>
+          <div style={{ textAlign: 'center', marginBottom: isMobile ? '3rem' : '6rem' }} className="reveal-on-scroll">
+            <h2 style={{ fontSize: isMobile ? '2.5rem' : '3.5rem', fontWeight: '900', color: '#111827', margin: 0, lineHeight: '1.1' }}>Os nossos serviços</h2>
+            <p style={{ color: '#6b7280', fontSize: isMobile ? '1rem' : '1.25rem', marginTop: '0.25rem' }}>O que temos ao seu dispor todos os dias</p>
           </div>
 
           {/* Cotação em Direto - Integrada */}
-          <div style={{ background: 'white', borderRadius: '1rem', padding: '1.25rem 2rem', marginBottom: '6rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)' }}>
+          <div style={{ background: 'white', borderRadius: '1rem', padding: isMobile ? '1.25rem' : '1.25rem 2rem', marginBottom: isMobile ? '3rem' : '6rem', display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', gap: '1.5rem', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               <div className="live-dot" style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', flexShrink: 0 }}></div>
               <span style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#9ca3af' }}>Cotação em Direto</span>
             </div>
-            <div style={{ display: 'flex', gap: '3rem', flexWrap: 'wrap', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: isMobile ? '1.5rem' : '3rem', flexWrap: 'wrap', alignItems: 'center', flexDirection: isMobile ? 'column' : 'row', width: isMobile ? '100%' : 'auto', alignItems: isMobile ? 'flex-start' : 'center' }}>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#9ca3af', marginBottom: '0.15rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Fuel size={12} /> Gasóleo Simples</span>
                 <span style={{ fontSize: '2rem', fontWeight: '900', color: '#111827', letterSpacing: '-0.05em', lineHeight: '1' }}>{fuelPrices.gasoleo}€</span>
               </div>
-              <div style={{ width: '1px', height: '36px', background: 'rgba(0,0,0,0.1)' }}></div>
+              <div style={{ width: isMobile ? '100%' : '1px', height: isMobile ? '1px' : '36px', background: 'rgba(0,0,0,0.1)' }}></div>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#9ca3af', marginBottom: '0.15rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Fuel size={12} /> Gasolina 95</span>
                 <span style={{ fontSize: '2rem', fontWeight: '900', color: '#111827', letterSpacing: '-0.05em', lineHeight: '1' }}>{fuelPrices.gasolina}€</span>
               </div>
-              <div style={{ width: '1px', height: '36px', background: 'rgba(0,0,0,0.1)' }}></div>
+              <div style={{ width: isMobile ? '100%' : '1px', height: isMobile ? '1px' : '36px', background: 'rgba(0,0,0,0.1)' }}></div>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#9ca3af', marginBottom: '0.15rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Flame size={12} /> Gás (Galp, Rubis, Cepsa)</span>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
@@ -406,9 +439,9 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '5rem' : '10rem' }}>
             {servicesData.map((service, index) => (
-              <ServiceBlock key={service.id} service={service} index={index} />
+              <ServiceBlock key={service.id} service={service} index={index} isMobile={isMobile} />
             ))}
           </div>
 
@@ -416,8 +449,8 @@ export default function LandingPage() {
       </section>
 
       {/* Marcações e Mapa */}
-      <section id="agendar" className="section-dots" style={{ padding: 'var(--space-24) 5%', background: '#f7f5f2' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: 'var(--space-16)' }}>
+      <section id="agendar" className="section-dots" style={{ padding: isMobile ? 'var(--space-12) 5%' : 'var(--space-24) 5%', background: '#f7f5f2' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 'var(--space-16)' }}>
           
           {/* Form */}
           <div style={{ background: 'white', padding: 'var(--space-8)', borderRadius: 'var(--radius-xl)', boxShadow: '0 8px 32px rgba(0,0,0,0.10), 0 1px 0 rgba(255,255,255,0.9)' }}>
@@ -433,7 +466,7 @@ export default function LandingPage() {
               </div>
             ) : (
               <form onSubmit={handleBookingSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1.25rem' }}>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <label style={{ fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem', color: '#374151' }}>Nome *</label>
                     <input type="text" required value={bookingForm.nome} onChange={e => setBookingForm({...bookingForm, nome: e.target.value})} style={{ padding: '0.75rem', borderRadius: '0.5rem', border: '1.5px solid #d1d5db', outline: 'none', transition: 'border-color 0.2s', width: '100%' }} onFocus={e => e.target.style.borderColor = 'var(--accent-red)'} onBlur={e => e.target.style.borderColor = '#d1d5db'} />
@@ -444,7 +477,7 @@ export default function LandingPage() {
                   </div>
                 </div>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.25rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 2fr', gap: '1.25rem' }}>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <label style={{ fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem', color: '#374151' }}>Matrícula *</label>
                     <input type="text" placeholder="XX-XX-XX" required value={bookingForm.matricula} onChange={e => setBookingForm({...bookingForm, matricula: e.target.value})} style={{ padding: '0.75rem', borderRadius: '0.5rem', border: '1.5px solid #d1d5db', outline: 'none', transition: 'border-color 0.2s', width: '100%', textTransform: 'uppercase' }} onFocus={e => e.target.style.borderColor = 'var(--accent-red)'} onBlur={e => e.target.style.borderColor = '#d1d5db'} />
@@ -460,7 +493,7 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.25rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.25rem' }}>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <label style={{ fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem', color: '#374151' }}>Data *</label>
                     <select required value={bookingForm.data_desejada} onChange={e => setBookingForm({...bookingForm, data_desejada: e.target.value})} style={{ padding: '0.75rem', borderRadius: '0.5rem', border: '1.5px solid #d1d5db', outline: 'none', transition: 'border-color 0.2s', width: '100%', appearance: 'none', background: 'url("data:image/svg+xml;utf8,<svg fill=%27%239ca3af%27 height=%2724%27 viewBox=%270 0 24 24%27 width=%2724%27 xmlns=%27http://www.w3.org/2000/svg%27><path d=%27M7 10l5 5 5-5z%27/></svg>") no-repeat right 0.75rem center/1.25rem white' }} onFocus={e => e.target.style.borderColor = 'var(--accent-red)'} onBlur={e => e.target.style.borderColor = '#d1d5db'}>
@@ -528,9 +561,9 @@ export default function LandingPage() {
       </section>
 
       {/* Sobre Nós */}
-      <section id="sobre" className="section-dots" style={{ padding: 'var(--space-24) 5%', backgroundColor: '#f7f5f2' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-12)', alignItems: 'center' }}>
-          <div style={{ paddingRight: '2rem' }}>
+      <section id="sobre" className="section-dots" style={{ padding: isMobile ? 'var(--space-16) 5%' : 'var(--space-24) 5%', backgroundColor: '#f7f5f2' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 'var(--space-12)', alignItems: 'center' }}>
+          <div style={{ paddingRight: isMobile ? '0' : '2rem' }}>
             <h2 style={{ fontSize: '2.5rem', fontWeight: '800', color: '#111827', marginBottom: 'var(--space-6)', lineHeight: '1.1' }}>Mais do que um posto. Uma paragem obrigatória.</h2>
             <p style={{ fontSize: '1.125rem', color: '#4b5563', marginBottom: 'var(--space-4)', lineHeight: '1.7' }}>
               A GarageM não é apenas um local de passagem. O nosso edifício faz parte da história do centro de Famalicão há mais de 25 anos. Passámos por marcas internacionais como a BP e Prio, mas hoje orgulhamo-nos de ser um espaço com identidade própria e independente.
@@ -586,9 +619,9 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div style={{ borderTop: '1px solid #374151', paddingTop: 'var(--space-8)', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', color: '#6b7280', fontSize: '0.875rem' }}>
+        <div style={{ borderTop: '1px solid #374151', paddingTop: 'var(--space-8)', display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', gap: '1rem', color: '#6b7280', fontSize: '0.875rem' }}>
           <p>© {new Date().getFullYear()} GarageM. Todos os direitos reservados.</p>
-          <div style={{ display: 'flex', gap: '1.5rem' }}>
+          <div style={{ display: 'flex', gap: '1.5rem', width: isMobile ? '100%' : 'auto', justifyContent: isMobile ? 'center' : 'flex-end', paddingBottom: isMobile ? '1rem' : 0 }}>
             <button onClick={() => navigate('/privacidade')} style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color='white'} onMouseLeave={e => e.currentTarget.style.color='#6b7280'}>Política de Privacidade</button>
           </div>
         </div>

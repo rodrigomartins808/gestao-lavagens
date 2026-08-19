@@ -228,24 +228,92 @@ export default function LandingPage() {
     }).catch(e => console.error("Erro a carregar vagas:", e));
   }, [bookingForm.data_desejada]);
 
+  const SERVICE_DURATIONS = {
+    'Lavagem Simples': 1,
+    'Lavagem Completa': 1,
+    'Revitalização de plásticos (internos e externos)': 3,
+    'Higienização a Ozono': 2,
+    'Remoção de bolor': 1,
+    'Remoção calcário dos vidros': 1,
+    'Higienização de Estofos': 10
+  };
+
+  const getServiceDuration = (servico) => SERVICE_DURATIONS[servico] || 1;
+
   const getServicePoints = (servico) => {
     if (!servico) return 30;
     if (servico.includes('Simples')) return 20; // max 3 por 30m
     if (servico.includes('Gás')) return 10;
-    return 30; // max 2 por 30m para os restantes serviços pesados
+    return 30; // max 2 por 30m para completas e especiais
   };
   const MAX_POINTS = 60;
 
+  const timeToMinutes = (t) => {
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + m;
+  };
+
+  const minutesToTime = (m) => {
+    const h = Math.floor(m / 60);
+    const min = m % 60;
+    return `${h.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+  };
+
+  const getPointsForSlot = (timeStr, bookings) => {
+    const slotMin = timeToMinutes(timeStr);
+    return bookings.reduce((sum, b) => {
+      const bStart = timeToMinutes(b.hora_chegada);
+      const bDuration = getServiceDuration(b.servico) * 30;
+      const bEnd = bStart + bDuration;
+      if (slotMin >= bStart && slotMin < bEnd) {
+        return sum + getServicePoints(b.servico);
+      }
+      return sum;
+    }, 0);
+  };
+
+  const isServiceAvailableAt = (servico, timeStr, bookings) => {
+    if (!servico) return true;
+    
+    // Regra estofos: max 14:30 chegada, 1 por manha, 1 por tarde
+    if (servico.includes('Estofos')) {
+      const tMin = timeToMinutes(timeStr);
+      if (tMin > timeToMinutes('14:30')) return false;
+      const isMorning = tMin < timeToMinutes('13:00');
+      const existingEstofos = bookings.filter(b => b.servico.includes('Estofos'));
+      const hasMorning = existingEstofos.some(b => timeToMinutes(b.hora_chegada) < timeToMinutes('13:00'));
+      const hasAfternoon = existingEstofos.some(b => timeToMinutes(b.hora_chegada) >= timeToMinutes('13:00'));
+      if (isMorning && hasMorning) return false;
+      if (!isMorning && hasAfternoon) return false;
+    }
+
+    const duration = getServiceDuration(servico);
+    const startMin = timeToMinutes(timeStr);
+    const requiredPts = getServicePoints(servico);
+
+    for (let i = 0; i < duration; i++) {
+      const currentSlotMin = startMin + i * 30;
+      if (currentSlotMin >= timeToMinutes('20:00')) return false; // Ultrapassa hora de fecho
+      const currentSlotStr = minutesToTime(currentSlotMin);
+      if (getPointsForSlot(currentSlotStr, bookings) + requiredPts > MAX_POINTS) {
+        return false;
+      }
+    }
+    return true;
+  };
+
   useEffect(() => {
-    const pointsInSlot = dayBookings.filter(b => b.hora_chegada === bookingForm.hora_chegada).reduce((sum, b) => sum + getServicePoints(b.servico), 0);
-    if (pointsInSlot + getServicePoints(bookingForm.servico) > MAX_POINTS) {
-      const firstAvailable = chegadaOptions.find(t => {
-        const pts = dayBookings.filter(b => b.hora_chegada === t).reduce((sum, b) => sum + getServicePoints(b.servico), 0);
-        return pts + getServicePoints(bookingForm.servico) <= MAX_POINTS;
-      });
+    if (!isServiceAvailableAt(bookingForm.servico, bookingForm.hora_chegada, dayBookings)) {
+      const firstAvailable = chegadaOptions.find(t => isServiceAvailableAt(bookingForm.servico, t, dayBookings));
       if (firstAvailable) {
         setBookingForm(prev => ({...prev, hora_chegada: firstAvailable}));
       }
+    }
+    
+    // Atualiza hora de levantamento se for inferior ao tempo mínimo necessário
+    const minLevantamento = minutesToTime(timeToMinutes(bookingForm.hora_chegada) + getServiceDuration(bookingForm.servico) * 30);
+    if (timeToMinutes(bookingForm.hora_levantamento) < timeToMinutes(minLevantamento)) {
+      setBookingForm(prev => ({...prev, hora_levantamento: minLevantamento}));
     }
   }, [dayBookings, bookingForm.servico, bookingForm.hora_chegada]);
 
@@ -266,9 +334,7 @@ export default function LandingPage() {
   const handleBookingSubmit = async (e) => {
     e.preventDefault();
     
-    // Validar capacidade no momento do submit
-    const pts = dayBookings.filter(b => b.hora_chegada === bookingForm.hora_chegada).reduce((sum, b) => sum + getServicePoints(b.servico), 0);
-    if (pts + getServicePoints(bookingForm.servico) > MAX_POINTS) {
+    if (!isServiceAvailableAt(bookingForm.servico, bookingForm.hora_chegada, dayBookings)) {
       alert("Lamentamos, mas essa hora de chegada acabou de esgotar. Por favor selecione outra.");
       return;
     }
@@ -509,8 +575,7 @@ export default function LandingPage() {
                     <label style={{ fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem', color: '#374151' }}>Chegada *</label>
                     <select required value={bookingForm.hora_chegada} onChange={e => setBookingForm({...bookingForm, hora_chegada: e.target.value})} style={{ padding: '0.75rem', borderRadius: '0.5rem', border: '1.5px solid #d1d5db', outline: 'none', transition: 'border-color 0.2s', width: '100%', appearance: 'none', background: 'url("data:image/svg+xml;utf8,<svg fill=%27%239ca3af%27 height=%2724%27 viewBox=%270 0 24 24%27 width=%2724%27 xmlns=%27http://www.w3.org/2000/svg%27><path d=%27M7 10l5 5 5-5z%27/></svg>") no-repeat right 0.75rem center/1.25rem white' }} onFocus={e => e.target.style.borderColor = 'var(--accent-red)'} onBlur={e => e.target.style.borderColor = '#d1d5db'}>
                       {chegadaOptions.map(t => {
-                        const pts = dayBookings.filter(b => b.hora_chegada === t).reduce((sum, b) => sum + getServicePoints(b.servico), 0);
-                        const available = pts + getServicePoints(bookingForm.servico) <= MAX_POINTS;
+                        const available = isServiceAvailableAt(bookingForm.servico, t, dayBookings);
                         return (
                           <option key={t} value={t} disabled={!available}>
                             {t} {!available ? '(Esgotado)' : ''}
@@ -522,7 +587,7 @@ export default function LandingPage() {
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <label style={{ fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem', color: '#374151' }}>Levantamento *</label>
                     <select required value={bookingForm.hora_levantamento} onChange={e => setBookingForm({...bookingForm, hora_levantamento: e.target.value})} style={{ padding: '0.75rem', borderRadius: '0.5rem', border: '1.5px solid #d1d5db', outline: 'none', transition: 'border-color 0.2s', width: '100%', appearance: 'none', background: 'url("data:image/svg+xml;utf8,<svg fill=%27%239ca3af%27 height=%2724%27 viewBox=%270 0 24 24%27 width=%2724%27 xmlns=%27http://www.w3.org/2000/svg%27><path d=%27M7 10l5 5 5-5z%27/></svg>") no-repeat right 0.75rem center/1.25rem white' }} onFocus={e => e.target.style.borderColor = 'var(--accent-red)'} onBlur={e => e.target.style.borderColor = '#d1d5db'}>
-                      {levantamentoOptions.filter(t => t > bookingForm.hora_chegada).map(t => <option key={t} value={t}>{t}</option>)}
+                      {levantamentoOptions.filter(t => timeToMinutes(t) >= timeToMinutes(bookingForm.hora_chegada) + getServiceDuration(bookingForm.servico) * 30).map(t => <option key={t} value={t}>{t}</option>)}
                     </select>
                   </div>
                 </div>

@@ -217,15 +217,19 @@ export default function EmployeeDashboard({ currentUser }) {
 
   const handleOpenDelivery = async (wash) => {
     setDeliveryWash(wash);
-    setCreateProfile(false);
     setProfileData({ nome: '', nif: '' });
     
     if (wash.cliente_id) {
       const customer = await dataService.getCustomerById(wash.cliente_id);
       const vehicles = await dataService.getVehiclesByCustomer(wash.cliente_id);
       setDeliveryCustomer({ ...customer, viaturas: vehicles });
+      
+      // Auto-check association if vehicle doesn't exist
+      const vehicleExists = vehicles.some(v => v.matricula.toUpperCase() === wash.matricula.toUpperCase());
+      setCreateProfile(!vehicleExists);
     } else {
       setDeliveryCustomer(null);
+      setCreateProfile(false);
     }
   };
 

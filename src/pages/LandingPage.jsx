@@ -504,14 +504,12 @@ export default function LandingPage() {
               <h3 style={{ fontSize: '2rem', fontWeight: '800', marginBottom: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#111827' }}><MapPin size={28} color="var(--accent-red)" /> Onde nos encontrar</h3>
               <p style={{ color: '#4b5563', lineHeight: '1.6' }}>R. São João de Deus, 4760-114 Vila Nova de Famalicão</p>
             </div>
-            <div style={{ width: '100%', height: '100%', minHeight: '350px', borderRadius: 'var(--radius-xl)', overflow: 'hidden', border: '1px solid rgba(0,0,0,0.1)' }}>
+            <div style={{ width: '100%', height: '100%', minHeight: '350px', borderRadius: 'var(--radius-xl)', overflow: 'hidden', border: '1px solid rgba(0,0,0,0.1)', position: 'relative' }}>
               <iframe
                 title="Localização GarageM - R. São João de Deus, Vila Nova de Famalicão"
-                width="100%"
-                height="100%"
                 frameBorder="0"
-                style={{ border: 0, minHeight: '350px', display: 'block' }}
-                src="https://www.openstreetmap.org/export/embed.html?bbox=-8.5248%2C41.4055%2C-8.5173%2C41.4098&layer=mapnik&marker=41.4076%2C-8.5211"
+                style={{ border: 0, minHeight: '400px', display: 'block', position: 'absolute', top: 0, left: 0, width: '100%', height: 'calc(100% + 50px)' }}
+                src="https://www.openstreetmap.org/export/embed.html?bbox=-8.5228%2C41.4080%2C-8.5153%2C41.4123&layer=mapnik&marker=41.410161%2C-8.519030"
                 allowFullScreen
                 loading="lazy">
               </iframe>

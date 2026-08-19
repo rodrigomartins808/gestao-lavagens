@@ -552,7 +552,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer Completo */}
-      <footer style={{ background: '#111827', color: '#d1d5db', padding: 'var(--space-16) 5% var(--space-8)', fontSize: '0.95rem', borderTop: '4px solid var(--accent-red)' }}>
+      <footer style={{ background: '#000000', color: '#d1d5db', padding: 'var(--space-16) 5% var(--space-8)', fontSize: '0.95rem', borderTop: '4px solid var(--accent-red)' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 'var(--space-8)', marginBottom: 'var(--space-12)' }}>
           
           <div>

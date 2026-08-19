@@ -405,9 +405,9 @@ export default function LandingPage() {
               <div style={{ fontSize: '3.5rem', fontWeight: '900', color: '#f97316', fontFamily: 'monospace', letterSpacing: '-0.05em' }}>{fuelPrices.gasolina}€</div>
             </div>
             <div style={{ background: '#1f2937', padding: 'var(--space-6)', borderRadius: 'var(--radius-lg)', border: '1px solid #374151', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <div style={{ color: '#9ca3af', fontSize: '1rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Flame size={20} /> Gás (Várias Marcas)</div>
+              <div style={{ color: '#9ca3af', fontSize: '1rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Flame size={20} /> Gás (Galp, Rubis, Cepsa)</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#f97316', fontFamily: 'monospace', letterSpacing: '-0.05em', lineHeight: '1' }}>Desde {fuelPrices.gas}€</div>
+                <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#f97316', fontFamily: 'monospace', letterSpacing: '-0.05em', lineHeight: '1' }}>Desde 30.00€</div>
                 <div style={{ color: '#10b981', fontSize: '0.875rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                   <span style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', display: 'inline-block' }}></span> Disponível em loja
                 </div>

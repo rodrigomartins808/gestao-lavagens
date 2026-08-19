@@ -225,14 +225,23 @@ export default function CustomerCard({
                       </div>
                     </div>
                     <div style={{ 
-                      color: '#2563eb', 
+                      color: wash.carimbos_ganhos === 0 ? '#16a34a' : '#2563eb', 
                       fontWeight: 'bold', 
-                      fontSize: '1rem',
-                      background: 'rgba(59, 130, 246, 0.1)',
+                      fontSize: '0.9rem',
+                      background: wash.carimbos_ganhos === 0 ? 'rgba(22, 163, 74, 0.1)' : 'rgba(59, 130, 246, 0.1)',
                       padding: '0.3rem 0.75rem',
                       borderRadius: '0.375rem'
                     }}>
-                      {wash.valor > 0 ? `${wash.valor.toFixed(2)}€` : 'Oferta'}
+                      {(() => {
+                        if (wash.carimbos_ganhos === 0) return 'Vale 20€ Usado';
+                        if (wash.valor > 0) return `${wash.valor.toFixed(2)}€`;
+                        
+                        // Estimativa caso não tenha valor
+                        if (wash.tipo_lavagem.includes('Completa')) return '20.00€';
+                        if (wash.tipo_lavagem.includes('Interior')) return '12.00€';
+                        if (wash.tipo_lavagem.includes('Especial')) return '30.00€';
+                        return '10.00€';
+                      })()}
                     </div>
                   </div>
                 )

@@ -298,11 +298,11 @@ export default function LandingPage() {
           <img src={logo} alt="GarageM Logo" style={{ height: '60px', borderRadius: 'var(--radius-md)' }} />
         </div>
         
-        <nav style={{ display: 'flex', gap: '2.5rem', fontWeight: '600', color: '#4b5563', fontSize: '1.15rem' }}>
-          <button onClick={() => document.getElementById('servicos').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.15rem' }}>Serviços</button>
-          <button onClick={() => document.getElementById('precos').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.15rem' }}>Combustível</button>
-          <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.15rem' }}>Marcações</button>
-          <button onClick={() => document.getElementById('sobre').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.15rem' }}>Sobre Nós</button>
+        <nav style={{ display: 'flex', gap: '2rem', fontWeight: '600', color: '#4b5563', fontSize: '1.05rem' }}>
+          <button onClick={() => document.getElementById('servicos').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.05rem', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-red)'} onMouseLeave={e => e.currentTarget.style.color = '#4b5563'}>Serviços</button>
+          <button onClick={() => document.getElementById('precos').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.05rem', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-red)'} onMouseLeave={e => e.currentTarget.style.color = '#4b5563'}>Combustível</button>
+          <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.05rem', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-red)'} onMouseLeave={e => e.currentTarget.style.color = '#4b5563'}>Marcações</button>
+          <button onClick={() => document.getElementById('sobre').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', color: '#4b5563', fontSize: '1.05rem', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-red)'} onMouseLeave={e => e.currentTarget.style.color = '#4b5563'}>Sobre Nós</button>
         </nav>
 
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>

@@ -355,8 +355,8 @@ export default function LandingPage() {
         </div>
 
         {/* Hero Image Placeholder (New Facade) */}
-        <div style={{ width: '100%', maxWidth: '1000px', borderRadius: 'var(--radius-xl)', position: 'relative', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)', border: '4px solid rgba(255,255,255,0.1)' }}>
-          <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80" alt="Fachada Atual GarageM" style={{ width: '100%', height: 'auto', display: 'block' }} />
+        <div style={{ width: '100%', maxWidth: '1000px', aspectRatio: '16/9', borderRadius: 'var(--radius-xl)', position: 'relative', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)', border: '4px solid rgba(255,255,255,0.1)' }}>
+          <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80" alt="Fachada Atual GarageM" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '1.5rem', background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)' }}>
             <p style={{ margin: 0, color: 'white', fontWeight: '500', fontSize: '1.1rem', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>A nossa fachada atual — sempre prontos para o receber.</p>
           </div>

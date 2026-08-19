@@ -119,6 +119,7 @@ export default function LandingPage() {
       description: 'Cuidamos do seu carro ao pormenor. Desde uma lavagem simples com produtos de alta qualidade, até à limpeza profunda de interiores.',
       items: [
         { name: 'Lavagem Simples', desc: 'Lavagem exterior e secagem', price: '8.50€' },
+        { name: 'Lavagem Interior', price: '9.50€' },
         { name: 'Lavagem Completa', desc: 'Lavagem exterior, aspiração e limpeza de vidros', price: '15.00€' }
       ],
       images: [
@@ -146,10 +147,11 @@ export default function LandingPage() {
       title: 'Serviços Especiais',
       description: 'Polimentos, higienização a ozono, limpeza profunda de estofos e tratamento de peles para devolver o aspeto de novo.',
       items: [
-        { name: 'Polimento de Óticas', price: '30.00€' },
-        { name: 'Higienização a Ozono', price: '25.00€' },
-        { name: 'Limpeza de Estofos', price: '60.00€' },
-        { name: 'Tratamento de Peles', price: '40.00€' }
+        { name: 'Lavagem de estofos (c/ lavagem completa)', price: '75.00€' },
+        { name: 'Revitalização de plásticos (internos e externos)', price: '25.00€' },
+        { name: 'Higienização a Ozono', price: '20.00€' },
+        { name: 'Remoção de bolor', price: '10.00€' },
+        { name: 'Remoção calcário dos vidros', price: '22.50€' }
       ],
       images: [
         'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',

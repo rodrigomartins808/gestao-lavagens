@@ -368,7 +368,7 @@ export const getCustomerLifetimeValue = async (customerId) => {
 // --- Settings (Prices) ---
 export const getFuelPrices = async () => {
   const { data, error } = await supabase.from('settings').select('value').eq('id', 'fuel_prices').single();
-  if (error || !data) return { gasoleo: '1.49', gasolina: '1.69', gas: '0.89', botija: '30.00' };
+  if (error || !data) return { gasoleo: '1.49', gasolina: '1.69', botija: '30.00' };
   return { botija: '30.00', ...data.value };
 };
 

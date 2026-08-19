@@ -369,8 +369,8 @@ export default function LandingPage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           
           <div style={{ textAlign: 'center', marginBottom: '6rem' }} className="reveal-on-scroll">
-            <h2 style={{ fontSize: '3.5rem', fontWeight: '900', color: 'white', margin: 0 }}>Os nossos serviços</h2>
-            <p style={{ color: '#9ca3af', fontSize: '1.25rem', marginTop: '1rem' }}>O que temos ao seu dispor todos os dias</p>
+            <h2 style={{ fontSize: '3.5rem', fontWeight: '900', color: 'white', margin: 0, lineHeight: '1.1' }}>Os nossos serviços</h2>
+            <p style={{ color: '#9ca3af', fontSize: '1.25rem', marginTop: '0.25rem' }}>O que temos ao seu dispor todos os dias</p>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10rem' }}>

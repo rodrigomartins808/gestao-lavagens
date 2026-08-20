@@ -317,7 +317,17 @@ export default function LandingPage() {
         </div>
       </section>
 
-
+      {/* História e Valores */}
+      <section style={{ backgroundColor: '#ffffff', padding: isMobile ? 'var(--space-16) 5%' : 'var(--space-24) 5%', textAlign: 'center', borderBottom: '1px solid #f3f4f6' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto' }} className="reveal-on-scroll">
+          <p style={{ fontSize: isMobile ? '1.1rem' : '1.35rem', color: '#4b5563', lineHeight: '1.8', marginBottom: '1.5rem' }}>
+            A GarageM não é apenas um local de passagem. O nosso edifício faz parte da história do centro de Famalicão há mais de 60 anos. <strong style={{ color: '#111827' }}>Os anos passaram, o mundo acelerou, mas nós evoluímos lado a lado com as exigências do tempo sem nunca perder a nossa essência.</strong>
+          </p>
+          <p style={{ fontSize: isMobile ? '1.1rem' : '1.35rem', color: '#4b5563', lineHeight: '1.8' }}>
+            Aqui, não é apenas mais um número. Conhecemos os nossos clientes pelo nome, sabemos o que o seu carro precisa e fazemos questão de manter essa proximidade humana. É essa confiança que nos mantém aqui todos os dias.
+          </p>
+        </div>
+      </section>
       {/* Serviços Animados */}
       <section id="servicos" style={{ backgroundColor: '#f7f5f2', position: 'relative', padding: 'var(--space-24) 5%', overflow: 'hidden' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>

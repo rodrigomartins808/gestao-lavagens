@@ -1,10 +1,12 @@
 User-agent: *
-Allow: /
-Disallow: /acesso-gerencia*
-Disallow: /acesso-equipa*
+Allow: /$
+Allow: /privacidade$
+Disallow: /acesso-gerencia-x89f
+Disallow: /acesso-equipa-x89f
 Disallow: /cliente
 Disallow: /cartao
-Disallow: /tv-*
-Disallow: /tracking/*
+Disallow: /tv-v9k2
+Disallow: /tracking/
 
-Sitemap: https://www.garagem.pt/sitemap.xml
+# O sitemap deve ser adicionado apenas quando houver um domínio definitivo
+# Sitemap: https://www.oseudominio.pt/sitemap.xml

@@ -76,6 +76,9 @@ const ServiceBlock = ({ service, index, isMobile }) => {
               key={img}
               src={img} 
               alt={`${service.title} imagem ${i+1}`}
+              width="600"
+              height="400"
+              loading="lazy"
               style={{ 
                 position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', 
                 opacity: i === currentImage ? 1 : 0, transition: 'opacity 0.6s ease-in-out' 
@@ -211,8 +214,10 @@ export default function LandingPage() {
           <img 
             src={logo} 
             alt="GarageM Logo" 
+            width="148"
+            height="60"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            style={{ height: '60px', cursor: 'pointer', mixBlendMode: 'multiply' }} 
+            style={{ height: '60px', width: 'auto', cursor: 'pointer', mixBlendMode: 'multiply' }} 
           />
         </div>
         {isMobile ? (
@@ -278,11 +283,16 @@ export default function LandingPage() {
           overflow: 'hidden'
       }}>
         {/* Background Layer with Dark Overlay */}
-        <div style={{
-          position: 'absolute', inset: 0, zIndex: -1,
-          backgroundImage: 'url("https://images.unsplash.com/photo-1544256718-3bcf237f3974?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80")',
-          backgroundSize: 'cover', backgroundPosition: 'center'
-        }}></div>
+        <img 
+          src="https://images.unsplash.com/photo-1544256718-3bcf237f3974?ixlib=rb-1.2.1&auto=format&fit=crop&w=1080&q=80" 
+          alt="Posto GarageM"
+          fetchpriority="high"
+          loading="eager"
+          style={{
+            position: 'absolute', inset: 0, zIndex: -1,
+            width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center'
+          }}
+        />
         <div style={{ position: 'absolute', inset: 0, zIndex: -1, background: 'rgba(17, 24, 39, 0.85)' }}></div>
 
         <h1 style={{ fontSize: isMobile ? '2.25rem' : 'clamp(3rem, 5vw, 4.5rem)', fontWeight: '800', marginBottom: isMobile ? 'var(--space-6)' : 'var(--space-4)', lineHeight: '1.1', maxWidth: '900px', letterSpacing: '-0.02em' }}>
@@ -299,7 +309,7 @@ export default function LandingPage() {
 
         {/* Hero Image Placeholder (New Facade) */}
         <div style={{ width: '100%', maxWidth: '1000px', aspectRatio: '16/9', borderRadius: 'var(--radius-xl)', position: 'relative', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
-          <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80" alt="Fachada Atual GarageM" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80" alt="Fachada Atual GarageM" width="1200" height="675" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '1.5rem', background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)' }}>
             <p style={{ margin: 0, color: 'white', fontWeight: '500', fontSize: '1.1rem', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>A nossa fachada atual — sempre prontos para o receber.</p>
           </div>
@@ -425,7 +435,7 @@ export default function LandingPage() {
           
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: 'var(--space-4)' }}>
-              <img src={logoWhite} alt="GarageM" style={{ height: '32px' }} />
+              <img src={logoWhite} alt="GarageM" width="135" height="32" loading="lazy" style={{ height: '32px', width: 'auto' }} />
             </div>
             <p style={{ color: '#9ca3af', lineHeight: '1.6', fontSize: '0.95rem' }}>A cuidar do seu automóvel no coração de Vila Nova de Famalicão com dedicação, rigor e compromisso com a qualidade.</p>
           </div>

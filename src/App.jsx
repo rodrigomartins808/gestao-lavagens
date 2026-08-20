@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Routes, Route, Navigate, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
-import Login from './pages/Login';
-import EmployeeDashboard from './pages/EmployeeDashboard';
-import AdminDashboard from './pages/AdminDashboard';
-import CustomerPortal from './pages/CustomerPortal';
-import LiveQueue from './pages/LiveQueue';
-import CustomerTracking from './pages/CustomerTracking';
-import PrivacyPolicy from './pages/PrivacyPolicy';
 import LandingPage from './pages/LandingPage';
 import Navbar from './components/Navbar';
 import dataService from './services/dataService';
+
+const Login = lazy(() => import('./pages/Login'));
+const EmployeeDashboard = lazy(() => import('./pages/EmployeeDashboard'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const CustomerPortal = lazy(() => import('./pages/CustomerPortal'));
+const LiveQueue = lazy(() => import('./pages/LiveQueue'));
+const CustomerTracking = lazy(() => import('./pages/CustomerTracking'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -57,42 +58,44 @@ export default function App() {
       {currentUser && !isStandaloneRoute && <Navbar user={currentUser} onLogout={handleLogout} />}
       
       <main className="main-content">
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          
-          <Route path="/acesso-gerencia-x89f" element={
-            !currentUser ? <Login type="admin" onLogin={handleLogin} /> :
-            currentUser.role === 'admin' ? <AdminDashboard currentUser={currentUser} /> :
-            <Navigate to="/" />
-          } />
+        <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', width: '100%' }}>A carregar...</div>}>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            
+            <Route path="/acesso-gerencia-x89f" element={
+              !currentUser ? <Login type="admin" onLogin={handleLogin} /> :
+              currentUser.role === 'admin' ? <AdminDashboard currentUser={currentUser} /> :
+              <Navigate to="/" />
+            } />
 
-          <Route path="/acesso-equipa-x89f" element={
-            !currentUser ? <Login type="employee" onLogin={handleLogin} /> :
-            ['admin', 'employee'].includes(currentUser.role) 
-              ? <EmployeeDashboard currentUser={currentUser} /> 
-              : <Navigate to="/" />
-          } />
-          
-          <Route path="/cliente" element={
-            !currentUser ? <Login type="customer" onLogin={handleLogin} /> :
-            currentUser.role === 'customer' 
-              ? <CustomerPortal currentUser={currentUser} /> 
-              : <Navigate to="/" />
-          } />
-          
-          <Route path="/cartao" element={
-            !currentUser ? <Login type="customer" onLogin={handleLogin} /> :
-            currentUser.role === 'customer' 
-              ? <CustomerPortal currentUser={currentUser} /> 
-              : <Navigate to="/" />
-          } />
+            <Route path="/acesso-equipa-x89f" element={
+              !currentUser ? <Login type="employee" onLogin={handleLogin} /> :
+              ['admin', 'employee'].includes(currentUser.role) 
+                ? <EmployeeDashboard currentUser={currentUser} /> 
+                : <Navigate to="/" />
+            } />
+            
+            <Route path="/cliente" element={
+              !currentUser ? <Login type="customer" onLogin={handleLogin} /> :
+              currentUser.role === 'customer' 
+                ? <CustomerPortal currentUser={currentUser} /> 
+                : <Navigate to="/" />
+            } />
+            
+            <Route path="/cartao" element={
+              !currentUser ? <Login type="customer" onLogin={handleLogin} /> :
+              currentUser.role === 'customer' 
+                ? <CustomerPortal currentUser={currentUser} /> 
+                : <Navigate to="/" />
+            } />
 
-          <Route path="/tv-v9k2" element={<LiveQueue />} />
-          <Route path="/tracking/:id" element={<CustomerTracking />} />
-          <Route path="/privacidade" element={<PrivacyPolicy />} />
+            <Route path="/tv-v9k2" element={<LiveQueue />} />
+            <Route path="/tracking/:id" element={<CustomerTracking />} />
+            <Route path="/privacidade" element={<PrivacyPolicy />} />
 
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </Suspense>
       </main>
     </div>
   );

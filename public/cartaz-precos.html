@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cartaz de Preços - GarageM</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
 
-        /* Configuração de Impressão (A4) */
+        /* Configuração de Impressão (A4 Paisagem) */
         @page {
-            size: A4;
+            size: A4 landscape;
             margin: 0;
         }
 
@@ -17,123 +17,161 @@
             margin: 0;
             padding: 0;
             font-family: 'Inter', sans-serif;
-            background-color: #f7f5f2; /* Fundo Creme GarageM */
-            color: #111827; /* Texto Escuro */
-            width: 210mm; /* A4 Width */
-            height: 297mm; /* A4 Height */
+            background-color: #ffffff; /* Fundo Branco */
+            color: #000000; /* Texto Preto */
+            width: 297mm; /* A4 Landscape Width */
+            height: 210mm; /* A4 Landscape Height */
             box-sizing: border-box;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .poster-container {
-            padding: 20mm;
+            width: 100%;
             height: 100%;
+            padding: 15mm 25mm;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            border: 15mm solid #111827;
+            border: 10mm solid #ef4444; /* Borda Vermelha (Cor Secundária) */
         }
 
         .header {
-            text-align: center;
-            margin-bottom: 15mm;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12mm;
+            border-bottom: 4px solid #000000;
+            padding-bottom: 5mm;
         }
 
-        .logo {
-            width: 120px;
-            margin-bottom: 5mm;
+        .header-text {
+            display: flex;
+            flex-direction: column;
         }
 
         .title {
-            font-size: 32pt;
-            font-weight: 800;
-            color: #ef4444; /* Vermelho GarageM */
+            font-size: 38pt;
+            font-weight: 900;
+            color: #000000;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             margin: 0;
+            line-height: 1;
         }
 
         .subtitle {
-            font-size: 14pt;
+            font-size: 16pt;
             font-weight: 600;
-            color: #4b5563;
-            margin-top: 5mm;
+            color: #ef4444; /* Vermelho */
+            text-transform: uppercase;
+            margin: 2mm 0 0 0;
         }
 
-        .section {
-            margin-bottom: 12mm;
+        .logo {
+            height: 70px;
+            object-fit: contain;
+        }
+
+        .content {
+            display: flex;
+            gap: 20mm;
+            flex-grow: 1;
+        }
+
+        .column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .section-title {
-            font-size: 18pt;
+            font-size: 22pt;
             font-weight: 800;
-            color: #111827;
-            border-bottom: 3px solid #ef4444;
-            padding-bottom: 3mm;
+            color: #ef4444; /* Títulos em Vermelho */
             margin-bottom: 8mm;
             text-transform: uppercase;
+            letter-spacing: -0.5px;
         }
 
         .price-list {
             list-style: none;
             padding: 0;
             margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 7mm;
         }
 
         .price-item {
             display: flex;
             justify-content: space-between;
             align-items: baseline;
-            margin-bottom: 6mm;
+        }
+
+        .service-info {
+            background-color: #ffffff;
+            padding-right: 4mm;
+            z-index: 2;
         }
 
         .service-name {
             font-size: 16pt;
+            font-weight: 800;
+            color: #000000;
+            display: block;
+        }
+        
+        .service-desc {
+            font-size: 11pt;
             font-weight: 600;
-            background-color: #f7f5f2;
-            padding-right: 5mm;
+            color: #666666; /* Detalhes Escuros */
+            display: block;
+            margin-top: 1mm;
         }
 
         .service-price {
-            font-size: 16pt;
-            font-weight: 800;
-            color: #ef4444;
-            background-color: #f7f5f2;
-            padding-left: 5mm;
+            font-size: 20pt;
+            font-weight: 900;
+            color: #000000; /* Preços a Preto (Detalhes a preto) */
+            background-color: #ffffff;
+            padding-left: 4mm;
+            z-index: 2;
         }
 
         .dots {
             flex-grow: 1;
-            border-bottom: 2px dotted #9ca3af;
-            margin: 0 5mm;
+            border-bottom: 3px dotted #cccccc;
             position: relative;
-            top: -4pt;
+            top: -6pt;
+            z-index: 1;
         }
 
         .footer {
             margin-top: auto;
-            text-align: center;
-            padding-top: 10mm;
-            border-top: 1px solid #d1d5db;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 5mm;
         }
 
         .footer p {
-            font-size: 11pt;
-            color: #6b7280;
-            margin: 2mm 0;
+            font-size: 12pt;
+            font-weight: 600;
+            color: #000000;
+            margin: 0;
         }
         
-        .footer-logo-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            margin-top: 5mm;
-        }
-        
-        .accent-red {
-            color: #ef4444;
+        .footer-highlight {
+            background-color: #000000;
+            color: #ffffff;
+            padding: 2mm 5mm;
+            font-weight: 800;
+            font-size: 14pt;
+            text-transform: uppercase;
         }
     </style>
 </head>
@@ -141,73 +179,95 @@
     <div class="poster-container">
         <!-- Cabeçalho -->
         <div class="header">
+            <div class="header-text">
+                <h1 class="title">Tabela de Preços</h1>
+                <p class="subtitle">Serviço de Excelência Automóvel</p>
+            </div>
             <img src="/favicon.png" alt="GarageM Logo" class="logo">
-            <h1 class="title">Tabela de Preços</h1>
-            <p class="subtitle">Serviço de Excelência Automóvel</p>
         </div>
 
-        <!-- Seção 1: Lavagem Automóvel -->
-        <div class="section">
-            <h2 class="section-title">Lavagem Automóvel</h2>
-            <ul class="price-list">
-                <li class="price-item">
-                    <span class="service-name">Lavagem Simples <span style="font-size: 11pt; color: #6b7280; display: block; font-weight: 400;">(Exterior e secagem)</span></span>
-                    <span class="dots"></span>
-                    <span class="service-price">8.50€</span>
-                </li>
-                <li class="price-item">
-                    <span class="service-name">Lavagem Interior <span style="font-size: 11pt; color: #6b7280; display: block; font-weight: 400;">(Aspiração e limpeza completa)</span></span>
-                    <span class="dots"></span>
-                    <span class="service-price">9.50€</span>
-                </li>
-                <li class="price-item">
-                    <span class="service-name">Lavagem Completa <span style="font-size: 11pt; color: #6b7280; display: block; font-weight: 400;">(Exterior, aspiração e vidros)</span></span>
-                    <span class="dots"></span>
-                    <span class="service-price">15.00€</span>
-                </li>
-            </ul>
-        </div>
+        <!-- Conteúdo em Duas Colunas (Paisagem) -->
+        <div class="content">
+            <!-- Coluna Esquerda -->
+            <div class="column">
+                <h2 class="section-title">Lavagem Automóvel</h2>
+                <ul class="price-list">
+                    <li class="price-item">
+                        <div class="service-info">
+                            <span class="service-name">Lavagem Simples</span>
+                            <span class="service-desc">Exterior e secagem</span>
+                        </div>
+                        <span class="dots"></span>
+                        <span class="service-price">8.50€</span>
+                    </li>
+                    <li class="price-item">
+                        <div class="service-info">
+                            <span class="service-name">Lavagem Interior</span>
+                            <span class="service-desc">Aspiração e limpeza completa</span>
+                        </div>
+                        <span class="dots"></span>
+                        <span class="service-price">9.50€</span>
+                    </li>
+                    <li class="price-item">
+                        <div class="service-info">
+                            <span class="service-name">Lavagem Completa</span>
+                            <span class="service-desc">Exterior, aspiração e vidros</span>
+                        </div>
+                        <span class="dots"></span>
+                        <span class="service-price">15.00€</span>
+                    </li>
+                </ul>
+            </div>
 
-        <!-- Seção 2: Serviços Especiais -->
-        <div class="section">
-            <h2 class="section-title">Serviços Especiais de Detalhe</h2>
-            <ul class="price-list">
-                <li class="price-item">
-                    <span class="service-name">Lavagem de Estofos <span style="font-size: 11pt; color: #6b7280; font-weight: 400;">(C/ lavagem completa)</span></span>
-                    <span class="dots"></span>
-                    <span class="service-price">75.00€</span>
-                </li>
-                <li class="price-item">
-                    <span class="service-name">Revitalização de Plásticos</span>
-                    <span class="dots"></span>
-                    <span class="service-price">25.00€</span>
-                </li>
-                <li class="price-item">
-                    <span class="service-name">Remoção Calcário dos Vidros</span>
-                    <span class="dots"></span>
-                    <span class="service-price">22.50€</span>
-                </li>
-                <li class="price-item">
-                    <span class="service-name">Higienização a Ozono</span>
-                    <span class="dots"></span>
-                    <span class="service-price">20.00€</span>
-                </li>
-                <li class="price-item">
-                    <span class="service-name">Remoção de Bolor</span>
-                    <span class="dots"></span>
-                    <span class="service-price">10.00€</span>
-                </li>
-            </ul>
+            <!-- Coluna Direita -->
+            <div class="column">
+                <h2 class="section-title">Serviços de Detalhe</h2>
+                <ul class="price-list">
+                    <li class="price-item">
+                        <div class="service-info">
+                            <span class="service-name">Lavagem de Estofos</span>
+                            <span class="service-desc">C/ lavagem completa</span>
+                        </div>
+                        <span class="dots"></span>
+                        <span class="service-price">75.00€</span>
+                    </li>
+                    <li class="price-item">
+                        <div class="service-info">
+                            <span class="service-name">Revitalização de Plásticos</span>
+                        </div>
+                        <span class="dots"></span>
+                        <span class="service-price">25.00€</span>
+                    </li>
+                    <li class="price-item">
+                        <div class="service-info">
+                            <span class="service-name">Remoção Calcário dos Vidros</span>
+                        </div>
+                        <span class="dots"></span>
+                        <span class="service-price">22.50€</span>
+                    </li>
+                    <li class="price-item">
+                        <div class="service-info">
+                            <span class="service-name">Higienização a Ozono</span>
+                        </div>
+                        <span class="dots"></span>
+                        <span class="service-price">20.00€</span>
+                    </li>
+                    <li class="price-item">
+                        <div class="service-info">
+                            <span class="service-name">Remoção de Bolor</span>
+                        </div>
+                        <span class="dots"></span>
+                        <span class="service-price">10.00€</span>
+                    </li>
+                </ul>
+            </div>
         </div>
 
         <!-- Rodapé -->
         <div class="footer">
-            <p><strong>Mecânica Rápida:</strong> Serviços sob consulta presencial.</p>
             <p>Os preços apresentados incluem IVA à taxa legal em vigor.</p>
-            <div class="footer-logo-row">
-                <strong style="font-size: 14pt;">Garage<span class="accent-red">M</span></strong>
-                <span style="color: #d1d5db;">|</span>
-                <span style="font-size: 12pt; color: #4b5563;">Vila Nova de Famalicão</span>
+            <div class="footer-highlight">
+                Mecânica Rápida: Preço sob consulta presencial
             </div>
         </div>
     </div>

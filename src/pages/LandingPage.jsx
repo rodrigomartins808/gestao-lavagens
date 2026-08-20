@@ -4,6 +4,10 @@ import { Fuel, Droplets, Wrench, Calendar, MapPin, ChevronRight, ChevronLeft, Us
 import dataService from '../services/dataService';
 import logo from '../assets/logo.jpeg';
 import logoWhite from '../assets/logo-white.png';
+import lavagem1 from '../assets/lavagem1.jpg';
+import lavagem2 from '../assets/lavagem2.jpg';
+import lavagem4 from '../assets/lavagem4.jpg';
+import mecanicaImg from '../assets/mecanica.jpg';
 import BookingForm from '../components/BookingForm';
 
 // -- Add ServiceBlock above LandingPage --
@@ -127,9 +131,9 @@ export default function LandingPage() {
         { name: 'Lavagem Completa', desc: 'Lavagem exterior, aspiração e limpeza de vidros', price: '15.00€' }
       ],
       images: [
-        'https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-        'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-        'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
+        lavagem4,
+        lavagem2,
+        lavagem1
       ]
     },
     {
@@ -141,7 +145,7 @@ export default function LandingPage() {
         { name: 'Serviços simples de mecânica', price: 'Sob consulta presencial' }
       ],
       images: [
-        'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+        mecanicaImg,
         'https://images.unsplash.com/photo-1632823462947-a87754d9c792?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
       ]
     },

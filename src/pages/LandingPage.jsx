@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Fuel, Droplets, Wrench, Calendar, MapPin, ChevronRight, ChevronLeft, User, Flame, Phone, Clock, CheckCircle2, Menu, X } from 'lucide-react';
-import dataService from '../services/dataService';
 import logo from '../assets/logo.jpeg';
 import logoWhite from '../assets/logo-white.png';
 import lavagem1 from '../assets/lavagem1.jpg';
 import lavagem2 from '../assets/lavagem2.jpg';
 import lavagem4 from '../assets/lavagem4.jpg';
 import mecanicaImg from '../assets/mecanica.jpg';
-import BookingForm from '../components/BookingForm';
+
+const BookingForm = lazy(() => import('../components/BookingForm'));
 
 // -- Add ServiceBlock above LandingPage --
 const ServiceBlock = ({ service, index, isMobile }) => {
@@ -197,6 +197,7 @@ export default function LandingPage() {
   useEffect(() => {
     async function loadPrices() {
       try {
+        const dataService = (await import('../services/dataService')).default;
         const prices = await dataService.getFuelPrices();
         setFuelPrices(prices);
       } catch (err) {
@@ -374,7 +375,9 @@ export default function LandingPage() {
             </h3>
             <p style={{ color: '#4b5563', marginBottom: '2rem', fontSize: '1.05rem', lineHeight: '1.6' }}>Preencha o formulário e garantimos o seu lugar. Entraremos em contacto para confirmar.</p>
             
-            <BookingForm isMobile={isMobile} />
+            <Suspense fallback={<div style={{ textAlign: 'center', padding: '2rem' }}>A carregar formulário...</div>}>
+              <BookingForm isMobile={isMobile} />
+            </Suspense>
           </div>
 
           {/* Map & Contacts */}

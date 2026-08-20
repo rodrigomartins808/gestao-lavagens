@@ -2,7 +2,6 @@ import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Routes, Route, Navigate, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import Navbar from './components/Navbar';
-import dataService from './services/dataService';
 
 const Login = lazy(() => import('./pages/Login'));
 const EmployeeDashboard = lazy(() => import('./pages/EmployeeDashboard'));
@@ -27,6 +26,7 @@ export default function App() {
     const cardId = searchParams.get('id');
     if (cardId && !storedUser) {
       const fetchCustomer = async () => {
+        const dataService = (await import('./services/dataService')).default;
         const customer = await dataService.getCustomerById(cardId);
         if (customer) {
           handleLogin({ ...customer, role: 'customer' });
@@ -47,6 +47,7 @@ export default function App() {
   const handleLogout = async () => {
     setCurrentUser(null);
     sessionStorage.removeItem('currentUser');
+    const dataService = (await import('./services/dataService')).default;
     await dataService.logout();
     navigate('/');
   };

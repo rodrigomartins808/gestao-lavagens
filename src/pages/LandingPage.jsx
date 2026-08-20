@@ -6,7 +6,7 @@ import logo from '../assets/logo.jpeg';
 import logoWhite from '../assets/logo-white.png';
 import lavagem1 from '../assets/lavagem1.jpg';
 import lavagem2 from '../assets/lavagem2.jpg';
-import lavagem3 from '../assets/lavagem3.jpg';
+import lavagem4 from '../assets/lavagem4.jpg';
 import mecanicaImg from '../assets/mecanica.jpg';
 import BookingForm from '../components/BookingForm';
 
@@ -131,7 +131,7 @@ export default function LandingPage() {
         { name: 'Lavagem Completa', desc: 'Lavagem exterior, aspiração e limpeza de vidros', price: '15.00€' }
       ],
       images: [
-        lavagem3,
+        lavagem4,
         lavagem2,
         lavagem1
       ]

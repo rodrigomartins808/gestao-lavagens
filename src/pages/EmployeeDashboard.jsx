@@ -10,6 +10,11 @@ import AddVehicleModal from '../components/AddVehicleModal';
 
 export default function EmployeeDashboard({ currentUser }) {
   const [stats, setStats] = useState({ totalWashes: 0, totalRevenue: 0, newCustomers: 0 });
+
+  useEffect(() => {
+    document.title = 'EQUIPA - GarageM';
+  }, []);
+
   const [activeWashes, setActiveWashes] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [activeTab, setActiveTab] = useState('producao'); // producao | clientes

@@ -8,6 +8,11 @@ import { migrateToSupabase } from '../services/migrationService';
 
 export default function AdminDashboard({ currentUser }) {
   const [activeTab, setActiveTab] = useState('painel');
+  
+  useEffect(() => {
+    document.title = 'ADMIN - GarageM';
+  }, []);
+  
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [stats, setStats] = useState({ today: null, month: null, global: null });
   const [customers, setCustomers] = useState([]);

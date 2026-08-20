@@ -108,6 +108,11 @@ const ServiceBlock = ({ service, index, isMobile }) => {
 
 export default function LandingPage() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = 'GarageM - Lavagem Automóvel';
+  }, []);
+
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [fuelPrices, setFuelPrices] = useState({ gasoleo: '1.49', gasolina: '1.69', gas: '0.89' });
@@ -416,13 +421,13 @@ export default function LandingPage() {
 
       {/* Footer Completo */}
       <footer style={{ background: '#000000', color: '#d1d5db', padding: 'var(--space-16) 5% var(--space-8)', fontSize: '0.95rem', borderTop: '4px solid var(--accent-red)' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 'var(--space-8)', marginBottom: 'var(--space-12)' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: 'var(--space-8)', marginBottom: 'var(--space-12)' }}>
           
           <div>
-            <img src={logoWhite} alt="GarageM" style={{ height: '32px', marginBottom: 'var(--space-4)' }} />
-            <p style={{ color: '#9ca3af', lineHeight: '1.6', marginBottom: 'var(--space-4)', maxWidth: '280px' }}>
-              O posto de abastecimento e lavagem automóvel no coração de Famalicão. 
-            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: 'var(--space-4)' }}>
+              <img src={logoWhite} alt="GarageM" style={{ height: '32px' }} />
+            </div>
+            <p style={{ color: '#9ca3af', lineHeight: '1.6', fontSize: '0.95rem' }}>A cuidar do seu automóvel no coração de Vila Nova de Famalicão com dedicação, rigor e compromisso com a qualidade.</p>
           </div>
 
           <div>
@@ -439,14 +444,6 @@ export default function LandingPage() {
               <li><strong>Segunda a Sábado:</strong> 07:45 - 21:00</li>
               <li><strong>Domingo e Feriados:</strong> 08:00 - 14:00</li>
             </ul>
-          </div>
-
-          <div>
-            <h4 style={{ color: 'white', fontSize: '1.125rem', fontWeight: '700', marginBottom: 'var(--space-4)' }}>Siga-nos</h4>
-            <div style={{ display: 'flex', gap: '1rem', flexDirection: 'column' }}>
-              <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', transition: 'color 0.2s', fontWeight: '500' }} onMouseEnter={e => e.currentTarget.style.color='white'} onMouseLeave={e => e.currentTarget.style.color='#d1d5db'}>Facebook</a>
-              <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', transition: 'color 0.2s', fontWeight: '500' }} onMouseEnter={e => e.currentTarget.style.color='white'} onMouseLeave={e => e.currentTarget.style.color='#d1d5db'}>Instagram</a>
-            </div>
           </div>
         </div>
 

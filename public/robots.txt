@@ -1,4 +1,10 @@
 User-agent: *
 Allow: /
+Disallow: /acesso-gerencia*
+Disallow: /acesso-equipa*
+Disallow: /cliente
+Disallow: /cartao
+Disallow: /tv-*
+Disallow: /tracking/*
 
 Sitemap: https://www.garagem.pt/sitemap.xml

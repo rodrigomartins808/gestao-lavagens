@@ -145,8 +145,7 @@ export default function LandingPage() {
         { name: 'Serviços simples de mecânica', price: 'Sob consulta presencial' }
       ],
       images: [
-        mecanicaImg,
-        'https://images.unsplash.com/photo-1632823462947-a87754d9c792?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
+        mecanicaImg
       ]
     },
     {

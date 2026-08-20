@@ -31,9 +31,17 @@ const ServiceBlock = ({ service, index, isMobile }) => {
       {/* Texto */}
       <div style={{ flex: 1, order: isMobile ? 2 : (index % 2 === 0 ? 1 : 2), width: '100%' }} className="service-text-col">
         {/* Icone removido a pedido do utilizador */}
-        <h3 style={{ fontSize: isMobile ? '2rem' : '2.5rem', fontWeight: '800', marginBottom: 'var(--space-4)', color: '#111827', lineHeight: '1.2' }}>
-          {service.title}
-        </h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-4)' }}>
+          <h3 style={{ fontSize: isMobile ? '2rem' : '2.5rem', fontWeight: '800', color: '#111827', lineHeight: '1.2', margin: 0 }}>
+            {service.title}
+          </h3>
+          {service.startingPrice && (
+            <div style={{ background: '#fef2f2', padding: '0.5rem 1rem', borderRadius: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, marginTop: '0.25rem' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--accent-red)', textTransform: 'uppercase' }}>Desde</span>
+              <span style={{ fontSize: '1.25rem', fontWeight: '900', color: '#991b1b', lineHeight: '1' }}>{service.startingPrice}</span>
+            </div>
+          )}
+        </div>
         <p style={{ color: '#4b5563', lineHeight: '1.7', fontSize: isMobile ? '1rem' : '1.125rem', marginBottom: 'var(--space-6)' }}>
           {service.description}
         </p>
@@ -46,7 +54,7 @@ const ServiceBlock = ({ service, index, isMobile }) => {
                   <CheckCircle2 size={22} color="var(--accent-red)" style={{ marginRight: '0.75rem', flexShrink: 0 }} /> 
                   <span style={{ fontWeight: '700', color: '#111827', fontSize: isMobile ? '1rem' : '1.1rem' }}>{item.name}</span>
                 </div>
-                <span style={{ color: 'var(--accent-red)', fontWeight: '800', marginLeft: isMobile ? '2.125rem' : 'auto', fontSize: isMobile ? '0.95rem' : '1.1rem', whiteSpace: isMobile ? 'normal' : 'nowrap', paddingLeft: isMobile ? '0' : '1rem' }}>{item.price}</span>
+                <span style={{ color: 'var(--accent-red)', fontWeight: '800', marginLeft: isMobile ? '2.125rem' : 'auto', fontSize: isMobile ? '0.95rem' : '1.1rem', whiteSpace: isMobile ? 'normal' : 'nowrap', paddingLeft: isMobile ? '0' : '1rem' }}>{service.id === 'mecanica' ? item.price : ''}</span>
               </div>
               {item.desc && (
                 <p style={{ color: '#6b7280', fontSize: '0.9rem', margin: '0.15rem 0 0 2rem', lineHeight: '1.4' }}>{item.desc}</p>
@@ -111,6 +119,7 @@ export default function LandingPage() {
       id: 'lavagem',
       icon: <Droplets size={28} />,
       title: 'Lavagem Automóvel',
+      startingPrice: '8.50€',
       description: 'Cuidamos do seu carro ao pormenor. Desde uma lavagem simples com produtos de alta qualidade, até à limpeza profunda de interiores.',
       items: [
         { name: 'Lavagem Simples', desc: 'Lavagem exterior e secagem', price: '8.50€' },
@@ -140,6 +149,7 @@ export default function LandingPage() {
       id: 'especiais',
       icon: <Clock size={28} />,
       title: 'Serviços Especiais',
+      startingPrice: '10.00€',
       description: 'Polimentos, higienização a ozono, limpeza profunda de estofos e tratamento de peles para devolver o aspeto de novo.',
       items: [
         { name: 'Lavagem de estofos (c/ lavagem completa)', price: '75.00€' },
@@ -216,7 +226,7 @@ export default function LandingPage() {
             </nav>
 
             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'var(--accent-red)', color: 'white', padding: '0.6rem 1.5rem', borderRadius: 'var(--radius-full)', fontWeight: '700', fontSize: '1.05rem', border: 'none', cursor: 'pointer', textAlign: 'center', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#dc2626'} onMouseLeave={e => e.currentTarget.style.background = 'var(--accent-red)'}>
+              <button onClick={() => document.getElementById('agendar').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'var(--accent-red)', color: 'white', padding: '0.6rem 1.5rem', borderRadius: 'var(--radius-full)', fontWeight: '700', fontSize: '1.05rem', border: 'none', cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.background = '#dc2626'; e.currentTarget.style.transform = 'translateY(-2px)'; }} onMouseLeave={e => { e.currentTarget.style.background = 'var(--accent-red)'; e.currentTarget.style.transform = 'translateY(0)'; }}>
                 Agendar Lavagem
               </button>
               <button 

@@ -317,17 +317,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* História e Valores */}
-      <section style={{ backgroundColor: '#ffffff', padding: isMobile ? 'var(--space-16) 5%' : 'var(--space-24) 5%', textAlign: 'center', borderBottom: '1px solid #f3f4f6' }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto' }} className="reveal-on-scroll">
-          <p style={{ fontSize: isMobile ? '1.1rem' : '1.35rem', color: '#4b5563', lineHeight: '1.8', marginBottom: '1.5rem' }}>
-            A GarageM não é apenas um local de passagem. O nosso edifício faz parte da história do centro de Famalicão há mais de 60 anos. <strong style={{ color: '#111827' }}>Os anos passaram, o mundo acelerou, mas nós evoluímos lado a lado com as exigências do tempo sem nunca perder a nossa essência.</strong>
-          </p>
-          <p style={{ fontSize: isMobile ? '1.1rem' : '1.35rem', color: '#4b5563', lineHeight: '1.8' }}>
-            Aqui, não é apenas mais um número. Conhecemos os nossos clientes pelo nome, sabemos o que o seu carro precisa e fazemos questão de manter essa proximidade humana. É essa confiança que nos mantém aqui todos os dias.
-          </p>
-        </div>
-      </section>
       {/* Serviços Animados */}
       <section id="servicos" style={{ backgroundColor: '#f7f5f2', position: 'relative', padding: 'var(--space-24) 5%', overflow: 'hidden' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
@@ -425,7 +414,7 @@ export default function LandingPage() {
           <div style={{ paddingRight: isMobile ? '0' : '2rem' }}>
             <h2 style={{ fontSize: '2.5rem', fontWeight: '800', color: '#111827', marginBottom: 'var(--space-6)', lineHeight: '1.1' }}>Mais do que um posto. Uma paragem obrigatória.</h2>
             <p style={{ fontSize: '1.125rem', color: '#4b5563', marginBottom: 'var(--space-4)', lineHeight: '1.7' }}>
-              A GarageM não é apenas um local de passagem. O nosso edifício faz parte da história do centro de Famalicão há mais de 25 anos. Passámos por marcas internacionais como a BP e Prio, mas hoje orgulhamo-nos de ser um espaço com identidade própria e independente.
+              A GarageM não é apenas um local de passagem. O nosso edifício faz parte da história do centro de Famalicão há mais de 60 anos. Os tempos mudaram e nós evoluímos, mas a nossa essência manteve-se intacta.
             </p>
             <p style={{ fontSize: '1.125rem', color: '#4b5563', lineHeight: '1.7' }}>
               Aqui, não é apenas mais um número. Conhecemos os nossos clientes pelo nome, sabemos o que o seu carro precisa e fazemos questão de manter essa proximidade humana. É essa confiança que nos mantém aqui todos os dias.

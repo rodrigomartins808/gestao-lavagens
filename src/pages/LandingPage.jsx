@@ -421,8 +421,11 @@ export default function LandingPage() {
               Aqui, não é apenas mais um número. Conhecemos os nossos clientes pelo nome, sabemos o que o seu carro precisa e fazemos questão de manter essa proximidade humana. É essa confiança que nos mantém aqui todos os dias.
             </p>
           </div>
-          <div style={{ position: 'relative', height: '100%', minHeight: '400px', borderRadius: 'var(--radius-xl)', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}>
-            <img src={fachadaAntiga} alt="Edifício histórico GarageM" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0, display: 'block' }} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', height: '100%' }}>
+            <div style={{ position: 'relative', flexGrow: 1, minHeight: '400px', borderRadius: 'var(--radius-xl)', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}>
+              <img src={fachadaAntiga} alt="Edifício histórico GarageM" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0, display: 'block' }} />
+            </div>
+            <p style={{ color: '#6b7280', fontSize: '0.95rem', fontStyle: 'italic', textAlign: 'center', margin: 0 }}>Fotografia do nosso estabelecimento com cerca de 60 anos.</p>
           </div>
         </div>
       </section>

@@ -425,7 +425,7 @@ export default function LandingPage() {
             <div style={{ position: 'relative', flexGrow: 1, minHeight: '400px', borderRadius: 'var(--radius-xl)', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}>
               <img src={fachadaAntiga} alt="Edifício histórico GarageM" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0, display: 'block' }} />
             </div>
-            <p style={{ color: '#6b7280', fontSize: '0.95rem', fontStyle: 'italic', textAlign: 'center', margin: 0 }}>Fotografia do nosso estabelecimento com cerca de 60 anos.</p>
+            <p style={{ color: '#6b7280', fontSize: '0.95rem', fontStyle: 'italic', textAlign: 'center', margin: 0 }}>Mais de 60 anos de história no coração de Famalicão.</p>
           </div>
         </div>
       </section>

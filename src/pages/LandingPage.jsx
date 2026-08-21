@@ -7,6 +7,7 @@ import lavagem1 from '../assets/lavagem1.jpg';
 import lavagem2 from '../assets/lavagem2.jpg';
 import lavagem4 from '../assets/lavagem4.jpg';
 import mecanicaImg from '../assets/mecanica.jpg';
+import fachadaAntiga from '../assets/fachada_antiga.jpg';
 
 const BookingForm = lazy(() => import('../components/BookingForm'));
 
@@ -420,13 +421,8 @@ export default function LandingPage() {
               Aqui, não é apenas mais um número. Conhecemos os nossos clientes pelo nome, sabemos o que o seu carro precisa e fazemos questão de manter essa proximidade humana. É essa confiança que nos mantém aqui todos os dias.
             </p>
           </div>
-          <div style={{ position: 'relative', height: '100%', minHeight: '400px', background: '#e5e7eb', borderRadius: 'var(--radius-xl)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '12rem', fontWeight: '900', color: '#f3f4f6', zIndex: 0, userSelect: 'none', whiteSpace: 'nowrap' }}>
-              est. 199X
-            </div>
-            <p style={{ color: '#9ca3af', fontWeight: '600', zIndex: 1, textAlign: 'center', padding: '1rem', border: '2px dashed #d1d5db', borderRadius: 'var(--radius-lg)' }}>
-              [Placeholder para Fotografia Histórica / Edifício]
-            </p>
+          <div style={{ position: 'relative', height: '100%', minHeight: '400px', borderRadius: 'var(--radius-xl)', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}>
+            <img src={fachadaAntiga} alt="Edifício histórico GarageM" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0, display: 'block' }} />
           </div>
         </div>
       </section>
